@@ -23,7 +23,7 @@ module.exports = {
      * @optional
      */
     description: "TODO Service Now integration description",
-    entityTypes: [&#39;email&#39;],
+    entityTypes: ["email"],
     /**
      * An array of style files (css or less) that will be included for your integration. Any styles specified in
      * the below files can be used in your custom template.

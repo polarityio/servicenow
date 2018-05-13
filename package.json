@@ -1,20 +1,24 @@
 {
   "main": "./integration.js",
-  "name": "Service Now",
+  "name": "service-now",
   "version": "1.0.0-beta",
   "private": true,
   "license": "MIT",
   "author": "Polarity",
   "dependencies": {
-    "request": "^2.75",
-    "async": "2.1.4"
+    "async": "^2.1.4",
+    "request": "^2.85.0"
   },
   "devDependencies": {
-    "chai": "~3.5",
-    "mocha": "~3.2"
+    "bunyan": "^1.8.12",
+    "chai": "^4.1.2",
+    "mocha": "^5.1.1",
+    "mountebank": "^1.14.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha --recursive",
+    "pretest": "mb start --configfile imposters.json --mock &",
+    "test": "mocha --recursive || mb stop",
+    "posttest": "mb stop",
     "dev": "./sync.js"
   }
 }

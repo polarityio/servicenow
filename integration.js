@@ -1,15 +1,41 @@
 let async = require('async');
+let request = require('request');
 let config = require('./config/config');
 
+let requestWithDefaults;
 let Logger;
-let requestOptions = {};
-
-function getRequestOptions() {
-    return JSON.parse(JSON.stringify(requestOptions));
-}
+let requestOptions = {
+    json: true
+};
 
 function doLookup(entities, options, callback) {
-    callback(null, null);
+    let results = [];
+
+    async.each(entities, (entity, callback) => {
+        let requestOptions = {};
+        requestOptions.auth = {
+            username: options.username,
+            password: options.password
+        };
+        requestOptions.qs = {
+            sysparm_query: `email=${entities[0].value}`
+        };
+
+        requestWithDefaults(options.host + '/api/now/table/sys_user', requestOptions, (err, resp, body) => {
+            if (err || resp.statusCode != 200) {
+                Logger.error('error during entity lookup', { error: err, statusCode: resp ? resp.statusCode : null });
+                callback(err || new Error('non-200 http status code: ' + resp.statusCode));
+                return;
+            }
+
+            Logger.trace('resp body', { body: body });
+
+            results.push(body);
+            callback();
+        });
+    }, err => {
+        callback(err, results);
+    });
 }
 
 function startup(logger) {
@@ -38,6 +64,8 @@ function startup(logger) {
     if (typeof config.request.rejectUnauthorized === 'boolean') {
         requestOptions.rejectUnauthorized = config.request.rejectUnauthorized;
     }
+
+    requestWithDefaults = request.defaults(requestOptions);
 }
 
 function validateOptions(options, callback) {
