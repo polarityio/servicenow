@@ -58,7 +58,6 @@ describe('Service Now integration', () => {
 
         it('should return user details', (done) => {
             integration.doLookup([{ value: 'john.example@example.com' }], options, (err, results) => {
-                console.error(results);
                 assert.equal('john.example@example.com', results[0].result[0].email);
                 done();
             });
@@ -66,11 +65,17 @@ describe('Service Now integration', () => {
 
         it('should lookup multiple entities', (done) => {
             integration.doLookup([{ value: 'john.example@example.com' }, { value: 'lucius.bagnoli@example.com' }], options, (err, results) => {
-                console.error(results);
-                assert.equal(2, results.length);
                 assert.equal('john.example@example.com', results[0].result[0].email);
                 assert.equal('lucius.bagnoli@example.com', results[1].result[0].email);
                 done();
+            });
+        });
+    });
+
+    describe('change lookups', () => {
+        xit('should allow looksups by change ids', (done) => {
+            integration.doLookup([{ value: 'CHG0000036' }], options, (err, results) => {
+
             });
         });
     });

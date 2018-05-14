@@ -13,7 +13,10 @@
     "bunyan": "^1.8.12",
     "chai": "^4.1.2",
     "mocha": "^5.1.1",
-    "mountebank": "^1.14.0"
+    "mountebank": "^1.14.0",
+    "node-ssh": "^5.1.1",
+    "node-watch": "^0.5.8",
+    "scp2": "^0.5.0"
   },
   "scripts": {
     "pretest": "mb start --configfile imposters.json --mock &",

@@ -24,6 +24,16 @@ module.exports = {
      */
     description: "TODO Service Now integration description",
     entityTypes: ["email"],
+    customTypes: [
+        {
+            key: 'incident',
+            regex: /INC[0-9]{7,}/
+        },
+        {
+            key: 'change',
+            regex: /CHG[0-9]{7,}/
+        }
+    ],
     /**
      * An array of style files (css or less) that will be included for your integration. Any styles specified in
      * the below files can be used in your custom template.
@@ -32,7 +42,7 @@ module.exports = {
      * @optional
      */
     "styles": [
-        "./styles/Service Now.less"
+        "./styles/service-now.less"
     ],
     /**
      * Provide custom component logic and template for rendering the integration details block.  If you do not
@@ -44,18 +54,18 @@ module.exports = {
      */
     block: {
         component: {
-            file: "./components/Service Now-block.js"
+            file: "./components/service-now-block.js"
         },
         template: {
-            file: "./templates/Service Now-block.hbs"
+            file: "./templates/service-now-block.hbs"
         }
     },
     summary: {
         component: {
-            file: './components/Service Now-summary.js'
+            file: './components/service-now-summary.js'
         },
         template: {
-            file: './templates/Service Now-summary.hbs'
+            file: './templates/service-now-summary.hbs'
         }
     },
     request: {

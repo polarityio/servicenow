@@ -18,7 +18,7 @@ function doLookup(entities, options, callback) {
             password: options.password
         };
         requestOptions.qs = {
-            sysparm_query: `email=${entities[0].value}`
+            sysparm_query: `email=${entity.value}`
         };
 
         requestWithDefaults(options.host + '/api/now/table/sys_user', requestOptions, (err, resp, body) => {
