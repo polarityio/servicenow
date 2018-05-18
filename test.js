@@ -58,15 +58,15 @@ describe('Service Now integration', () => {
 
         it('should return user details', (done) => {
             integration.doLookup([{ value: 'john.example@example.com' }], options, (err, results) => {
-                assert.equal('john.example@example.com', results[0].result[0].email);
+                assert.equal('john.example@example.com', results[0].data.details.result[0].email);
                 done();
             });
         });
 
         it('should lookup multiple entities', (done) => {
             integration.doLookup([{ value: 'john.example@example.com' }, { value: 'lucius.bagnoli@example.com' }], options, (err, results) => {
-                assert.equal('john.example@example.com', results[0].result[0].email);
-                assert.equal('lucius.bagnoli@example.com', results[1].result[0].email);
+                assert.equal('john.example@example.com', results[0].data.details.result[0].email);
+                assert.equal('lucius.bagnoli@example.com', results[1].data.details.result[0].email);
                 done();
             });
         });

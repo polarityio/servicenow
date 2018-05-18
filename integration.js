@@ -9,31 +9,39 @@ let requestOptions = {
 };
 
 function doLookup(entities, options, callback) {
+    Logger.trace({ options: options });
     let results = [];
 
     async.each(entities, (entity, callback) => {
-        let requestOptions = {};
-        requestOptions.auth = {
-            username: options.username,
-            password: options.password
-        };
-        requestOptions.qs = {
-            sysparm_query: `email=${entity.value}`
+        let additionalOptions = {
+            auth: {
+                username: options.username,
+                password: options.password
+            },
+            qs: {
+                sysparm_query: `email=${entity.value}`
+            }
         };
 
-        requestWithDefaults(options.host + '/api/now/table/sys_user', requestOptions, (err, resp, body) => {
+        Logger.trace({ additionalOptions: additionalOptions });
+
+        requestWithDefaults(options.host + '/api/now/table/sys_user', additionalOptions, (err, resp, body) => {
             if (err || resp.statusCode != 200) {
                 Logger.error('error during entity lookup', { error: err, statusCode: resp ? resp.statusCode : null });
                 callback(err || new Error('non-200 http status code: ' + resp.statusCode));
                 return;
             }
 
-            Logger.trace('resp body', { body: body });
+            Logger.trace('resp body for ' + entity.value, { body: body, statusCode: resp.statusCode });
 
-            results.push(body);
+            body.result.forEach(result => {
+                results.push({ entity: entity, data: { details: result } });
+            });
+
             callback();
         });
     }, err => {
+        Logger.trace('result returned to client', results);
         callback(err, results);
     });
 }
