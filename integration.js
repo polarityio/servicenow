@@ -13,26 +13,43 @@ function doLookup(entities, options, callback) {
     let results = [];
 
     async.each(entities, (entity, callback) => {
+        let table;
+        let query;
+
+        if (entity.isEmail) {
+            table = 'sys_user';
+            query = 'email';
+        } else if (entity.types.indexOf('custom.change') > -1) {
+            table = 'change_request';
+            query = 'number';
+        } else if (entity.types.indexOf('custom.incident') > -1) {
+            table = 'incident';
+            query = 'number';
+        } else {
+            callback({ err: 'invalid entity type ' + entity.type });
+            return;
+        }
+
+        let url = `${options.host}/api/now/table/${table}`;
+
         let additionalOptions = {
             auth: {
                 username: options.username,
                 password: options.password
             },
             qs: {
-                sysparm_query: `email=${entity.value}`
+                sysparm_query: `${query}=${entity.value}`
             }
         };
 
         Logger.trace({ additionalOptions: additionalOptions });
 
-        requestWithDefaults(options.host + '/api/now/table/sys_user', additionalOptions, (err, resp, body) => {
+        requestWithDefaults(url, additionalOptions, (err, resp, body) => {
             if (err || resp.statusCode != 200) {
                 Logger.error('error during entity lookup', { error: err, statusCode: resp ? resp.statusCode : null });
-                callback(err || new Error('non-200 http status code: ' + resp.statusCode));
+                callback(err || { err: 'non-200 http status code: ' + resp.statusCode });
                 return;
             }
-
-            Logger.trace('resp body for ' + entity.value, { body: body, statusCode: resp.statusCode });
 
             body.result.forEach(result => {
                 results.push({ entity: entity, data: { details: result } });

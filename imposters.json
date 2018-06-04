@@ -214,6 +214,282 @@
                     ]
                 },
                 {
+                    "predicates": [
+                        {
+                            "deepEquals": {
+                                "path": "/api/now/table/change_request",
+                                "query": {
+                                    "sysparm_query": "number=CHG0000001"
+                                }
+                            }
+                        }
+                    ],
+                    "responses": [
+                        {
+                            "is": {
+                                "headers": {
+                                    "Content-Type": "application/json"
+                                },
+                                "body": {
+                                    "result": [
+                                        {
+                                            "parent": "",
+                                            "reason": "",
+                                            "made_sla": "false",
+                                            "backout_plan": "Current prod environment to be snapshotted with VmWare\n            prior to change.\n        ",
+                                            "watch_list": "",
+                                            "upon_reject": "",
+                                            "sys_updated_on": "2018-04-09 12:42:23",
+                                            "type": "normal",
+                                            "conflict_status": "",
+                                            "approval_history": "",
+                                            "number": "CHG0000001",
+                                            "test_plan": "Multi-User testing on Sunday night",
+                                            "sys_updated_by": "admin",
+                                            "opened_by": {
+                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user/6816f79cc0a8016401c5a33be04be441",
+                                                "value": "6816f79cc0a8016401c5a33be04be441"
+                                            },
+                                            "user_input": "",
+                                            "requested_by_date": "2017-10-10 00:00:00",
+                                            "sys_created_on": "2017-10-03 22:12:50",
+                                            "sys_domain": {
+                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user_group/global",
+                                                "value": "global"
+                                            },
+                                            "state": "-5",
+                                            "sys_created_by": "admin",
+                                            "knowledge": "false",
+                                            "order": "",
+                                            "phase": "requested",
+                                            "closed_at": "2018-04-04 09:46:25",
+                                            "cmdb_ci": {
+                                                "link": "https://ven02475.service-now.com/api/now/table/cmdb_ci/a9c0c8d2c6112276018f7705562f9cb0",
+                                                "value": "a9c0c8d2c6112276018f7705562f9cb0"
+                                            },
+                                            "delivery_plan": "",
+                                            "impact": "3",
+                                            "active": "true",
+                                            "review_comments": "",
+                                            "work_notes_list": "",
+                                            "business_service": "",
+                                            "priority": "3",
+                                            "sys_domain_path": "/",
+                                            "time_worked": "",
+                                            "cab_recommendation": "",
+                                            "expected_start": "",
+                                            "production_system": "false",
+                                            "rejection_goto": "",
+                                            "opened_at": "2017-10-03 22:12:50",
+                                            "review_date": "",
+                                            "business_duration": "",
+                                            "group_list": "",
+                                            "requested_by": {
+                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user/5137153cc611227c000bbd1bd8cd2007",
+                                                "value": "5137153cc611227c000bbd1bd8cd2007"
+                                            },
+                                            "work_end": "",
+                                            "change_plan": "Backup dataset, image current system, reinstall previous\n            release, test\n        ",
+                                            "phase_state": "open",
+                                            "approval_set": "",
+                                            "cab_date": "",
+                                            "wf_activity": "",
+                                            "work_notes": "",
+                                            "implementation_plan": "",
+                                            "end_date": "2018-03-28 01:00:00",
+                                            "short_description": "Rollback Oracle Version",
+                                            "close_code": "",
+                                            "correlation_display": "",
+                                            "delivery_task": "",
+                                            "work_start": "",
+                                            "assignment_group": "",
+                                            "additional_assignee_list": "",
+                                            "outside_maintenance_schedule": "false",
+                                            "description": "Performance of the Siebel SFA software has been severely\n            degraded since the upgrade performed this weekend.\n\n            We moved to an unsupported Oracle DB version. Need to rollback the\n            Oracle Instance to a supported version.\n        ",
+                                            "on_hold_reason": "",
+                                            "calendar_duration": "",
+                                            "std_change_producer_version": "",
+                                            "close_notes": "",
+                                            "sys_class_name": "change_request",
+                                            "closed_by": {
+                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user/6816f79cc0a8016401c5a33be04be441",
+                                                "value": "6816f79cc0a8016401c5a33be04be441"
+                                            },
+                                            "follow_up": "",
+                                            "sys_id": "a9e9c33dc61122760072455df62663d2",
+                                            "contact_type": "phone",
+                                            "urgency": "3",
+                                            "scope": "3",
+                                            "company": "",
+                                            "justification": "",
+                                            "reassignment_count": "",
+                                            "review_status": "3",
+                                            "activity_due": "",
+                                            "assigned_to": {
+                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user/681b365ec0a80164000fb0b05854a0cd",
+                                                "value": "681b365ec0a80164000fb0b05854a0cd"
+                                            },
+                                            "start_date": "2018-03-27 23:00:00",
+                                            "comments": "",
+                                            "approval": "requested",
+                                            "sla_due": "",
+                                            "comments_and_work_notes": "",
+                                            "due_date": "",
+                                            "sys_mod_count": "21",
+                                            "on_hold": "false",
+                                            "sys_tags": "",
+                                            "conflict_last_run": "",
+                                            "escalation": "0",
+                                            "upon_approval": "",
+                                            "correlation_id": "",
+                                            "location": "",
+                                            "risk": "2",
+                                            "category": "Software",
+                                            "risk_impact_analysis": ""
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "predicates": [
+                        {
+                            "deepEquals": {
+                                "path": "/api/now/table/incident",
+                                "query": {
+                                    "sysparm_query": "number=INC0000001"
+                                }
+                            }
+                        }
+                    ],
+                    "responses": [
+                        {
+                            "is": {
+                                "headers": {
+                                    "Content-Type": "application/json"
+                                },
+                                "body": {
+                                    "result": [
+                                        {
+                                            "parent": "",
+                                            "made_sla": "false",
+                                            "caused_by": "",
+                                            "watch_list": "",
+                                            "upon_reject": "",
+                                            "sys_updated_on": "2018-04-09 20:16:07",
+                                            "child_incidents": "",
+                                            "approval_history": "",
+                                            "number": "INC0000001",
+                                            "resolved_by": {
+                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user/6816f79cc0a8016401c5a33be04be441",
+                                                "value": "6816f79cc0a8016401c5a33be04be441"
+                                            },
+                                            "sys_updated_by": "admin",
+                                            "opened_by": {
+                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user/681ccaf9c0a8016400b98a06818d57c7",
+                                                "value": "681ccaf9c0a8016400b98a06818d57c7"
+                                            },
+                                            "user_input": "",
+                                            "sys_created_on": "2016-08-08 18:24:13",
+                                            "sys_domain": {
+                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user_group/global",
+                                                "value": "global"
+                                            },
+                                            "state": "7",
+                                            "sys_created_by": "pat",
+                                            "knowledge": "false",
+                                            "order": "",
+                                            "calendar_stc": "7937181",
+                                            "closed_at": "2018-01-08 23:10:06",
+                                            "cmdb_ci": {
+                                                "link": "https://ven02475.service-now.com/api/now/table/cmdb_ci/b0c4030ac0a800090152e7a4564ca36c",
+                                                "value": "b0c4030ac0a800090152e7a4564ca36c"
+                                            },
+                                            "delivery_plan": "",
+                                            "impact": "1",
+                                            "active": "false",
+                                            "work_notes_list": "",
+                                            "business_service": "",
+                                            "priority": "1",
+                                            "sys_domain_path": "/",
+                                            "rfc": "",
+                                            "time_worked": "",
+                                            "expected_start": "",
+                                            "rejection_goto": "",
+                                            "opened_at": "2018-01-07 23:09:51",
+                                            "business_duration": "1970-01-22 21:46:21",
+                                            "group_list": "",
+                                            "work_end": "",
+                                            "caller_id": "",
+                                            "resolved_at": "2018-04-09 19:56:12",
+                                            "approval_set": "",
+                                            "subcategory": "",
+                                            "wf_activity": "",
+                                            "work_notes": "",
+                                            "short_description": "Can't read email",
+                                            "close_code": "Closed/Resolved by Caller",
+                                            "correlation_display": "",
+                                            "delivery_task": "",
+                                            "work_start": "",
+                                            "assignment_group": {
+                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user_group/d625dccec0a8016700a222a0f7900d06",
+                                                "value": "d625dccec0a8016700a222a0f7900d06"
+                                            },
+                                            "additional_assignee_list": "",
+                                            "business_stc": "1892781",
+                                            "description": "User can't access email on mail.company.com.",
+                                            "calendar_duration": "1970-04-02 20:46:21",
+                                            "close_notes": "Closed before close notes were made mandatory",
+                                            "notify": "1",
+                                            "sys_class_name": "incident",
+                                            "closed_by": {
+                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user/9ee1b13dc6112271007f9d0efdb69cd0",
+                                                "value": "9ee1b13dc6112271007f9d0efdb69cd0"
+                                            },
+                                            "follow_up": "",
+                                            "parent_incident": "",
+                                            "sys_id": "9c573169c611228700193229fff72400",
+                                            "contact_type": "",
+                                            "incident_state": "7",
+                                            "urgency": "1",
+                                            "problem_id": {
+                                                "link": "https://ven02475.service-now.com/api/now/table/problem/9d3a266ac6112287004e37fb2ceb0133",
+                                                "value": "9d3a266ac6112287004e37fb2ceb0133"
+                                            },
+                                            "company": "",
+                                            "reassignment_count": "1",
+                                            "activity_due": "",
+                                            "assigned_to": {
+                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user/46b87022a9fe198101a78787e40d7547",
+                                                "value": "46b87022a9fe198101a78787e40d7547"
+                                            },
+                                            "severity": "1",
+                                            "comments": "",
+                                            "approval": "",
+                                            "sla_due": "",
+                                            "comments_and_work_notes": "",
+                                            "due_date": "",
+                                            "sys_mod_count": "21",
+                                            "reopen_count": "",
+                                            "sys_tags": "",
+                                            "escalation": "0",
+                                            "upon_approval": "",
+                                            "correlation_id": "",
+                                            "location": {
+                                                "link": "https://ven02475.service-now.com/api/now/table/cmn_location/1083361cc611227501b682158cabf646",
+                                                "value": "1083361cc611227501b682158cabf646"
+                                            },
+                                            "category": "network"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
                     "responses": [
                         {
                             "is": {

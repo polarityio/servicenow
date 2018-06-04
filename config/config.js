@@ -24,7 +24,7 @@ module.exports = {
      */
     description: "TODO Service Now integration description",
     entityTypes: ["email"],
-    /*customTypes: [
+    customTypes: [
         {
             key: 'incident',
             regex: /INC[0-9]{7,}/
@@ -33,7 +33,7 @@ module.exports = {
             key: 'change',
             regex: /CHG[0-9]{7,}/
         }
-    ],*/
+    ],
     /**
      * An array of style files (css or less) that will be included for your integration. Any styles specified in
      * the below files can be used in your custom template.
@@ -100,7 +100,7 @@ module.exports = {
         // the directory you specify is writable by the `polarityd:polarityd` user and group.
 
         //directoryPath: '/var/log/polarity-integrations',
-        level: 'trace',  //trace, debug, info, warn, error, fatal
+        level: 'info',  //trace, debug, info, warn, error, fatal
     },
     /**
      * Options that are displayed to the user/admin in the Polarity integration user-interface.  Should be structured
