@@ -69,7 +69,7 @@ describe('Service Now integration', () => {
 
         it('should return user details', (done) => {
             integration.doLookup([getEntities('email', 'john.example@example.com')], options, (err, results) => {
-                assert.equal('john.example@example.com', results[0].data.details.email);
+                assert.equal('john.example@example.com', results[0].data.details.results.email);
                 done();
             });
         });
@@ -80,8 +80,8 @@ describe('Service Now integration', () => {
                 getEntities('email', 'lucius.bagnoli@example.com')],
                 options,
                 (err, results) => {
-                    assert.equal('john.example@example.com', results[0].data.details.email);
-                    assert.equal('lucius.bagnoli@example.com', results[1].data.details.email);
+                    assert.equal('john.example@example.com', results[0].data.details.results.email);
+                    assert.equal('lucius.bagnoli@example.com', results[1].data.details.results.email);
                     done();
                 });
         });
@@ -92,6 +92,7 @@ describe('Service Now integration', () => {
             integration.doLookup([getEntities('custom.change', 'CHG0000001')], options, (err, results) => {
                 assert.notOk(err);
                 assert.equal(1, results.length);
+                assert.equal('CHG0000001', results[0].data.details.results.number)
                 done();
             });
         });
@@ -102,6 +103,7 @@ describe('Service Now integration', () => {
             integration.doLookup([getEntities('custom.incident', 'INC0000001')], options, (err, results) => {
                 assert.notOk(err);
                 assert.equal(1, results.length);
+                assert.equal('INC0000001', results[0].data.details.results.number)
                 done();
             });
         });

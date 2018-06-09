@@ -52,7 +52,16 @@ function doLookup(entities, options, callback) {
             }
 
             body.result.forEach(result => {
-                results.push({ entity: entity, data: { details: result } });
+                results.push({
+                    entity: entity,
+                    data: {
+                        details: {
+                            host: options.host,
+                            uriType: table,
+                            results: result
+                        }
+                    }
+                });
             });
 
             callback();
@@ -93,8 +102,24 @@ function startup(logger) {
     requestWithDefaults = request.defaults(requestOptions);
 }
 
+function validateOption(errors, options, optionName, errMessage) {
+    if (typeof options[optionName].value !== 'string' ||
+        (typeof options[optionName].value === 'string' && options[optionName].value.length === 0)) {
+        errors.push({
+            key: optionName,
+            message: errMessage
+        });
+    }
+}
+
 function validateOptions(options, callback) {
-    callback(null, null);
+    let errors = [];
+
+    validateOption(errors, options, 'host', 'You must provide a valid host.');
+    validateOption(errors, options, 'username', 'You must provide a valid username.');
+    validateOption(errors, options, 'password', 'You must provide a valid password.');
+
+    callback(null, errors);
 }
 
 module.exports = {
