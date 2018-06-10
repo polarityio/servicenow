@@ -1,7 +1,10 @@
 <div>
+    <h1 class="p-title">
+        <i class="fa fa-fw fa-info"></i> {{section}}
+    </h1>
     {{#each items as |item|}}
     <div class="item">
-        <span class="p-key">{{item.title}}:</span>
+        <span class="p-key">{{item.title}}</span>
         <span class="p-value">{{item.value}}</span>
     </div>
     {{/each}}

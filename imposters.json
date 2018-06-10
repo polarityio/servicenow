@@ -38,7 +38,7 @@
                                             "sys_updated_by": "admin",
                                             "sys_created_on": "2012-02-18 03:04:49",
                                             "sys_domain": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user_group/global",
+                                                "link": "https://localhost:5555/api/now/table/sys_user_group/global",
                                                 "value": "global"
                                             },
                                             "state": "",
@@ -53,7 +53,7 @@
                                             "last_password": "",
                                             "sys_domain_path": "/",
                                             "cost_center": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/cmn_cost_center/91e8bbf43710200044e0bfc8bcbe5daa",
+                                                "link": "https://localhost:5555/api/now/table/cmn_cost_center/91e8bbf43710200044e0bfc8bcbe5daa",
                                                 "value": "91e8bbf43710200044e0bfc8bcbe5daa"
                                             },
                                             "phone": "",
@@ -74,11 +74,11 @@
                                             "mobile_phone": "",
                                             "street": "",
                                             "company": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/core_company/81fd65ecac1d55eb42a426568fc87a63",
+                                                "link": "https://localhost:5555/api/now/table/core_company/81fd65ecac1d55eb42a426568fc87a63",
                                                 "value": "81fd65ecac1d55eb42a426568fc87a63"
                                             },
                                             "department": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/cmn_department/5d7f17f03710200044e0bfc8bcbe5d43",
+                                                "link": "https://localhost:5555/api/now/table/cmn_department/5d7f17f03710200044e0bfc8bcbe5d43",
                                                 "value": "5d7f17f03710200044e0bfc8bcbe5d43"
                                             },
                                             "first_name": "Lucius",
@@ -86,7 +86,7 @@
                                             "introduction": "",
                                             "preferred_language": "",
                                             "manager": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user/02826bf03710200044e0bfc8bcbe5d88",
+                                                "link": "https://localhost:5555/api/now/table/sys_user/02826bf03710200044e0bfc8bcbe5d88",
                                                 "value": "02826bf03710200044e0bfc8bcbe5d88"
                                             },
                                             "locked_out": "false",
@@ -99,7 +99,7 @@
                                             "schedule": "",
                                             "date_format": "",
                                             "location": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/cmn_location/0002c0a93790200044e0bfc8bcbe5df5",
+                                                "link": "https://localhost:5555/api/now/table/cmn_location/0002c0a93790200044e0bfc8bcbe5df5",
                                                 "value": "0002c0a93790200044e0bfc8bcbe5df5"
                                             }
                                         }
@@ -142,7 +142,7 @@
                                             "sys_updated_by": "admin",
                                             "sys_created_on": "2012-02-18 03:04:49",
                                             "sys_domain": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user_group/global",
+                                                "link": "https://localhost:5555/api/now/table/sys_user_group/global",
                                                 "value": "global"
                                             },
                                             "state": "",
@@ -157,7 +157,7 @@
                                             "last_password": "",
                                             "sys_domain_path": "/",
                                             "cost_center": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/cmn_cost_center/91e8bbf43710200044e0bfc8bcbe5daa",
+                                                "link": "https://localhost:5555/api/now/table/cmn_cost_center/91e8bbf43710200044e0bfc8bcbe5daa",
                                                 "value": "91e8bbf43710200044e0bfc8bcbe5daa"
                                             },
                                             "phone": "",
@@ -178,11 +178,11 @@
                                             "mobile_phone": "",
                                             "street": "",
                                             "company": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/core_company/81fd65ecac1d55eb42a426568fc87a63",
+                                                "link": "https://localhost:5555/api/now/table/core_company/81fd65ecac1d55eb42a426568fc87a63",
                                                 "value": "81fd65ecac1d55eb42a426568fc87a63"
                                             },
                                             "department": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/cmn_department/5d7f17f03710200044e0bfc8bcbe5d43",
+                                                "link": "https://localhost:5555/api/now/table/cmn_department/5d7f17f03710200044e0bfc8bcbe5d43",
                                                 "value": "5d7f17f03710200044e0bfc8bcbe5d43"
                                             },
                                             "first_name": "Lucius",
@@ -190,7 +190,7 @@
                                             "introduction": "",
                                             "preferred_language": "",
                                             "manager": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user/02826bf03710200044e0bfc8bcbe5d88",
+                                                "link": "https://localhost:5555/api/now/table/sys_user/02826bf03710200044e0bfc8bcbe5d88",
                                                 "value": "02826bf03710200044e0bfc8bcbe5d88"
                                             },
                                             "locked_out": "false",
@@ -203,7 +203,7 @@
                                             "schedule": "",
                                             "date_format": "",
                                             "location": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/cmn_location/0002c0a93790200044e0bfc8bcbe5df5",
+                                                "link": "https://localhost:5555/api/now/table/cmn_location/0002c0a93790200044e0bfc8bcbe5df5",
                                                 "value": "0002c0a93790200044e0bfc8bcbe5df5"
                                             }
                                         }
@@ -247,14 +247,14 @@
                                             "test_plan": "Multi-User testing on Sunday night",
                                             "sys_updated_by": "admin",
                                             "opened_by": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user/6816f79cc0a8016401c5a33be04be441",
+                                                "link": "https://localhost:5555/api/now/table/sys_user/6816f79cc0a8016401c5a33be04be441",
                                                 "value": "6816f79cc0a8016401c5a33be04be441"
                                             },
                                             "user_input": "",
                                             "requested_by_date": "2017-10-10 00:00:00",
                                             "sys_created_on": "2017-10-03 22:12:50",
                                             "sys_domain": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user_group/global",
+                                                "link": "https://localhost:5555/api/now/table/sys_user_group/global",
                                                 "value": "global"
                                             },
                                             "state": "-5",
@@ -264,7 +264,7 @@
                                             "phase": "requested",
                                             "closed_at": "2018-04-04 09:46:25",
                                             "cmdb_ci": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/cmdb_ci/a9c0c8d2c6112276018f7705562f9cb0",
+                                                "link": "https://localhost:5555/api/now/table/cmdb_ci/a9c0c8d2c6112276018f7705562f9cb0",
                                                 "value": "a9c0c8d2c6112276018f7705562f9cb0"
                                             },
                                             "delivery_plan": "",
@@ -285,7 +285,7 @@
                                             "business_duration": "",
                                             "group_list": "",
                                             "requested_by": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user/5137153cc611227c000bbd1bd8cd2007",
+                                                "link": "https://localhost:5555/api/now/table/sys_user/5137153cc611227c000bbd1bd8cd2007",
                                                 "value": "5137153cc611227c000bbd1bd8cd2007"
                                             },
                                             "work_end": "",
@@ -312,7 +312,7 @@
                                             "close_notes": "",
                                             "sys_class_name": "change_request",
                                             "closed_by": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user/6816f79cc0a8016401c5a33be04be441",
+                                                "link": "https://localhost:5555/api/now/table/sys_user/6816f79cc0a8016401c5a33be04be441",
                                                 "value": "6816f79cc0a8016401c5a33be04be441"
                                             },
                                             "follow_up": "",
@@ -326,7 +326,7 @@
                                             "review_status": "3",
                                             "activity_due": "",
                                             "assigned_to": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user/681b365ec0a80164000fb0b05854a0cd",
+                                                "link": "https://localhost:5555/api/now/table/sys_user/681b365ec0a80164000fb0b05854a0cd",
                                                 "value": "681b365ec0a80164000fb0b05854a0cd"
                                             },
                                             "start_date": "2018-03-27 23:00:00",
@@ -383,18 +383,18 @@
                                             "approval_history": "",
                                             "number": "INC0000001",
                                             "resolved_by": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user/6816f79cc0a8016401c5a33be04be441",
+                                                "link": "https://localhost:5555/api/now/table/sys_user/6816f79cc0a8016401c5a33be04be441",
                                                 "value": "6816f79cc0a8016401c5a33be04be441"
                                             },
                                             "sys_updated_by": "admin",
                                             "opened_by": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user/681ccaf9c0a8016400b98a06818d57c7",
+                                                "link": "https://localhost:5555/api/now/table/sys_user/681ccaf9c0a8016400b98a06818d57c7",
                                                 "value": "681ccaf9c0a8016400b98a06818d57c7"
                                             },
                                             "user_input": "",
                                             "sys_created_on": "2016-08-08 18:24:13",
                                             "sys_domain": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user_group/global",
+                                                "link": "https://localhost:5555/api/now/table/sys_user_group/global",
                                                 "value": "global"
                                             },
                                             "state": "7",
@@ -404,7 +404,7 @@
                                             "calendar_stc": "7937181",
                                             "closed_at": "2018-01-08 23:10:06",
                                             "cmdb_ci": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/cmdb_ci/b0c4030ac0a800090152e7a4564ca36c",
+                                                "link": "https://localhost:5555/api/now/table/cmdb_ci/b0c4030ac0a800090152e7a4564ca36c",
                                                 "value": "b0c4030ac0a800090152e7a4564ca36c"
                                             },
                                             "delivery_plan": "",
@@ -434,7 +434,7 @@
                                             "delivery_task": "",
                                             "work_start": "",
                                             "assignment_group": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user_group/d625dccec0a8016700a222a0f7900d06",
+                                                "link": "https://localhost:5555/api/now/table/sys_user_group/d625dccec0a8016700a222a0f7900d06",
                                                 "value": "d625dccec0a8016700a222a0f7900d06"
                                             },
                                             "additional_assignee_list": "",
@@ -445,7 +445,7 @@
                                             "notify": "1",
                                             "sys_class_name": "incident",
                                             "closed_by": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user/9ee1b13dc6112271007f9d0efdb69cd0",
+                                                "link": "https://localhost:5555/api/now/table/sys_user/9ee1b13dc6112271007f9d0efdb69cd0",
                                                 "value": "9ee1b13dc6112271007f9d0efdb69cd0"
                                             },
                                             "follow_up": "",
@@ -455,15 +455,15 @@
                                             "incident_state": "7",
                                             "urgency": "1",
                                             "problem_id": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/problem/9d3a266ac6112287004e37fb2ceb0133",
+                                                "link": "https://localhost:5555/api/now/table/problem/9d3a266ac6112287004e37fb2ceb0133",
                                                 "value": "9d3a266ac6112287004e37fb2ceb0133"
                                             },
                                             "company": "",
                                             "reassignment_count": "1",
                                             "activity_due": "",
                                             "assigned_to": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/sys_user/46b87022a9fe198101a78787e40d7547",
-                                                "value": "46b87022a9fe198101a78787e40d7547"
+                                                "link": "https://localhost:5555/api/now/table/sys_user/681b365ec0a80164000fb0b05854a0cd",
+                                                "value": "681b365ec0a80164000fb0b05854a0cd"
                                             },
                                             "severity": "1",
                                             "comments": "",
@@ -478,12 +478,111 @@
                                             "upon_approval": "",
                                             "correlation_id": "",
                                             "location": {
-                                                "link": "https://ven02475.service-now.com/api/now/table/cmn_location/1083361cc611227501b682158cabf646",
+                                                "link": "https://localhost:5555/api/now/table/cmn_location/1083361cc611227501b682158cabf646",
                                                 "value": "1083361cc611227501b682158cabf646"
                                             },
                                             "category": "network"
                                         }
                                     ]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "predicates": [
+                        {
+                            "deepEquals": {
+                                "path": "/api/now/table/sys_user/681b365ec0a80164000fb0b05854a0cd"
+                            }
+                        }
+                    ],
+                    "responses": [
+                        {
+                            "is": {
+                                "headers": {
+                                    "Content-Type": "application/json"
+                                },
+                                "body": {
+                                    "result": {
+                                        "calendar_integration": "1",
+                                        "country": "",
+                                        "user_password": "$s$w79J13Mn3xUvfT9zEjxbzFR8mLNrO60Yx2nE5YC5EJc=$/xQtDNgvnmd8vzC1+v2CVGCyb2sCvIEyFgUqUUKViuc=",
+                                        "last_login_time": "",
+                                        "last_login_device": "",
+                                        "source": "",
+                                        "sys_updated_on": "2018-04-10 17:47:17",
+                                        "building": "",
+                                        "web_service_access_only": "false",
+                                        "notification": "1",
+                                        "sys_updated_by": "guest",
+                                        "sys_created_on": "2004-07-03 18:26:21",
+                                        "sys_domain": {
+                                            "link": "https://localhost:5555/api/now/table/sys_user_group/global",
+                                            "value": "global"
+                                        },
+                                        "state": "",
+                                        "vip": "false",
+                                        "sys_created_by": "admin",
+                                        "zip": "",
+                                        "home_phone": "",
+                                        "time_format": "",
+                                        "last_login": "",
+                                        "default_perspective": {
+                                            "link": "https://localhost:5555/api/now/table/sys_perspective/ 08743cf3c0a8016400627b5c1005",
+                                            "value": " 08743cf3c0a8016400627b5c1005"
+                                        },
+                                        "active": "true",
+                                        "last_password": "",
+                                        "sys_domain_path": "/",
+                                        "cost_center": {
+                                            "link": "https://localhost:5555/api/now/table/cmn_cost_center/7fb1cc99c0a80a6d30c04574d14c0acf",
+                                            "value": "7fb1cc99c0a80a6d30c04574d14c0acf"
+                                        },
+                                        "phone": "",
+                                        "name": "ITIL User",
+                                        "employee_number": "",
+                                        "password_needs_reset": "true",
+                                        "gender": "",
+                                        "city": "",
+                                        "failed_attempts": "",
+                                        "user_name": "itil",
+                                        "edu_status": "",
+                                        "roles": "itil",
+                                        "title": "IT Technician",
+                                        "sys_class_name": "sys_user",
+                                        "sys_id": "681b365ec0a80164000fb0b05854a0cd",
+                                        "internal_integration_user": "false",
+                                        "ldap_server": "",
+                                        "mobile_phone": "",
+                                        "street": "",
+                                        "company": {
+                                            "link": "https://localhost:5555/api/now/table/core_company/31bea3d53790200044e0bfc8bcbe5dec",
+                                            "value": "31bea3d53790200044e0bfc8bcbe5dec"
+                                        },
+                                        "department": {
+                                            "link": "https://localhost:5555/api/now/table/cmn_department/221db0edc611228401760aec06c9d929",
+                                            "value": "221db0edc611228401760aec06c9d929"
+                                        },
+                                        "first_name": "ITIL",
+                                        "email": "itil@example.com",
+                                        "introduction": "",
+                                        "preferred_language": "",
+                                        "manager": "",
+                                        "locked_out": "false",
+                                        "sys_mod_count": "10",
+                                        "last_name": "User",
+                                        "photo": "",
+                                        "middle_name": "",
+                                        "sys_tags": "",
+                                        "time_zone": "",
+                                        "schedule": "",
+                                        "date_format": "",
+                                        "location": {
+                                            "link": "https://localhost:5555/api/now/table/cmn_location/1081761cc611227501d063fd3475a2de",
+                                            "value": "1081761cc611227501d063fd3475a2de"
+                                        }
+                                    }
                                 }
                             }
                         }

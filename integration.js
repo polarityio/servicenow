@@ -51,7 +51,9 @@ function doLookup(entities, options, callback) {
                 return;
             }
 
-            body.result.forEach(result => {
+            async.each(body.result, (result, callback) => {
+                Logger.trace('async.each for body.result');
+
                 results.push({
                     entity: entity,
                     data: {
@@ -62,9 +64,32 @@ function doLookup(entities, options, callback) {
                         }
                     }
                 });
-            });
 
-            callback();
+                Logger.trace('results is now', results);
+
+                async.each(['assigned_to'/*, 'opened_by', 'closed_by', 'resolved_by'*/], (fill, callback) => {
+                    if (result[fill]) {
+                        let link = result[fill].link;
+
+                        requestWithDefaults(link, additionalOptions, (err, resp, body) => {
+                            if (err || resp.statusCode != 200) {
+                                // Ignore and continue, we'll just mark them "unavailable" on the gui
+                                Logger.error('error during ' + fill + ' lookup, continuing', { error: err, statusCode: resp ? resp.statusCode : null, body: body });
+                            } else {
+                                result[fill] = body.result;
+                            }
+
+                            callback();
+                        });
+                    } else {
+                        callback();
+                    }
+                }, err => {
+                    callback(err);
+                });
+            }, err => {
+                callback(err);
+            });
         });
     }, err => {
         Logger.trace('result returned to client', results);

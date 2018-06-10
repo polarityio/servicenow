@@ -108,4 +108,15 @@ describe('Service Now integration', () => {
             });
         });
     });
+
+    describe('assigned lookup', () => {
+        it('should look up assigned info and insert it into the returned result', (done) => {
+            integration.doLookup([getEntities('custom.change', 'CHG0000001')], options, (err, results) => {
+                assert.notOk(err);
+                assert.equal(1, results.length);
+                assert.equal('ITIL User', results[0].data.details.results.assigned_to.name);
+                done();
+            });
+        });
+    });
 });

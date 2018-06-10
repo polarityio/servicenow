@@ -22,7 +22,7 @@ module.exports = {
      * @type String
      * @optional
      */
-    description: "TODO Service Now integration description",
+    description: "ServiceNow automates and streamlines work and helps create great employee and customer experiences.",
     entityTypes: ["email"],
     customTypes: [
         {
