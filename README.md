@@ -2,19 +2,26 @@
 
 ![image](https://img.shields.io/badge/status-beta-green.svg)
 
+Polarity's Service Now Integration allows the lookup of emails, Service Now change request IDs (e.g. CHG00000012), and Service Now incident IDs (e.g. INC00000154) against your instance of Service Now.
+
+To learn more about Service Now, visit the [offical website](https://servicenow.com).
+
+> Note that this integration is currently in beta.
+
+| ![image](./example.png)
+|---|
+|*Service Now Example*|
+
 ## Service Now Integration Options
 
-### Option 1
+### Service Now Server URL
+The URL for your Service Now server which should include the schema (i.e., http, https) and port if required
 
-Describe option 1 here.
+### Username
+The username of the Service Now user you want the integration to authenticate as.  The user should have permissions to access the `sys_user`, `incident`, and `change_request` tables.
 
-### Option 2
-
-Describe option 2 here.
-
-### Option 3
-
-Describe option 3 here.
+### Password
+The password for the provided username you want the integration to authenticate as.
 
 ## Polarity
 
