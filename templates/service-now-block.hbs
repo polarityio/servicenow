@@ -1,15 +1,14 @@
 <div>
+    <div>
+        <a class="p-link" href="{{link}}">View in Service Now</a>
+    </div>
     <h1 class="p-title">
         <i class="fa fa-fw fa-info"></i> {{section}}
     </h1>
     {{#each items as |item|}}
-    <div class="item">
+    <div>
         <span class="p-key">{{item.title}}</span>
         <span class="p-value">{{item.value}}</span>
     </div>
     {{/each}}
-
-    <div class="item">
-        <a class="p-link" href="{{link}}">View in Service Now</a>
-    </div>
 </div>
