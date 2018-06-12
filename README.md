@@ -23,6 +23,12 @@ The username of the Service Now user you want the integration to authenticate as
 ### Password
 The password for the provided username you want the integration to authenticate as.
 
+### Custom Fields
+A comma separated list of fields to lookup on IP matches. See below for use.
+
+## IP Lookups
+Because Service Now is often customized to fit specific needs, Polarity's Service Now Integration offers the ability to look up IP matches on custom fields on Incidents. Simply add a comma separated list of custom fields to the `Custom Fields` integration option, and when Polarity reognizes an IP address, it will look up the address in the custom fields you listed and display the results.
+
 ## Polarity
 
 Polarity is a memory-augmentation platform that improves and accelerates analyst decision making.  For more information about the Polarity platform please see: 

@@ -23,7 +23,7 @@ module.exports = {
      * @optional
      */
     description: "ServiceNow automates and streamlines work and helps create great employee and customer experiences.",
-    entityTypes: ["email"],
+    entityTypes: ['ipv4', 'email'],
     customTypes: [
         {
             key: 'incident',
@@ -100,7 +100,7 @@ module.exports = {
         // the directory you specify is writable by the `polarityd:polarityd` user and group.
 
         //directoryPath: '/var/log/polarity-integrations',
-        level: 'info',  //trace, debug, info, warn, error, fatal
+        level: 'trace',  //trace, debug, info, warn, error, fatal
     },
     /**
      * Options that are displayed to the user/admin in the Polarity integration user-interface.  Should be structured
@@ -134,6 +134,15 @@ module.exports = {
             description: "The password to log in to Service Now with",
             default: "",
             type: "password",
+            userCanEdit: false,
+            adminOnly: true
+        },
+        {
+            key: 'custom',
+            name: 'Custom Fields',
+            description: 'A comma separated list of custom fields to query IP against incidents',
+            default: '',
+            type: 'text',
             userCanEdit: false,
             adminOnly: true
         }

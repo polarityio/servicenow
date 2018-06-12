@@ -16,17 +16,20 @@ describe('Service Now integration', () => {
         options = {
             host: 'https://localhost:5555',
             username: 'username',
-            password: 'password'
+            password: 'password',
+            custom: ''
         };
     });
 
     function getEntities(type, value) {
         let isEmail = type === 'email';
+        let isIPv4 = type === 'ip';
         let types = type.indexOf('custom') > -1 ? type : undefined;
         return {
             type: type.split('.')[0],
             types: types,
             isEmail: isEmail,
+            isIP: isIP,
             value: value
         };
     }
@@ -115,6 +118,24 @@ describe('Service Now integration', () => {
                 assert.notOk(err);
                 assert.equal(1, results.length);
                 assert.equal('ITIL User', results[0].data.details.results.assigned_to.name);
+                done();
+            });
+        });
+    });
+
+    describe('custom looksup', () => {
+        it('should allow ip lookups on custom fields', (done) => {
+            let options = {
+                host: 'https://localhost:5555',
+                username: 'username',
+                password: 'password',
+                custom: 'custom_field'
+            };
+
+            integration.doLookup([getEntities('ip', '123.456.789.012')], options, (err, results) => {
+                assert.notOk(err);
+                assert.equal(1, results.length);
+                assert.equal('123.456.789.012', results[0].data.details.results.custom_field);
                 done();
             });
         });

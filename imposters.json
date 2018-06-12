@@ -493,6 +493,143 @@
                     "predicates": [
                         {
                             "deepEquals": {
+                                "path": "/api/now/table/incident",
+                                "query": {
+                                    "sysparm_query": "custom_field=123.456.789.012"
+                                }
+                            }
+                        }
+                    ],
+                    "responses": [
+                        {
+                            "is": {
+                                "headers": {
+                                    "Content-Type": "application/json"
+                                },
+                                "body": {
+                                    "result": [
+                                        {
+                                            "parent": "",
+                                            "made_sla": "false",
+                                            "caused_by": "",
+                                            "custom_field": "123.456.789.012",
+                                            "watch_list": "",
+                                            "upon_reject": "",
+                                            "sys_updated_on": "2018-04-09 20:16:07",
+                                            "child_incidents": "",
+                                            "approval_history": "",
+                                            "number": "INC0000001",
+                                            "resolved_by": {
+                                                "link": "https://localhost:5555/api/now/table/sys_user/6816f79cc0a8016401c5a33be04be441",
+                                                "value": "6816f79cc0a8016401c5a33be04be441"
+                                            },
+                                            "sys_updated_by": "admin",
+                                            "opened_by": {
+                                                "link": "https://localhost:5555/api/now/table/sys_user/681ccaf9c0a8016400b98a06818d57c7",
+                                                "value": "681ccaf9c0a8016400b98a06818d57c7"
+                                            },
+                                            "user_input": "",
+                                            "sys_created_on": "2016-08-08 18:24:13",
+                                            "sys_domain": {
+                                                "link": "https://localhost:5555/api/now/table/sys_user_group/global",
+                                                "value": "global"
+                                            },
+                                            "state": "7",
+                                            "sys_created_by": "pat",
+                                            "knowledge": "false",
+                                            "order": "",
+                                            "calendar_stc": "7937181",
+                                            "closed_at": "2018-01-08 23:10:06",
+                                            "cmdb_ci": {
+                                                "link": "https://localhost:5555/api/now/table/cmdb_ci/b0c4030ac0a800090152e7a4564ca36c",
+                                                "value": "b0c4030ac0a800090152e7a4564ca36c"
+                                            },
+                                            "delivery_plan": "",
+                                            "impact": "1",
+                                            "active": "false",
+                                            "work_notes_list": "",
+                                            "business_service": "",
+                                            "priority": "1",
+                                            "sys_domain_path": "/",
+                                            "rfc": "",
+                                            "time_worked": "",
+                                            "expected_start": "",
+                                            "rejection_goto": "",
+                                            "opened_at": "2018-01-07 23:09:51",
+                                            "business_duration": "1970-01-22 21:46:21",
+                                            "group_list": "",
+                                            "work_end": "",
+                                            "caller_id": "",
+                                            "resolved_at": "2018-04-09 19:56:12",
+                                            "approval_set": "",
+                                            "subcategory": "",
+                                            "wf_activity": "",
+                                            "work_notes": "",
+                                            "short_description": "Can't read email",
+                                            "close_code": "Closed/Resolved by Caller",
+                                            "correlation_display": "",
+                                            "delivery_task": "",
+                                            "work_start": "",
+                                            "assignment_group": {
+                                                "link": "https://localhost:5555/api/now/table/sys_user_group/d625dccec0a8016700a222a0f7900d06",
+                                                "value": "d625dccec0a8016700a222a0f7900d06"
+                                            },
+                                            "additional_assignee_list": "",
+                                            "business_stc": "1892781",
+                                            "description": "User can't access email on mail.company.com.",
+                                            "calendar_duration": "1970-04-02 20:46:21",
+                                            "close_notes": "Closed before close notes were made mandatory",
+                                            "notify": "1",
+                                            "sys_class_name": "incident",
+                                            "closed_by": {
+                                                "link": "https://localhost:5555/api/now/table/sys_user/9ee1b13dc6112271007f9d0efdb69cd0",
+                                                "value": "9ee1b13dc6112271007f9d0efdb69cd0"
+                                            },
+                                            "follow_up": "",
+                                            "parent_incident": "",
+                                            "sys_id": "9c573169c611228700193229fff72400",
+                                            "contact_type": "",
+                                            "incident_state": "7",
+                                            "urgency": "1",
+                                            "problem_id": {
+                                                "link": "https://localhost:5555/api/now/table/problem/9d3a266ac6112287004e37fb2ceb0133",
+                                                "value": "9d3a266ac6112287004e37fb2ceb0133"
+                                            },
+                                            "company": "",
+                                            "reassignment_count": "1",
+                                            "activity_due": "",
+                                            "assigned_to": {
+                                                "link": "https://localhost:5555/api/now/table/sys_user/681b365ec0a80164000fb0b05854a0cd",
+                                                "value": "681b365ec0a80164000fb0b05854a0cd"
+                                            },
+                                            "severity": "1",
+                                            "comments": "",
+                                            "approval": "",
+                                            "sla_due": "",
+                                            "comments_and_work_notes": "",
+                                            "due_date": "",
+                                            "sys_mod_count": "21",
+                                            "reopen_count": "",
+                                            "sys_tags": "",
+                                            "escalation": "0",
+                                            "upon_approval": "",
+                                            "correlation_id": "",
+                                            "location": {
+                                                "link": "https://localhost:5555/api/now/table/cmn_location/1083361cc611227501b682158cabf646",
+                                                "value": "1083361cc611227501b682158cabf646"
+                                            },
+                                            "category": "network"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "predicates": [
+                        {
+                            "deepEquals": {
                                 "path": "/api/now/table/sys_user/681b365ec0a80164000fb0b05854a0cd"
                             }
                         }

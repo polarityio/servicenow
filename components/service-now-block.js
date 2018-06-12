@@ -22,17 +22,16 @@ polarity.export = PolarityComponent.extend({
         var items = [
             // Email Attributes
             { title: 'Name:', value: details.name },
-            { title: 'VIP', value: details.vip, boolean: true },
-            { title: 'Active', value: details.active, boolean: true },
+            { title: 'VIP', value: details.vip },
+            { title: 'Active', value: details.active },
             { title: 'Gender:', value: details.gender },
             { title: 'Education Status:', value: details.edu_status },
-            { title: 'Locked Out', value: details.locked_out, boolean: true },
+            { title: 'Locked Out', value: details.locked_out },
             { title: 'Failed Attempts:', value: details.failed_attempts },
             { title: 'Needs Password Reset', value: details.password_needs_reset, boolean: true },
 
             // INC/CHG Attributes
             { title: 'Short Description:', value: details.short_description },
-            { title: 'Class:', value: details.sys_class_name },
             { title: 'Urgency:', value: details.urgency },
             { title: 'Severity:', value: details.severity },
             { title: 'Category:', value: details.category },
@@ -66,21 +65,17 @@ polarity.export = PolarityComponent.extend({
         return items;
     }),
     section: Ember.computed('block.data.details', function () {
-        try {
-            var entity = this.get('block.entity');
-            var type = entity.types.pop(); // Shouldn't have multiple types
+        var details = this.get('block.data.details');
+        var type = details.results.sys_class_name;
 
-            return {
-                'custom.incident': 'Incident',
-                'custom.change': 'Change',
-                'email': 'User'
-            }[type];
-        } catch (e) {
-            return e;
-        }
+        return {
+            'change_request': 'Change',
+            'sys_user': 'User',
+            'incident': 'Incident'
+        }[type];
     }),
     link: Ember.computed('block.data.details', function () {
         var details = this.get('block.data.details');
-        return details.host + '/nav_to.do?uri=' + details.uriType + '.do?sys_id=' + details.results.sys_id
+        return `${details.host}/nav_to.do?uri=${details.uriType}do?sys_id=${details.results.sys_id}`;
     })
 });

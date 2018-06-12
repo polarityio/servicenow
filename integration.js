@@ -19,6 +19,15 @@ function doLookup(entities, options, callback) {
         if (entity.isEmail) {
             table = 'sys_user';
             query = 'email';
+        } else if (entity.isIPv4) {
+            if (!options.custom) {
+                Logger.warn('received an IPv4 entity but no custom fields are set, ignoring');
+                callback();
+                return;
+            } else {
+                table = 'incident';
+                query = options.custom;
+            }
         } else if (entity.types.indexOf('custom.change') > -1) {
             table = 'change_request';
             query = 'number';
@@ -65,16 +74,14 @@ function doLookup(entities, options, callback) {
                     }
                 });
 
-                Logger.trace('results is now', results);
-
-                async.each(['assigned_to'/*, 'opened_by', 'closed_by', 'resolved_by'*/], (fill, callback) => {
+                async.each(['assigned_to', 'opened_by', 'closed_by', 'resolved_by'], (fill, callback) => {
                     if (result[fill]) {
                         let link = result[fill].link;
 
                         requestWithDefaults(link, additionalOptions, (err, resp, body) => {
                             if (err || resp.statusCode != 200) {
                                 // Ignore and continue, we'll just mark them "unavailable" on the gui
-                                Logger.error('error during ' + fill + ' lookup, continuing', { error: err, statusCode: resp ? resp.statusCode : null, body: body });
+                                Logger.error(`error during ${fill} lookup, continuing`, { error: err, statusCode: resp ? resp.statusCode : null, body: body });
                             } else {
                                 result[fill] = body.result;
                             }
@@ -92,7 +99,11 @@ function doLookup(entities, options, callback) {
             });
         });
     }, err => {
-        Logger.trace('result returned to client', results);
+        // Logger.trace('result returned to client', results);
+        let id = Math.random();
+        Logger.trace('******** START RESULTS ' + id + ' ********');
+        results.forEach(result => Logger.trace(`${id} - ${result.entity.value} - ${result.data.details.number}`));
+        Logger.trace('******** END RESULTS ' + id + ' ********');
         callback(err, results);
     });
 }
