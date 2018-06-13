@@ -14,11 +14,11 @@ function doLookup(entities, options, callback) {
 
     async.each(entities, (entity, callback) => {
         let table;
-        let query;
+        let queries = [];
 
         if (entity.isEmail) {
             table = 'sys_user';
-            query = 'email';
+            queries.push('email');
         } else if (entity.isIPv4) {
             if (!options.custom) {
                 Logger.warn('received an IPv4 entity but no custom fields are set, ignoring');
@@ -26,84 +26,76 @@ function doLookup(entities, options, callback) {
                 return;
             } else {
                 table = 'incident';
-                query = options.custom;
+                queries = queries.concat(options.custom.split(','));
             }
         } else if (entity.types.indexOf('custom.change') > -1) {
             table = 'change_request';
-            query = 'number';
+            queries.push('number');
         } else if (entity.types.indexOf('custom.incident') > -1) {
             table = 'incident';
-            query = 'number';
+            queries.push('number');
         } else {
             callback({ err: 'invalid entity type ' + entity.type });
             return;
         }
 
-        let url = `${options.host}/api/now/table/${table}`;
+        async.each(queries, (query, callback) => {
+            let url = `${options.host}/api/now/table/${table}`;
+            let additionalOptions = {
+                auth: {
+                    username: options.username,
+                    password: options.password
+                },
+                qs: {
+                    sysparm_query: `${query}=${entity.value}`
+                }
+            };
 
-        let additionalOptions = {
-            auth: {
-                username: options.username,
-                password: options.password
-            },
-            qs: {
-                sysparm_query: `${query}=${entity.value}`
-            }
-        };
+            Logger.trace({ additionalOptions: additionalOptions });
 
-        Logger.trace({ additionalOptions: additionalOptions });
+            requestWithDefaults(url, additionalOptions, (err, resp, body) => {
+                if (err || resp.statusCode != 200) {
+                    Logger.error('error during entity lookup', { error: err, statusCode: resp ? resp.statusCode : null });
+                    callback(err || { err: 'non-200 http status code: ' + resp.statusCode });
+                    return;
+                }
 
-        requestWithDefaults(url, additionalOptions, (err, resp, body) => {
-            if (err || resp.statusCode != 200) {
-                Logger.error('error during entity lookup', { error: err, statusCode: resp ? resp.statusCode : null });
-                callback(err || { err: 'non-200 http status code: ' + resp.statusCode });
-                return;
-            }
+                async.each(body.result, (result, callback) => {
+                    Logger.trace('async.each for body.result');
 
-            async.each(body.result, (result, callback) => {
-                Logger.trace('async.each for body.result');
-
-                results.push({
-                    entity: entity,
-                    data: {
-                        details: {
-                            host: options.host,
-                            uriType: table,
-                            results: result
-                        }
-                    }
-                });
-
-                async.each(['assigned_to', 'opened_by', 'closed_by', 'resolved_by'], (fill, callback) => {
-                    if (result[fill]) {
-                        let link = result[fill].link;
-
-                        requestWithDefaults(link, additionalOptions, (err, resp, body) => {
-                            if (err || resp.statusCode != 200) {
-                                // Ignore and continue, we'll just mark them "unavailable" on the gui
-                                Logger.error(`error during ${fill} lookup, continuing`, { error: err, statusCode: resp ? resp.statusCode : null, body: body });
-                            } else {
-                                result[fill] = body.result;
+                    results.push({
+                        entity: entity,
+                        data: {
+                            details: {
+                                host: options.host,
+                                uriType: table,
+                                results: result
                             }
+                        }
+                    });
 
+                    async.each(['assigned_to', 'opened_by', 'closed_by', 'resolved_by'], (fill, callback) => {
+                        if (result[fill]) {
+                            let link = result[fill].link;
+
+                            requestWithDefaults(link, additionalOptions, (err, resp, body) => {
+                                if (err || resp.statusCode != 200) {
+                                    // Ignore and continue, we'll just mark them "unavailable" on the gui
+                                    Logger.error(`error during ${fill} lookup, continuing`, { error: err, statusCode: resp ? resp.statusCode : null, body: body });
+                                } else {
+                                    result[fill] = body.result;
+                                }
+
+                                callback();
+                            });
+                        } else {
                             callback();
-                        });
-                    } else {
-                        callback();
-                    }
-                }, err => {
-                    callback(err);
-                });
-            }, err => {
-                callback(err);
+                        }
+                    }, err => callback(err));
+                }, err => callback(err));
             });
-        });
+        }, err => callback(err));
     }, err => {
-        // Logger.trace('result returned to client', results);
-        let id = Math.random();
-        Logger.trace('******** START RESULTS ' + id + ' ********');
-        results.forEach(result => Logger.trace(`${id} - ${result.entity.value} - ${result.data.details.number}`));
-        Logger.trace('******** END RESULTS ' + id + ' ********');
         callback(err, results);
     });
 }

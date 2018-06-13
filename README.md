@@ -8,7 +8,7 @@ To learn more about Service Now, visit the [offical website](https://servicenow.
 
 > Note that this integration is currently in beta.
 
-| ![image](./example.png)
+| ![image](./example-integration.png)
 |---|
 |*Service Now Example*|
 
@@ -27,7 +27,11 @@ The password for the provided username you want the integration to authenticate 
 A comma separated list of fields to lookup on IP matches. See below for use.
 
 ## IP Lookups
-Because Service Now is often customized to fit specific needs, Polarity's Service Now Integration offers the ability to look up IP matches on custom fields on Incidents. Simply add a comma separated list of custom fields to the `Custom Fields` integration option, and when Polarity reognizes an IP address, it will look up the address in the custom fields you listed and display the results.
+Because Service Now is often customized to fit specific needs, Polarity's Service Now Integration offers the ability to look up IP matches on custom fields on Incidents. Simply add a comma separated list of custom fields to the `Custom Fields` integration option, and when Polarity reognizes an IP address, it will look up the address in the custom fields you listed and display the results.  To determine what value you should put in this field, use the Service Now REST API Explorer to examine an incident and look for the custom field on the response object. They are usually prepended with a `u_` and then the name of the custom field, in lower case, underscore (`_`) separated.
+
+|![image](./example-custom-field.png)
+|---|
+|*Custom Field Example*|
 
 ## Polarity
 

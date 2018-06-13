@@ -29,7 +29,7 @@ describe('Service Now integration', () => {
             type: type.split('.')[0],
             types: types,
             isEmail: isEmail,
-            isIP: isIP,
+            isIPv4: isIPv4,
             value: value
         };
     }
@@ -133,6 +133,23 @@ describe('Service Now integration', () => {
             };
 
             integration.doLookup([getEntities('ip', '123.456.789.012')], options, (err, results) => {
+                assert.notOk(err);
+                assert.equal(1, results.length);
+                assert.equal('123.456.789.012', results[0].data.details.results.custom_field);
+                done();
+            });
+        });
+
+        it('should allow ip lookups on multiple custom fields', (done) => {
+            let options = {
+                host: 'https://localhost:5555',
+                username: 'username',
+                password: 'password',
+                custom: 'custom_field,custom_field2'
+            };
+
+            integration.doLookup([getEntities('ip', '123.456.789.012')], options, (err, results) => {
+                console.error(err);
                 assert.notOk(err);
                 assert.equal(1, results.length);
                 assert.equal('123.456.789.012', results[0].data.details.results.custom_field);

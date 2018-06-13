@@ -22,11 +22,11 @@ polarity.export = PolarityComponent.extend({
         var items = [
             // Email Attributes
             { title: 'Name:', value: details.name },
-            { title: 'VIP', value: details.vip },
-            { title: 'Active', value: details.active },
+            { title: 'VIP', value: details.vip, boolean: true },
+            { title: 'Active', value: details.active, boolean: true },
             { title: 'Gender:', value: details.gender },
             { title: 'Education Status:', value: details.edu_status },
-            { title: 'Locked Out', value: details.locked_out },
+            { title: 'Locked Out', value: details.locked_out, boolean: true },
             { title: 'Failed Attempts:', value: details.failed_attempts },
             { title: 'Needs Password Reset', value: details.password_needs_reset, boolean: true },
 
@@ -56,7 +56,7 @@ polarity.export = PolarityComponent.extend({
             })
             .map(item => {
                 if (item.boolean) {
-                    item.value = '';
+                    item.value = 'Yes';
                 }
 
                 return item;

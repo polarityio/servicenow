@@ -626,6 +626,31 @@
                         }
                     ]
                 },
+
+                {
+                    "predicates": [
+                        {
+                            "deepEquals": {
+                                "path": "/api/now/table/incident",
+                                "query": {
+                                    "sysparm_query": "custom_field2=123.456.789.012"
+                                }
+                            }
+                        }
+                    ],
+                    "responses": [
+                        {
+                            "is": {
+                                "headers": {
+                                    "Content-Type": "application/json"
+                                },
+                                "body": {
+                                    "result": []
+                                }
+                            }
+                        }
+                    ]
+                },
                 {
                     "predicates": [
                         {
