@@ -1,14 +1,38 @@
-<div>
+{{#each details.results as | result |}}
     <div>
-        <a class="p-link" href="{{link}}">View in Service Now</a>
+        <h1 class="p-title">
+            <i class="fa fa-fw fa-info"></i> {{section}}
+        </h1>
+        {{#each-in result as |key property|}}
+            {{#if (or (and property.isLink block.detailsLoaded) (not property.isLink))}}
+                <div>
+
+                    {{#if property.isLink}}
+                        <span class="p-title">{{property.title}}</span>
+                        {{#each-in property.details as |detailsKey detailsProperty|}}
+                            {{#if detailsProperty.isLink}}
+                                {{#each-in detailsProperty.details as |subDetailsKey subDetailsProperty|}}
+                                    <div>
+                                        <span class="p-key">{{subDetailsProperty.title}}</span>
+                                        <span class="p-value">{{subDetailsProperty.value}}</span>
+                                    </div>
+                                {{/each-in}}
+                            {{else}}
+                                {{#if detailsProperty.value}}
+                                    <div>
+                                        <span class="p-key">{{detailsProperty.title}}</span>
+                                        <span class="p-value">{{detailsProperty.value}}</span>
+                                    </div>
+                                {{/if}}
+                            {{/if}}
+                        {{/each-in}}
+                    {{else}}
+                        <span class="p-key">{{property.title}}</span>
+                        <span class="p-value">{{property.value}}</span>
+                    {{/if}}
+
+                </div>
+            {{/if}}
+        {{/each-in}}
     </div>
-    <h1 class="p-title">
-        <i class="fa fa-fw fa-info"></i> {{section}}
-    </h1>
-    {{#each items as |item|}}
-    <div>
-        <span class="p-key">{{item.title}}</span>
-        <span class="p-value">{{item.value}}</span>
-    </div>
-    {{/each}}
-</div>
+{{/each}}

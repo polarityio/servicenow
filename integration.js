@@ -1,157 +1,465 @@
-let async = require('async');
-let request = require('request');
-let config = require('./config/config');
+const async = require('async');
+const request = require('request');
+const config = require('./config/config');
+const fs = require('fs');
 
 let requestWithDefaults;
 let Logger;
-let requestOptions = {
-    json: true
+
+const propertyMap = {
+  'custom.incident': {
+    number: {
+      title: 'Number'
+    },
+    opened_at: {
+      title: 'Opened At',
+      type: 'date'
+    },
+    resolved_by: {
+      title: 'Resolved By',
+      type: 'sys_user'
+    },
+    opened_by: {
+      title: 'Opened By',
+      type: 'sys_user'
+    },
+    assigned_to: {
+      title: 'Assigned To',
+      type: 'sys_user'
+    },
+    closed_by: {
+      title: 'Closed By',
+      type: 'sys_user'
+    }
+  },
+  'custom.change': {},
+  sys_user: {
+    name: {
+      title: 'Name'
+    },
+    title: {
+      title: 'Title'
+    },
+    location: {
+      title: 'Location',
+      type: 'cmn_location'
+    }
+  },
+  cmn_location: {
+    name: {
+      title: 'Location'
+    }
+  }
 };
 
-function doLookup(entities, options, callback) {
-    Logger.trace({ options: options });
-    let results = [];
+function doLookup(entities, options, cb) {
+  Logger.trace({ options: options });
+  const lookupResults = [];
 
-    async.each(entities, (entity, callback) => {
-        let table;
-        let queries = [];
+  async.each(
+    entities,
+    (entityObj, nextEntity) => {
+      const queryObj = getQueries(entityObj);
+      if (queryObj.error) {
+        nextEntity({
+          detail: queryObj.error
+        });
+      }
 
-        if (entity.isEmail) {
-            table = 'sys_user';
-            queries.push('email');
-        } else if (entity.isIPv4) {
-            if (!options.custom) {
-                Logger.warn('received an IPv4 entity but no custom fields are set, ignoring');
-                callback();
-                return;
-            } else {
-                table = 'incident';
-                queries = queries.concat(options.custom.split(','));
+      let requestOptions = {
+        uri: `${options.url}/api/now/table/${queryObj.table}`,
+        auth: {
+          username: options.username,
+          password: options.password
+        },
+        qs: {
+          sysparm_query: queryObj.query
+        }
+      };
+
+      // Logger.trace({
+      //   requestOptions: requestOptions
+      // });
+
+      requestWithDefaults(requestOptions, (err, resp, body) => {
+        if (err || resp.statusCode != 200) {
+          Logger.error('error during entity lookup', {
+            error: err,
+            statusCode: resp ? resp.statusCode : null
+          });
+
+          cb(
+            err || {
+              detail: 'non-200 http status code: ' + resp.statusCode
             }
-        } else if (entity.types.indexOf('custom.change') > -1) {
-            table = 'change_request';
-            queries.push('number');
-        } else if (entity.types.indexOf('custom.incident') > -1) {
-            table = 'incident';
-            queries.push('number');
-        } else {
-            callback({ err: 'invalid entity type ' + entity.type });
-            return;
+          );
+          return;
         }
 
-        async.each(queries, (query, callback) => {
-            let url = `${options.host}/api/now/table/${table}`;
-            let additionalOptions = {
-                auth: {
-                    username: options.username,
-                    password: options.password
-                },
-                qs: {
-                    sysparm_query: `${query}=${entity.value}`
+        if (body.result.length === 0) {
+          lookupResults.push({
+            entity: entityObj,
+            data: null
+          });
+          return nextEntity(null);
+        }
+
+        const entityType = getEntityType(entityObj);
+
+        parseResults(entityType, body.result, false, options, (err, parsedResults) => {
+          if (err) {
+            return nextEntity(err);
+          }
+
+          lookupResults.push({
+            entity: entityObj,
+            data: {
+              summary: getSummaryTags(body.result),
+              details: {
+                entityType: entityType,
+                results: parsedResults
+              }
+            }
+          });
+
+          nextEntity(null);
+        });
+      });
+    },
+    (err) => {
+      cb(err, lookupResults);
+    }
+  );
+}
+
+function getEntityType(entityObj) {
+  if (entityObj.type === 'custom') {
+    if (entityObj.types.indexOf('custom.incident') >= 0) {
+      return 'custom.incident';
+    } else {
+      return 'custom.change';
+    }
+  } else {
+    return entityObj.type;
+  }
+}
+
+function parseResults(type, results, withDetails, options, cb) {
+  if (typeof withDetails === 'undefined') {
+    withDetails = false;
+  }
+
+  let parsedResults = [];
+  async.each(
+    results,
+    (result, next) => {
+      parseResult(type, result, withDetails, options, (err, parsedResult) => {
+        parsedResults.push(parsedResult);
+        next(err);
+      });
+    },
+    (err) => {
+      cb(err, parsedResults);
+    }
+  );
+}
+
+function parseResult(type, result, withDetails, options, cb) {
+  let parsedResult = {};
+  if (typeof propertyMap[type] !== 'undefined') {
+    async.eachOf(
+      propertyMap[type],
+      (propertyMapObject, propertyKey, nextProperty) => {
+        // Logger.debug('', {
+        //   propertyMapObject: propertyMapObject,
+        //   propertyKey: propertyKey,
+        //   result: result
+        // });
+        let resultValue = result[propertyKey];
+
+        if (typeof resultValue !== 'undefined') {
+          if (valueIsLink(resultValue) && !linkIsProcessed(resultValue)) {
+            // this property is a link so we need to traverse it
+            if (withDetails) {
+              Logger.info('Printing resultValue', {
+                resultValue: resultValue
+              });
+
+              getDetailsInformation(resultValue.link, options, (err, details) => {
+                if (err) {
+                  return nextProperty(err);
                 }
-            };
+                Logger.debug('Parsing', { details: details });
 
-            Logger.trace({ additionalOptions: additionalOptions });
+                parseResult(
+                  propertyMapObject.type,
+                  details,
+                  true,
+                  options,
+                  (parseDetailsError, parsedDetailsResult) => {
+                    if (parseDetailsError) {
+                      return nextProperty(parseDetailsError);
+                    }
 
-            requestWithDefaults(url, additionalOptions, (err, resp, body) => {
-                if (err || resp.statusCode != 200) {
-                    Logger.error('error during entity lookup', { error: err, statusCode: resp ? resp.statusCode : null });
-                    callback(err || { err: 'non-200 http status code: ' + resp.statusCode });
-                    return;
-                }
+                    //resultValue = transformPropertyLinkValue(propertyMapObject, resultValue.link);
 
-                async.each(body.result, (result, callback) => {
-                    Logger.trace('async.each for body.result');
+                    if (!valueIsProcessed(resultValue)) {
+                      let transformedResult = transformPropertyLinkValue(
+                        propertyMapObject,
+                        resultValue
+                      );
+                      transformedResult.details = parsedDetailsResult;
+                      parsedResult[propertyKey] = transformedResult;
+                    } else {
+                      resultValue.details = parsedDetailsResult;
+                      parsedResult[propertyKey] = resultValue;
+                    }
 
-                    results.push({
-                        entity: entity,
-                        data: {
-                            details: {
-                                host: options.host,
-                                uriType: table,
-                                results: result
-                            }
-                        }
-                    });
+                    //parsedResult[propertyKey] = resultValue;
+                    nextProperty(null);
+                  }
+                );
+                //lookupObject.data.details.results.onDetails[objectName] = details;
+              });
+            } else {
+              // don't need to try and load details yet
+              parsedResult[propertyKey] = transformPropertyLinkValue(
+                propertyMapObject,
+                resultValue.link
+              );
+              nextProperty(null);
+            }
+          } else if (!valueIsProcessed(resultValue)) {
+            parsedResult[propertyKey] = transformPropertyValue(propertyMapObject, resultValue);
+            nextProperty(null);
+          } else {
+            nextProperty(null);
+          }
+        } else {
+          nextProperty(null);
+        }
+      },
+      (err) => {
+        console.info(parsedResult);
+        cb(err, parsedResult);
+      }
+    );
+  } else {
+    cb(null, parsedResult);
+  }
+}
 
-                    async.each(['assigned_to', 'opened_by', 'closed_by', 'resolved_by'], (fill, callback) => {
-                        if (result[fill]) {
-                            let link = result[fill].link;
+function valueIsProcessed(resultValue) {
+  if (resultValue !== null && resultValue.isProcessed === true) {
+    return true;
+  }
+  return false;
+}
 
-                            requestWithDefaults(link, additionalOptions, (err, resp, body) => {
-                                if (err || resp.statusCode != 200) {
-                                    // Ignore and continue, we'll just mark them "unavailable" on the gui
-                                    Logger.error(`error during ${fill} lookup, continuing`, { error: err, statusCode: resp ? resp.statusCode : null, body: body });
-                                } else {
-                                    result[fill] = body.result;
-                                }
+function linkIsProcessed(resultValue) {
+  if (
+    resultValue !== null &&
+    (resultValue.details === null || typeof resultValue.details === 'undefined')
+  ) {
+    return false;
+  }
+  return true;
+}
 
-                                callback();
-                            });
-                        } else {
-                            callback();
-                        }
-                    }, err => callback(err));
-                }, err => callback(err));
-            });
-        }, err => callback(err));
-    }, err => {
-        callback(err, results);
+function valueIsLink(resultValue) {
+  if (resultValue !== null && typeof resultValue.link === 'string') {
+    return true;
+  }
+  return false;
+}
+
+function transformPropertyLinkValue(propertyObj, link) {
+  return {
+    title: propertyObj.title,
+    value: null,
+    type: typeof propertyObj.type === 'undefined' ? 'text' : propertyObj.type,
+    link: link,
+    isLink: true,
+    isProcessed: true,
+    details: null
+  };
+}
+
+function transformPropertyValue(propertyObj, value) {
+  return {
+    title: propertyObj.title,
+    value: value,
+    type: typeof propertyObj.type === 'undefined' ? 'text' : propertyObj.type,
+    isLink: false,
+    isProcessed: true,
+    details: null
+  };
+}
+
+function getSummaryTags(results) {
+  const summaryProperties = [
+    'impact',
+    'active',
+    'edu_status',
+    'sys_class_name',
+    'category',
+    'phase'
+  ];
+
+  return results.reduce((acc, result) => {
+    //Logger.info('result: ', result);
+    summaryProperties.forEach((prop) => {
+      if (typeof result[prop] !== 'undefined') {
+        acc.push(result[prop]);
+      }
     });
+    return acc;
+  }, []);
+}
+
+function getQueries(entityObj) {
+  let result = {
+    table: '',
+    query: '',
+    error: null
+  };
+
+  if (entityObj.isEmail) {
+    result.table = 'sys_user';
+    result.query = `email=${entityObj.value}`;
+  } else if (entityObj.isIPv4) {
+    if (!options.custom) {
+      result.error = 'Received an IPv4 entity but no custom fields are set, ignoring';
+      return result;
+    } else {
+      result.table = 'incident';
+      result.query = options.customIpFields
+        .split(',')
+        .map((query) => `${query.trim()}=${entityObj.value}`)
+        .join('^NQ');
+    }
+  } else if (entityObj.types.indexOf('custom.change') > -1) {
+    result.table = 'change_request';
+    result.query = `number=${entityObj.value}`;
+  } else if (entityObj.types.indexOf('custom.incident') > -1) {
+    result.table = 'incident';
+    result.query = `number=${entityObj.value}`;
+  }
+
+  return result;
+}
+
+function onDetails(lookupObject, options, cb) {
+  parseResults(
+    lookupObject.data.details.entityType,
+    lookupObject.data.details.results,
+    true,
+    options,
+    (err, parsedResults) => {
+      if (err) {
+        return cb(err, lookupObject.data);
+      } else {
+        Logger.debug('onDetails', { results: lookupObject.data.details.results });
+        cb(null, lookupObject.data);
+      }
+    }
+  );
+}
+
+function getDetailsInformation(link, options, cb) {
+  const requestOptions = {
+    uri: link,
+    auth: {
+      username: options.username,
+      password: options.password
+    }
+  };
+
+  //Logger.info('getDetails URI', { requestOptions: requestOptions });
+  requestWithDefaults(requestOptions, (err, response, body) => {
+    if (err) {
+      return cb({
+        err: err,
+        link: link,
+        detail: 'HTTP Request Error when retrieving details'
+      });
+    }
+
+    if (response.statusCode !== 200) {
+      return cb({
+        detail: 'Unexpected Status Code Received',
+        link: link,
+        statusCode: response.statusCode
+      });
+    }
+
+    cb(null, body.result);
+  });
 }
 
 function startup(logger) {
-    Logger = logger;
+  Logger = logger;
+  const requestOptions = {
+    json: true
+  };
 
-    if (typeof config.request.cert === 'string' && config.request.cert.length > 0) {
-        requestOptions.cert = fs.readFileSync(config.request.cert);
-    }
+  if (typeof config.request.cert === 'string' && config.request.cert.length > 0) {
+    requestOptions.cert = fs.readFileSync(config.request.cert);
+  }
 
-    if (typeof config.request.key === 'string' && config.request.key.length > 0) {
-        requestOptions.key = fs.readFileSync(config.request.key);
-    }
+  if (typeof config.request.key === 'string' && config.request.key.length > 0) {
+    requestOptions.key = fs.readFileSync(config.request.key);
+  }
 
-    if (typeof config.request.passphrase === 'string' && config.request.passphrase.length > 0) {
-        requestOptions.passphrase = config.request.passphrase;
-    }
+  if (typeof config.request.passphrase === 'string' && config.request.passphrase.length > 0) {
+    requestOptions.passphrase = config.request.passphrase;
+  }
 
-    if (typeof config.request.ca === 'string' && config.request.ca.length > 0) {
-        requestOptions.ca = fs.readFileSync(config.request.ca);
-    }
+  if (typeof config.request.ca === 'string' && config.request.ca.length > 0) {
+    requestOptions.ca = fs.readFileSync(config.request.ca);
+  }
 
-    if (typeof config.request.proxy === 'string' && config.request.proxy.length > 0) {
-        requestOptions.proxy = config.request.proxy;
-    }
+  if (typeof config.request.proxy === 'string' && config.request.proxy.length > 0) {
+    requestOptions.proxy = config.request.proxy;
+  }
 
-    if (typeof config.request.rejectUnauthorized === 'boolean') {
-        requestOptions.rejectUnauthorized = config.request.rejectUnauthorized;
-    }
+  if (typeof config.request.rejectUnauthorized === 'boolean') {
+    requestOptions.rejectUnauthorized = config.request.rejectUnauthorized;
+  }
 
-    requestWithDefaults = request.defaults(requestOptions);
+  requestWithDefaults = request.defaults(requestOptions);
 }
 
 function validateOption(errors, options, optionName, errMessage) {
-    if (typeof options[optionName].value !== 'string' ||
-        (typeof options[optionName].value === 'string' && options[optionName].value.length === 0)) {
-        errors.push({
-            key: optionName,
-            message: errMessage
-        });
-    }
+  if (
+    typeof options[optionName].value !== 'string' ||
+    (typeof options[optionName].value === 'string' && options[optionName].value.length === 0)
+  ) {
+    errors.push({
+      key: optionName,
+      message: errMessage
+    });
+  }
 }
 
 function validateOptions(options, callback) {
-    let errors = [];
+  let errors = [];
 
-    validateOption(errors, options, 'host', 'You must provide a valid host.');
-    validateOption(errors, options, 'username', 'You must provide a valid username.');
-    validateOption(errors, options, 'password', 'You must provide a valid password.');
+  validateOption(errors, options, 'url', 'You must provide a valid URL.');
+  validateOption(errors, options, 'username', 'You must provide a valid username.');
+  validateOption(errors, options, 'password', 'You must provide a valid password.');
 
-    callback(null, errors);
+  callback(null, errors);
 }
 
 module.exports = {
-    doLookup: doLookup,
-    startup: startup,
-    validateOptions: validateOptions
+  doLookup: doLookup,
+  startup: startup,
+  validateOptions: validateOptions,
+  onDetails: onDetails
+  // // exports for testing purposes
+  // parseResults: parseResults,
+  // parseResult: parseResult,
+  // transformPropertyValue: transformPropertyValue,
+  // propertyIsLink: propertyIsLink
 };
