@@ -33,6 +33,10 @@ const propertyMap = {
       title: 'Email',
       type: 'sys_user'
     },
+    department: {
+      title: 'Department',
+      type: 'cmn_department'
+    },
     location: {
       title: 'Location',
       type: 'cmn_location'
@@ -42,6 +46,12 @@ const propertyMap = {
     name: {
       title: 'Location',
       type: 'cmn_location'
+    }
+  },
+  cmn_department: {
+    name: {
+      title: 'Department',
+      type: 'department'
     }
   }
 };
@@ -67,7 +77,8 @@ function doLookup(entities, options, cb) {
           password: options.password
         },
         qs: {
-          sysparm_query: queryObj.query
+          sysparm_query: queryObj.query,
+          sysparm_limit: 10
         }
       };
 
@@ -307,9 +318,9 @@ function getSummaryTags(entityObj, results) {
   let summaryProperties;
 
   if (entityObj.type === 'custom') {
-    summaryProperties = ['impact', 'active', 'edu_status', 'sys_class_name', 'category', 'phase'];
+    summaryProperties = ['sys_class_name', 'category', 'phase'];
   } else if (entityObj.type.toLowerCase() === 'ipv4') {
-    summaryProperties = ['number', 'active', 'category'];
+    summaryProperties = ['number'];
   } else if (entityObj.type.toLowerCase() === 'email') {
     summaryProperties = ['name'];
   }
