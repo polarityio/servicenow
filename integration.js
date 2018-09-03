@@ -53,9 +53,9 @@ function doLookup(entities, options, cb) {
   async.each(
     entities,
     (entityObj, nextEntity) => {
-      const queryObj = getQueries(entityObj);
+      const queryObj = getQueries(entityObj, options);
       if (queryObj.error) {
-        nextEntity({
+        return nextEntity({
           detail: queryObj.error
         });
       }
@@ -98,9 +98,9 @@ function doLookup(entities, options, cb) {
           return nextEntity(null);
         }
 
-        const entityType = getEntityType(entityObj);
+        const serviceNowObjectType = getServiceNowObjectType(entityObj);
 
-        parseResults(entityType, body.result, false, options, (err, parsedResults) => {
+        parseResults(serviceNowObjectType, body.result, false, options, (err, parsedResults) => {
           if (err) {
             return nextEntity(err);
           }
@@ -108,10 +108,10 @@ function doLookup(entities, options, cb) {
           lookupResults.push({
             entity: entityObj,
             data: {
-              summary: getSummaryTags(body.result),
+              summary: getSummaryTags(entityObj, body.result),
               details: {
-                entityType: entityType,
-                layout: layoutMap[entityType],
+                serviceNowObjectType: serviceNowObjectType,
+                layout: layoutMap[serviceNowObjectType],
                 results: parsedResults
               }
             }
@@ -127,7 +127,7 @@ function doLookup(entities, options, cb) {
   );
 }
 
-function getEntityType(entityObj) {
+function getServiceNowObjectType(entityObj) {
   if (entityObj.type === 'custom') {
     if (entityObj.types.indexOf('custom.incident') >= 0) {
       return 'incident';
@@ -137,7 +137,8 @@ function getEntityType(entityObj) {
   } else if (entityObj.type === 'email') {
     return 'sys_user';
   } else {
-    return entityObj.type;
+    //IPv4 fields are search incidents
+    return 'incident';
   }
 }
 
@@ -302,15 +303,16 @@ function transformPropertyValue(propertyObj, value, parentObj) {
   };
 }
 
-function getSummaryTags(results) {
-  const summaryProperties = [
-    'impact',
-    'active',
-    'edu_status',
-    'sys_class_name',
-    'category',
-    'phase'
-  ];
+function getSummaryTags(entityObj, results) {
+  let summaryProperties;
+
+  if (entityObj.type === 'custom') {
+    summaryProperties = ['impact', 'active', 'edu_status', 'sys_class_name', 'category', 'phase'];
+  } else if (entityObj.type.toLowerCase() === 'ipv4') {
+    summaryProperties = ['number', 'active', 'category'];
+  } else if (entityObj.type.toLowerCase() === 'email') {
+    summaryProperties = ['name'];
+  }
 
   return results.reduce((acc, result) => {
     //Logger.info('result: ', result);
@@ -323,7 +325,7 @@ function getSummaryTags(results) {
   }, []);
 }
 
-function getQueries(entityObj) {
+function getQueries(entityObj, options) {
   let result = {
     table: '',
     query: '',
@@ -334,7 +336,10 @@ function getQueries(entityObj) {
     result.table = 'sys_user';
     result.query = `email=${entityObj.value}`;
   } else if (entityObj.isIPv4) {
-    if (!options.custom) {
+    if (
+      !options.customIpFields ||
+      (typeof options.customIpFields === 'string' && options.customIpFields.length === 0)
+    ) {
       result.error = 'Received an IPv4 entity but no custom fields are set, ignoring';
       return result;
     } else {
@@ -357,7 +362,7 @@ function getQueries(entityObj) {
 
 function onDetails(lookupObject, options, cb) {
   parseResults(
-    lookupObject.data.details.entityType,
+    lookupObject.data.details.serviceNowObjectType,
     lookupObject.data.details.results,
     true,
     options,
