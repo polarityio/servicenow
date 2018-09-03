@@ -1,38 +1,37 @@
-{{#each details.results as | result |}}
-    <div>
-        <h1 class="p-title">
-            <i class="fa fa-fw fa-info"></i> {{section}}
-        </h1>
-        {{#each-in result as |key property|}}
-            {{#if (or (and property.isLink block.detailsLoaded) (not property.isLink))}}
-                <div>
-
-                    {{#if property.isLink}}
-                        <span class="p-title">{{property.title}}</span>
-                        {{#each-in property.details as |detailsKey detailsProperty|}}
-                            {{#if detailsProperty.isLink}}
-                                {{#each-in detailsProperty.details as |subDetailsKey subDetailsProperty|}}
-                                    <div>
-                                        <span class="p-key">{{subDetailsProperty.title}}</span>
-                                        <span class="p-value">{{subDetailsProperty.value}}</span>
-                                    </div>
-                                {{/each-in}}
-                            {{else}}
-                                {{#if detailsProperty.value}}
-                                    <div>
-                                        <span class="p-key">{{detailsProperty.title}}</span>
-                                        <span class="p-value">{{detailsProperty.value}}</span>
-                                    </div>
-                                {{/if}}
-                            {{/if}}
-                        {{/each-in}}
-                    {{else}}
-                        <span class="p-key">{{property.title}}</span>
-                        <span class="p-value">{{property.value}}</span>
+{{#each details.results as | result | }}
+    {{#each details.layout as | layout index| }}
+        {{#if (get result (concat layout.path ".value"))}}
+            {{#if (eq layout.type "title")}}
+                <h1 class="p-title pl-{{layout.depth}}">
+                    {{#if layout.icon}}
+                        {{fa-icon layout.icon fixedWidth=true}}
                     {{/if}}
-
+                    {{#if layout.link}}
+                        <a class="p-link"
+                           href="{{block.userOptions.url}}/nav_to.do?uri={{get result
+                                                                               (concat layout.path ".type")}}.do?sys_id={{get
+                                   result
+                                   (concat layout.path ".sysId")}}">
+                            {{get result (concat layout.path ".value")}}
+                        </a>
+                        {{fa-icon "external-link" class="p-link ml-1"}}
+                    {{else}}
+                        {{get result (concat layout.path ".value")}}
+                    {{/if}}
+                </h1>
+            {{else if (eq layout.type "block")}}
+                <div class="p-key pl-{{layout.depth}}">
+                    {{get result (concat layout.path ".value")}}
+                </div>
+            {{else}}
+                <div class="pl-{{layout.depth}}">
+                    <span class="p-key">{{get result (concat layout.path ".title")}}:</span>
+                    <span class="p-value">{{get result (concat layout.path ".value")}}</span>
                 </div>
             {{/if}}
-        {{/each-in}}
-    </div>
+        {{/if}}
+    {{/each}}
+    {{#if (gt details.results.length 1)}}
+        <hr>
+    {{/if}}
 {{/each}}

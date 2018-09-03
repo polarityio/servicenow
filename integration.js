@@ -2,43 +2,36 @@ const async = require('async');
 const request = require('request');
 const config = require('./config/config');
 const fs = require('fs');
+const incidentLayout = require('./models/incident-layout');
+const incidentModel = require('./models/incident-model');
+const changeLayout = require('./models/change-layout');
+const changeModel = require('./models/change-model');
+const userLayout = require('./models/user-layout');
 
 let requestWithDefaults;
 let Logger;
 
+const layoutMap = {
+  incident: incidentLayout,
+  change_request: changeLayout,
+  sys_user: userLayout
+};
+
 const propertyMap = {
-  'custom.incident': {
-    number: {
-      title: 'Number'
-    },
-    opened_at: {
-      title: 'Opened At',
-      type: 'date'
-    },
-    resolved_by: {
-      title: 'Resolved By',
-      type: 'sys_user'
-    },
-    opened_by: {
-      title: 'Opened By',
-      type: 'sys_user'
-    },
-    assigned_to: {
-      title: 'Assigned To',
-      type: 'sys_user'
-    },
-    closed_by: {
-      title: 'Closed By',
-      type: 'sys_user'
-    }
-  },
-  'custom.change': {},
+  incident: incidentModel,
+  change_request: changeModel,
   sys_user: {
     name: {
-      title: 'Name'
+      title: 'Name',
+      type: 'sys_user'
     },
     title: {
-      title: 'Title'
+      title: 'Title',
+      type: 'sys_user'
+    },
+    email: {
+      title: 'Email',
+      type: 'sys_user'
     },
     location: {
       title: 'Location',
@@ -47,7 +40,8 @@ const propertyMap = {
   },
   cmn_location: {
     name: {
-      title: 'Location'
+      title: 'Location',
+      type: 'cmn_location'
     }
   }
 };
@@ -117,6 +111,7 @@ function doLookup(entities, options, cb) {
               summary: getSummaryTags(body.result),
               details: {
                 entityType: entityType,
+                layout: layoutMap[entityType],
                 results: parsedResults
               }
             }
@@ -135,10 +130,12 @@ function doLookup(entities, options, cb) {
 function getEntityType(entityObj) {
   if (entityObj.type === 'custom') {
     if (entityObj.types.indexOf('custom.incident') >= 0) {
-      return 'custom.incident';
+      return 'incident';
     } else {
-      return 'custom.change';
+      return 'change_request';
     }
+  } else if (entityObj.type === 'email') {
+    return 'sys_user';
   } else {
     return entityObj.type;
   }
@@ -166,6 +163,7 @@ function parseResults(type, results, withDetails, options, cb) {
 
 function parseResult(type, result, withDetails, options, cb) {
   let parsedResult = {};
+
   if (typeof propertyMap[type] !== 'undefined') {
     async.eachOf(
       propertyMap[type],
@@ -206,7 +204,8 @@ function parseResult(type, result, withDetails, options, cb) {
                     if (!valueIsProcessed(resultValue)) {
                       let transformedResult = transformPropertyLinkValue(
                         propertyMapObject,
-                        resultValue
+                        resultValue,
+                        result
                       );
                       transformedResult.details = parsedDetailsResult;
                       parsedResult[propertyKey] = transformedResult;
@@ -225,12 +224,17 @@ function parseResult(type, result, withDetails, options, cb) {
               // don't need to try and load details yet
               parsedResult[propertyKey] = transformPropertyLinkValue(
                 propertyMapObject,
-                resultValue.link
+                resultValue,
+                result
               );
               nextProperty(null);
             }
           } else if (!valueIsProcessed(resultValue)) {
-            parsedResult[propertyKey] = transformPropertyValue(propertyMapObject, resultValue);
+            parsedResult[propertyKey] = transformPropertyValue(
+              propertyMapObject,
+              resultValue,
+              result
+            );
             nextProperty(null);
           } else {
             nextProperty(null);
@@ -273,26 +277,28 @@ function valueIsLink(resultValue) {
   return false;
 }
 
-function transformPropertyLinkValue(propertyObj, link) {
+function transformPropertyLinkValue(propertyObj, value, parentObj) {
   return {
     title: propertyObj.title,
-    value: null,
-    type: typeof propertyObj.type === 'undefined' ? 'text' : propertyObj.type,
-    link: link,
+    value: propertyObj.title,
+    type: propertyObj.type,
+    link: value.link,
     isLink: true,
     isProcessed: true,
-    details: null
+    details: null,
+    sysId: value.value
   };
 }
 
-function transformPropertyValue(propertyObj, value) {
+function transformPropertyValue(propertyObj, value, parentObj) {
   return {
     title: propertyObj.title,
     value: value,
-    type: typeof propertyObj.type === 'undefined' ? 'text' : propertyObj.type,
+    type: propertyObj.type,
     isLink: false,
     isProcessed: true,
-    details: null
+    details: null,
+    sysId: parentObj.sys_id
   };
 }
 
