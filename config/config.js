@@ -59,14 +59,6 @@ module.exports = {
       file: './templates/service-now-block.hbs'
     }
   },
-  // summary: {
-  //   component: {
-  //     file: './components/service-now-summary.js'
-  //   },
-  //   template: {
-  //     file: './templates/service-now-summary.hbs'
-  //   }
-  // },
   request: {
     // Provide the path to your certFile. Leave an empty string to ignore this option.
     // Relative paths are relative to the ServiceNow integration's root directory
@@ -84,8 +76,8 @@ module.exports = {
     // the url parameter (by embedding the auth info in the uri)
     proxy: '',
     /**
-     * If set to false, the integeration will ignore SSL errors.  This will allow the integration to connect
-     * to STAXX servers without valid SSL certificates.  Please note that we do NOT recommending setting this
+     * If set to false, the integration will ignore SSL errors.  This will allow the integration to connect
+     * to ServiceNow servers without valid SSL certificates.  Please note that we do NOT recommending setting this
      * to false in a production environment.
      */
     rejectUnauthorized: true
@@ -99,7 +91,7 @@ module.exports = {
     // the directory you specify is writable by the `polarityd:polarityd` user and group.
 
     //directoryPath: '/var/log/polarity-integrations',
-    level: 'trace' //trace, debug, info, warn, error, fatal
+    level: 'info' //trace, debug, info, warn, error, fatal
   },
   /**
    * Options that are displayed to the user/admin in the Polarity integration user-interface.  Should be structured

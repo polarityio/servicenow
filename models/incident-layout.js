@@ -55,6 +55,10 @@ module.exports = [
     depth: 1
   },
   {
+    path: 'opened_by.details.department.details.name',
+    depth: 1
+  },
+  {
     path: 'opened_by.details.location.details.name',
     depth: 1
   },
@@ -73,8 +77,13 @@ module.exports = [
     path: 'assigned_to.details.title',
     depth: 1
   },
+
   {
     path: 'assigned_to.details.email',
+    depth: 1
+  },
+  {
+    path: 'assigned_to.details.department.details.name',
     depth: 1
   },
   {
@@ -101,6 +110,10 @@ module.exports = [
     depth: 1
   },
   {
+    path: 'resolved_by.details.department.details.name',
+    depth: 1
+  },
+  {
     path: 'resolved_by.details.location.details.name',
     depth: 1
   },
@@ -121,6 +134,10 @@ module.exports = [
   },
   {
     path: 'closed_by.details.email',
+    depth: 1
+  },
+  {
+    path: 'closed_by.details.department.details.name',
     depth: 1
   },
   {
