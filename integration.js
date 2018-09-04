@@ -332,6 +332,11 @@ function getSummaryTags(entityObj, results) {
         acc.push(result[prop]);
       }
     });
+
+    if(typeof result.active !== 'undefined'){
+        acc.push(result.active === "true" ? "active" : "inactive");
+    }
+
     return acc;
   }, []);
 }

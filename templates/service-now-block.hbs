@@ -20,7 +20,7 @@
                     {{/if}}
                 </h1>
             {{else if (eq layout.type "block")}}
-                <div class="p-key pl-{{layout.depth}}">
+                <div class="block p-key pl-{{layout.depth}}">
                     {{get result (concat layout.path ".value")}}
                 </div>
             {{else}}
