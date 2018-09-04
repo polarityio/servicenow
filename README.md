@@ -8,7 +8,7 @@ To learn more about ServiceNow, visit the [offical website](https://servicenow.c
 
 > Note that this integration is currently in beta.
 
-| ![image](./example-integration.png)
+| ![image](https://user-images.githubusercontent.com/306319/45007240-e54bba00-afca-11e8-83f7-6287fe09588b.png)
 |---|
 |*Service Now Example*|
 
