@@ -24,7 +24,7 @@ module.exports = {
    */
   description:
     'ServiceNow automates and streamlines work and helps create great employee and customer experiences.',
-  entityTypes: ['ipv4', 'email'],
+  entityTypes: ['ipv4', 'email', 'domain'],
   customTypes: [
     {
       key: 'incident',
@@ -56,7 +56,8 @@ module.exports = {
       file: './components/service-now-block.js'
     },
     template: {
-      file: './templates/service-now-block.hbs'
+      file: './templates/service-now-block.hbs' 
+      //file: './templates/service-now-summary.hbs'
     }
   },
   request: {
@@ -125,6 +126,15 @@ module.exports = {
       description: 'The password to login to ServiceNow with',
       default: '',
       type: 'password',
+      userCanEdit: true,
+      adminOnly: false
+    },
+    {
+      key: 'assetTable',
+      name: 'Search Field for Asset Lookups',
+      description: 'Field to search for asset lookups in ServiceNow. The default is dns_domain',
+      default: 'dns_domain',
+      type: 'text',
       userCanEdit: true,
       adminOnly: false
     },

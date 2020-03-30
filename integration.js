@@ -63,6 +63,56 @@ function doLookup(entities, options, cb) {
   async.each(
     entities,
     (entityObj, nextEntity) => {
+      if(entityObj.isDomain){
+        let requestOptions = {
+          uri: `${options.url}/cmdb_ci_list.do?JSONv2=&sysparm_query=${options.assetTable}>=${entityObj.value}`,
+          auth: {
+            username: options.username,
+            password: options.password
+          }
+        };
+  
+        // Logger.trace({
+        //   requestOptions: requestOptions
+        // });
+  
+        requestWithDefaults(requestOptions, (err, resp, body) => {
+          if (err || resp.statusCode != 200) {
+            Logger.error('error during entity lookup', {
+              error: err,
+              statusCode: resp ? resp.statusCode : null
+            });
+  
+            cb(
+              err || {
+                detail: 'non-200 http status code: ' + resp.statusCode
+              }
+            );
+            return;
+          }
+          Logger.trace({body:body}, "Checking body from request options");
+
+          if (body.records.length === 0) {
+            lookupResults.push({
+              entity: entityObj,
+              data: null
+            });
+            return nextEntity(null);
+          }
+          
+            let numAssets = body.records.length
+            let domainData = body.records
+
+            lookupResults.push({
+              entity: entityObj,
+              data: {
+                summary: ["Total Associated Assets: " + numAssets],
+                details: {domainData:domainData}
+              }
+            });
+            nextEntity(null);
+        });
+      }else {
       const queryObj = getQueries(entityObj, options);
       if (queryObj.error) {
         return nextEntity({
@@ -108,7 +158,7 @@ function doLookup(entities, options, cb) {
           });
           return nextEntity(null);
         }
-
+        Logger.trace({body:body}, "Passing through all others lookup");
         const serviceNowObjectType = getServiceNowObjectType(entityObj);
 
         parseResults(serviceNowObjectType, body.result, false, options, (err, parsedResults) => {
@@ -125,14 +175,18 @@ function doLookup(entities, options, cb) {
                 layout: layoutMap[serviceNowObjectType],
                 results: parsedResults
               }
+              
             }
+            
           });
 
           nextEntity(null);
         });
       });
-    },
+    }
+  },
     (err) => {
+      Logger.trace({lookupREsults: lookupResults}, "Checking the final payload coming through");
       cb(err, lookupResults);
     }
   );
@@ -191,7 +245,7 @@ function parseResult(type, result, withDetails, options, cb) {
           if (valueIsLink(resultValue) && !linkIsProcessed(resultValue)) {
             // this property is a link so we need to traverse it
             if (withDetails) {
-              Logger.info('Printing resultValue', {
+              Logger.trace('Printing resultValue', {
                 resultValue: resultValue
               });
 
@@ -199,7 +253,7 @@ function parseResult(type, result, withDetails, options, cb) {
                 if (err) {
                   return nextProperty(err);
                 }
-                Logger.debug('Parsing', { details: details });
+                Logger.trace('Parsing', { details: details });
 
                 parseResult(
                   propertyMapObject.type,
@@ -256,11 +310,12 @@ function parseResult(type, result, withDetails, options, cb) {
         }
       },
       (err) => {
-        console.info(parsedResult);
+        Logger.trace({parsedResults: parsedResult}, "checking parsedresults in the function");
         cb(err, parsedResult);
       }
     );
   } else {
+    Logger.trace({parsedResults: parsedResult}, "checking parsedresults outside the function");
     cb(null, parsedResult);
   }
 }
@@ -323,7 +378,7 @@ function getSummaryTags(entityObj, results) {
     summaryProperties = ['number'];
   } else if (entityObj.type.toLowerCase() === 'email') {
     summaryProperties = ['name'];
-  }
+  } 
 
   return results.reduce((acc, result) => {
     //Logger.info('result: ', result);

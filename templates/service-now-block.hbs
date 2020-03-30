@@ -35,3 +35,78 @@
         <hr>
     {{/if}}
 {{/each}}
+
+{{#each block.data.details.domainData as | result | }}
+    {{#if result.asset.link}}
+        <div>
+            <span class="p-value"><a href="{{result.asset.link}}"> View Asset</a></span>
+        </div>
+    {{/if}}
+
+    {{#if result.name}}
+        <div>
+            <span class="p-key">Asset Name: </span>
+            <span class="p-value">{{result.name}}</span>
+        </div>
+    {{/if}}
+    {{#if result.subcategory}}
+        <div>
+            <span class="p-key">Asset Subcategory: </span>
+            <span class="p-value">{{result.subcategory}}</span>
+        </div>
+    {{/if}}
+    {{#if result.serial_number}}
+        <div>
+            <span class="p-key">Serial Number: </span>
+            <span class="p-value">{{result.serial_number}}</span>
+        </div>
+    {{/if}}
+    {{#if result.asset_tag}}
+        <div>
+            <span class="p-key">Asset Tag: </span>
+            <span class="p-value">{{result.asset_tag}}</span>
+        </div>
+    {{/if}}
+
+    {{#if result.delivery_date}}
+        <div>
+            <span class="p-key">Asset Delivered On: </span>
+            <span class="p-value">{{result.delivery_date}}</span>
+        </div>
+    {{/if}}
+
+    {{#if result.sys_updated_on}}
+        <div>
+            <span class="p-key">System Last Updated On: </span>
+            <span class="p-value">{{result.sys_updated_on}}</span>
+        </div>
+    {{/if}}
+    
+    {{#if result.warranty_expiration}}
+        <div>
+            <span class="p-key">Asset Sub-Warrenty Expires On: </span>
+            <span class="p-value">{{result.warranty_expiration}}</span>
+        </div>
+    {{/if}}
+    
+    {{#if result.os}}
+        <div>
+            <span class="p-key">Asset Operating System: </span>
+            <span class="p-value">{{result.os}}</span>
+        </div>
+    {{/if}}
+    {{#if result.delivery_date}}
+        <div>
+            <span class="p-key">Asset Delivered On: </span>
+            <span class="p-value">{{result.delivery_date}}</span>
+        </div>
+    {{/if}}
+    {{#if result.po_number}}
+        <div>
+            <span class="p-key">PO Number: </span>
+            <span class="p-value">{{result.po_number}}</span>
+        </div>
+    {{/if}}
+
+    <hr>
+{{/each}}
