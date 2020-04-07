@@ -36,7 +36,10 @@
     {{/if}}
 {{/each}}
 
-{{#each block.data.details.domainData as | result | }}
+{{#each block.data.details.assetData as | result index | }}
+    {{#if (gt index 0)}}
+        <hr>
+    {{/if}}
     {{#if result.asset.link}}
         <div>
             <span class="p-value"><a href="{{result.asset.link}}"> View Asset</a></span>
@@ -107,6 +110,4 @@
             <span class="p-value">{{result.po_number}}</span>
         </div>
     {{/if}}
-
-    <hr>
 {{/each}}

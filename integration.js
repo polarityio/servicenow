@@ -59,113 +59,82 @@ const propertyMap = {
 function doLookup(entities, options, cb) {
   Logger.trace({ options: options });
   const lookupResults = [];
-
   async.each(
     entities,
     (entityObj, nextEntity) => {
-      if(entityObj.isDomain){
-        let requestOptions = {
-          uri: `${options.url}/cmdb_ci_list.do?JSONv2=&sysparm_query=${options.assetTable}>=${entityObj.value}`,
-          auth: {
-            username: options.username,
-            password: options.password
-          }
-        };
-  
-        // Logger.trace({
-        //   requestOptions: requestOptions
-        // });
-  
-        requestWithDefaults(requestOptions, (err, resp, body) => {
-          if (err || resp.statusCode != 200) {
-            Logger.error('error during entity lookup', {
-              error: err,
-              statusCode: resp ? resp.statusCode : null
-            });
-  
-            cb(
-              err || {
-                detail: 'non-200 http status code: ' + resp.statusCode
-              }
-            );
-            return;
-          }
-          Logger.trace({body:body}, "Checking body from request options");
+      if (entityObj.isDomain || entityObj.isIP) {
+        queryAssets(entityObj, options, lookupResults, nextEntity, cb);
+      } else {
+        queryIncidents(entityObj, options, lookupResults, nextEntity, cb);
+      }
+    },
+    (err) => {
+      Logger.trace({ lookupREsults: lookupResults }, 'Checking the final payload coming through');
+      cb(err, lookupResults);
+    }
+  );
+}
 
-          if (body.records.length === 0) {
-            lookupResults.push({
-              entity: entityObj,
-              data: null
-            });
-            return nextEntity(null);
-          }
-          
-            let numAssets = body.records.length
-            let domainData = body.records
+function queryIncidents(entityObj, options, lookupResults, nextEntity, cb, priorQueryResult) {
+  const queryObj = getQueries(entityObj, options);
+  if (queryObj.error) {
+    return nextEntity({
+      detail: queryObj.error
+    });
+  }
 
-            lookupResults.push({
-              entity: entityObj,
-              data: {
-                summary: ["Total Associated Assets: " + numAssets],
-                details: {domainData:domainData}
-              }
-            });
-            nextEntity(null);
+  if (queryObj.query && queryObj.table) {
+    let requestOptions = {
+      uri: `${options.url}/api/now/table/${queryObj.table}`,
+      auth: {
+        username: options.username,
+        password: options.password
+      },
+      qs: {
+        sysparm_query: queryObj.query,
+        sysparm_limit: 10
+      }
+    };
+
+    requestWithDefaults(requestOptions, (err, resp, body) => {
+      if (err || resp.statusCode != 200) {
+        Logger.error('error during entity lookup', {
+          error: err,
+          statusCode: resp ? resp.statusCode : null
         });
-      }else {
-      const queryObj = getQueries(entityObj, options);
-      if (queryObj.error) {
-        return nextEntity({
-          detail: queryObj.error
-        });
+
+        return cb(
+          err || {
+            detail: 'non-200 http status code: ' + resp.statusCode
+          }
+        );
       }
 
-      let requestOptions = {
-        uri: `${options.url}/api/now/table/${queryObj.table}`,
-        auth: {
-          username: options.username,
-          password: options.password
-        },
-        qs: {
-          sysparm_query: queryObj.query,
-          sysparm_limit: 10
+      if (body.result.length === 0) {
+        lookupResults.push({
+          entity: entityObj,
+          data: null
+        });
+        return nextEntity(null);
+      }
+      Logger.trace({ body: body }, 'Passing through all others lookup');
+      const serviceNowObjectType = getServiceNowObjectType(entityObj);
+
+      parseResults(serviceNowObjectType, body.result, false, options, (err, parsedResults) => {
+        if (err) {
+          return nextEntity(err);
         }
-      };
-
-      // Logger.trace({
-      //   requestOptions: requestOptions
-      // });
-
-      requestWithDefaults(requestOptions, (err, resp, body) => {
-        if (err || resp.statusCode != 200) {
-          Logger.error('error during entity lookup', {
-            error: err,
-            statusCode: resp ? resp.statusCode : null
-          });
-
-          cb(
-            err || {
-              detail: 'non-200 http status code: ' + resp.statusCode
+        if (priorQueryResult) {
+          return cb(null, {
+            summary: getSummaryTags(entityObj, body.result).concat(priorQueryResult.summary),
+            details: {
+              ...priorQueryResult.details,
+              serviceNowObjectType: serviceNowObjectType,
+              layout: layoutMap[serviceNowObjectType],
+              results: parsedResults
             }
-          );
-          return;
-        }
-
-        if (body.result.length === 0) {
-          lookupResults.push({
-            entity: entityObj,
-            data: null
           });
-          return nextEntity(null);
-        }
-        Logger.trace({body:body}, "Passing through all others lookup");
-        const serviceNowObjectType = getServiceNowObjectType(entityObj);
-
-        parseResults(serviceNowObjectType, body.result, false, options, (err, parsedResults) => {
-          if (err) {
-            return nextEntity(err);
-          }
-
+        } else {
           lookupResults.push({
             entity: entityObj,
             data: {
@@ -175,21 +144,79 @@ function doLookup(entities, options, cb) {
                 layout: layoutMap[serviceNowObjectType],
                 results: parsedResults
               }
-              
             }
-            
           });
-
-          nextEntity(null);
-        });
+        }
+        nextEntity(null);
       });
+    });
+  } else if (priorQueryResult) {
+    lookupResults.push({
+      entity: entityObj,
+      data: {
+        summary: priorQueryResult.summary,
+        details: priorQueryResult.details
+      }
+    });
+    nextEntity(null);
+  }
+}
+
+function queryAssets(entityObj, options, lookupResults, nextEntity, cb) {
+  const assetTableQuery = options.assetTableFields
+    .split(',')
+    .map((field) => `${field.trim()}CONTAINS${entityObj.value}`)
+    .join('^OR');
+
+  let requestOptions = {
+    uri: `${options.url}/cmdb_ci_list.do?JSONv2=&sysparm_query=${assetTableQuery}`,
+    auth: {
+      username: options.username,
+      password: options.password
     }
-  },
-    (err) => {
-      Logger.trace({lookupREsults: lookupResults}, "Checking the final payload coming through");
-      cb(err, lookupResults);
+  };
+
+  requestWithDefaults(requestOptions, (err, resp, body) => {
+    if (err || resp.statusCode != 200) {
+      Logger.error('error during entity lookup', {
+        error: err,
+        statusCode: resp ? resp.statusCode : null
+      });
+
+      return cb(
+        err || {
+          detail: 'non-200 http status code: ' + resp.statusCode
+        }
+      );
     }
-  );
+    Logger.trace({ body }, 'Checking body from request options');
+
+    let assetData = body.records;
+    let numAssets = assetData && assetData.length;
+
+    if (numAssets === 0) {
+      lookupResults.push({
+        entity: entityObj,
+        data: null
+      });
+      return nextEntity(null);
+    }
+
+    const result = {
+      summary: ['Total Associated Assets: ' + numAssets],
+      details: { assetData }
+    };
+    if (entityObj.isIP) {
+      queryIncidents(entityObj, options, lookupResults, nextEntity, cb, result);
+    } else {
+      lookupResults.push({
+        entity: entityObj,
+        data: result
+      });
+
+      nextEntity(null);
+    }
+  });
 }
 
 function getServiceNowObjectType(entityObj) {
@@ -234,11 +261,6 @@ function parseResult(type, result, withDetails, options, cb) {
     async.eachOf(
       propertyMap[type],
       (propertyMapObject, propertyKey, nextProperty) => {
-        // Logger.debug('', {
-        //   propertyMapObject: propertyMapObject,
-        //   propertyKey: propertyKey,
-        //   result: result
-        // });
         let resultValue = result[propertyKey];
 
         if (typeof resultValue !== 'undefined') {
@@ -265,8 +287,6 @@ function parseResult(type, result, withDetails, options, cb) {
                       return nextProperty(parseDetailsError);
                     }
 
-                    //resultValue = transformPropertyLinkValue(propertyMapObject, resultValue.link);
-
                     if (!valueIsProcessed(resultValue)) {
                       let transformedResult = transformPropertyLinkValue(
                         propertyMapObject,
@@ -280,11 +300,9 @@ function parseResult(type, result, withDetails, options, cb) {
                       parsedResult[propertyKey] = resultValue;
                     }
 
-                    //parsedResult[propertyKey] = resultValue;
                     nextProperty(null);
                   }
                 );
-                //lookupObject.data.details.results.onDetails[objectName] = details;
               });
             } else {
               // don't need to try and load details yet
@@ -310,12 +328,12 @@ function parseResult(type, result, withDetails, options, cb) {
         }
       },
       (err) => {
-        Logger.trace({parsedResults: parsedResult}, "checking parsedresults in the function");
+        Logger.trace({ parsedResults }, 'checking parsedresults in the function');
         cb(err, parsedResult);
       }
     );
   } else {
-    Logger.trace({parsedResults: parsedResult}, "checking parsedresults outside the function");
+    Logger.trace({ parsedResults }, 'checking parsedresults outside the function');
     cb(null, parsedResult);
   }
 }
@@ -327,25 +345,15 @@ function valueIsProcessed(resultValue) {
   return false;
 }
 
-function linkIsProcessed(resultValue) {
-  if (
+const linkIsProcessed = (resultValue) =>
+  !(
     resultValue !== null &&
     (resultValue.details === null || typeof resultValue.details === 'undefined')
-  ) {
-    return false;
-  }
-  return true;
-}
+  );
 
-function valueIsLink(resultValue) {
-  if (resultValue !== null && typeof resultValue.link === 'string') {
-    return true;
-  }
-  return false;
-}
+const valueIsLink = (resultValue) => resultValue !== null && typeof resultValue.link === 'string';
 
-function transformPropertyLinkValue(propertyObj, value, parentObj) {
-  return {
+const transformPropertyLinkValue = (propertyObj, value, parentObj) => ({
     title: propertyObj.title,
     value: propertyObj.title,
     type: propertyObj.type,
@@ -354,11 +362,9 @@ function transformPropertyLinkValue(propertyObj, value, parentObj) {
     isProcessed: true,
     details: null,
     sysId: value.value
-  };
-}
+  })
 
-function transformPropertyValue(propertyObj, value, parentObj) {
-  return {
+const transformPropertyValue = (propertyObj, value, parentObj) => ({
     title: propertyObj.title,
     value: value,
     type: propertyObj.type,
@@ -366,8 +372,7 @@ function transformPropertyValue(propertyObj, value, parentObj) {
     isProcessed: true,
     details: null,
     sysId: parentObj.sys_id
-  };
-}
+  })
 
 function getSummaryTags(entityObj, results) {
   let summaryProperties;
@@ -378,7 +383,7 @@ function getSummaryTags(entityObj, results) {
     summaryProperties = ['number'];
   } else if (entityObj.type.toLowerCase() === 'email') {
     summaryProperties = ['name'];
-  } 
+  }
 
   return results.reduce((acc, result) => {
     //Logger.info('result: ', result);
@@ -388,8 +393,8 @@ function getSummaryTags(entityObj, results) {
       }
     });
 
-    if(typeof result.active !== 'undefined'){
-        acc.push(result.active === "true" ? "active" : "inactive");
+    if (typeof result.active !== 'undefined') {
+      acc.push(result.active === 'true' ? 'active' : 'inactive');
     }
 
     return acc;
@@ -408,12 +413,10 @@ function getQueries(entityObj, options) {
     result.query = `email=${entityObj.value}`;
   } else if (entityObj.isIPv4) {
     if (
-      !options.customIpFields ||
-      (typeof options.customIpFields === 'string' && options.customIpFields.length === 0)
+      options.customIpFields &&
+      typeof options.customIpFields === 'string' &&
+      options.customIpFields.length !== 0
     ) {
-      result.error = 'Received an IPv4 entity but no custom fields are set, ignoring';
-      return result;
-    } else {
       result.table = 'incident';
       result.query = options.customIpFields
         .split(',')
@@ -457,7 +460,6 @@ function getDetailsInformation(link, options, cb) {
     }
   };
 
-  //Logger.info('getDetails URI', { requestOptions: requestOptions });
   requestWithDefaults(requestOptions, (err, response, body) => {
     if (err) {
       return cb({
@@ -539,9 +541,4 @@ module.exports = {
   startup: startup,
   validateOptions: validateOptions,
   onDetails: onDetails
-  // // exports for testing purposes
-  // parseResults: parseResults,
-  // parseResult: parseResult,
-  // transformPropertyValue: transformPropertyValue,
-  // propertyIsLink: propertyIsLink
 };

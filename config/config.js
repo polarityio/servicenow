@@ -56,8 +56,7 @@ module.exports = {
       file: './components/service-now-block.js'
     },
     template: {
-      file: './templates/service-now-block.hbs' 
-      //file: './templates/service-now-summary.hbs'
+      file: './templates/service-now-block.hbs'
     }
   },
   request: {
@@ -105,7 +104,8 @@ module.exports = {
     {
       key: 'url',
       name: 'URL',
-      description: 'The URL of the ServiceNow instance to connect to including the schema (i.e., https://)',
+      description:
+        'The URL of the ServiceNow instance to connect to including the schema (i.e., https://)',
       default: '',
       type: 'text',
       userCanEdit: true,
@@ -130,10 +130,11 @@ module.exports = {
       adminOnly: false
     },
     {
-      key: 'assetTable',
-      name: 'Search Field for Asset Lookups',
-      description: 'Field to search for asset lookups in ServiceNow. The default is dns_domain',
-      default: 'dns_domain',
+      key: 'assetTableFields',
+      name: 'Search Fields for Asset Lookups',
+      description:
+        "A comma separated list of fields to search domains and IPs by in ServiceNow's Asset Table.",
+      default: 'dns_domain, sys_domain_path, ip_address',
       type: 'text',
       userCanEdit: true,
       adminOnly: false
