@@ -1,4 +1,7 @@
-{{#each details.results as | result | }}
+{{#each details.results as | result index | }}
+    {{#if (gt index 0)}}
+        <hr>
+    {{/if}}
     {{#each details.layout as | layout index| }}
         {{#if (get result (concat layout.path ".value"))}}
             {{#if (eq layout.type "title")}}
@@ -31,15 +34,13 @@
             {{/if}}
         {{/if}}
     {{/each}}
-    {{#if (gt details.results.length 1)}}
-        <hr>
-    {{/if}}
 {{/each}}
 
 {{#each block.data.details.assetData as | result index | }}
     {{#if (gt index 0)}}
         <hr>
     {{/if}}
+
     {{#if result.asset.link}}
         <div>
             <span class="p-value"><a href="{{result.asset.link}}"> View Asset</a></span>
@@ -108,6 +109,81 @@
         <div>
             <span class="p-key">PO Number: </span>
             <span class="p-value">{{result.po_number}}</span>
+        </div>
+    {{/if}}
+{{/each}}
+
+{{#each block.data.details.knowledgeBaseData as | result index | }}
+    {{#if (gt index 0)}}
+        <hr>
+    {{/if}}
+
+    {{#if result.number}}
+        <div>
+            <span class="p-key">Number: </span>
+            <span class="p-value">{{result.number}}</span>
+        </div>
+    {{/if}}
+    
+    {{#if result.topic}}
+        <div>
+            <span class="p-key">Topic: </span>
+            <span class="p-value">{{result.topic}}</span>
+        </div>
+    {{/if}}
+    
+    {{#if result.kb_category}}
+        <div>
+            <span class="p-key">Category: </span>
+            <span class="p-value">{{result.kb_category}}</span>
+        </div>
+    {{/if}}
+    
+    {{#if result.short_description}}
+        <div>
+            <span class="p-key">Description: </span>
+            <span class="p-value">{{result.short_description}}</span>
+        </div>
+    {{/if}}
+
+    {{#if result.author}}
+        <div>
+            <span class="p-key">Author: </span>
+            <span class="p-value">{{result.author}}</span>
+        </div>
+    {{/if}}
+
+    {{#if result.sys_created_on}}
+        <div>
+            <span class="p-key">Create On: </span>
+            <span class="p-value">{{result.sys_created_on}}</span>
+        </div>
+    {{/if}}
+    
+    {{#if result.sys_created_by}}
+        <div>
+            <span class="p-key">Create By: </span>
+            <span class="p-value">{{result.sys_created_by}}</span>
+        </div>
+    {{/if}}
+
+    {{#if result.sys_updated_on}}
+        <div>
+            <span class="p-key">Updated On: </span>
+            <span class="p-value">{{result.sys_updated_on}}</span>
+        </div>
+    {{/if}}
+    
+    {{#if result.sys_updated_by}}
+        <div>
+            <span class="p-key">Updated By: </span>
+            <span class="p-value">{{result.sys_updated_by}}</span>
+        </div>
+    {{/if}}
+
+    {{#if result.link}}
+        <div>
+            <span class="p-value"><a href="{{result.link}}"> View Knowledge Base Document</a></span>
         </div>
     {{/if}}
 {{/each}}

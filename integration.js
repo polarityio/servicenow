@@ -64,6 +64,11 @@ function doLookup(entities, options, cb) {
     (entityObj, nextEntity) => {
       if (entityObj.isDomain || entityObj.isIP) {
         queryAssets(entityObj, options, lookupResults, nextEntity, cb);
+      } else if (
+        entityObj.type === 'custom' &&
+        entityObj.types.indexOf('custom.knowledgeBase') >= 0
+      ) {
+        queryKnowledgeBase(entityObj, options, lookupResults, nextEntity, cb);
       } else {
         queryIncidents(entityObj, options, lookupResults, nextEntity, cb);
       }
@@ -125,13 +130,16 @@ function queryIncidents(entityObj, options, lookupResults, nextEntity, cb, prior
           return nextEntity(err);
         }
         if (priorQueryResult) {
-          return cb(null, {
-            summary: getSummaryTags(entityObj, body.result).concat(priorQueryResult.summary),
-            details: {
-              ...priorQueryResult.details,
-              serviceNowObjectType: serviceNowObjectType,
-              layout: layoutMap[serviceNowObjectType],
-              results: parsedResults
+          lookupResults.push({
+            entity: entityObj,
+            data: {
+              summary: getSummaryTags(entityObj, body.result).concat(priorQueryResult.summary),
+              details: {
+                ...priorQueryResult.details,
+                serviceNowObjectType: serviceNowObjectType,
+                layout: layoutMap[serviceNowObjectType],
+                results: parsedResults
+              }
             }
           });
         } else {
@@ -169,7 +177,7 @@ function queryAssets(entityObj, options, lookupResults, nextEntity, cb) {
     .join('^OR');
 
   let requestOptions = {
-    uri: `${options.url}/cmdb_ci_list.do?JSONv2=&sysparm_query=${assetTableQuery}`,
+    uri: `${options.url}/cmdb_ci_list.do?JSONv2=&displayvalue=true&sysparm_query=${assetTableQuery}`,
     auth: {
       username: options.username,
       password: options.password
@@ -203,7 +211,7 @@ function queryAssets(entityObj, options, lookupResults, nextEntity, cb) {
     }
 
     const result = {
-      summary: ['Total Associated Assets: ' + numAssets],
+      summary: ['Assets: ' + numAssets],
       details: { assetData }
     };
     if (entityObj.isIP) {
@@ -216,6 +224,60 @@ function queryAssets(entityObj, options, lookupResults, nextEntity, cb) {
 
       nextEntity(null);
     }
+  });
+}
+
+function queryKnowledgeBase(entityObj, options, lookupResults, nextEntity, cb) {
+  let requestOptions = {
+    uri: `${options.url}/kb_knowledge_list.do?JSONv2=&displayvalue=true&sysparm_query=numberCONTAINS${entityObj.value}`,
+    auth: {
+      username: options.username,
+      password: options.password
+    }
+  };
+
+  requestWithDefaults(requestOptions, (err, resp, body) => {
+    if (err || resp.statusCode != 200) {
+      Logger.error('error during entity lookup', {
+        error: err,
+        statusCode: resp ? resp.statusCode : null
+      });
+
+      return cb(
+        err || {
+          detail: 'non-200 http status code: ' + resp.statusCode
+        }
+      );
+    }
+    Logger.trace({ body }, 'Checking body from request options');
+
+    let knowledgeBaseData = body.records;
+    let numAssets = knowledgeBaseData && knowledgeBaseData.length;
+
+    if (numAssets === 0) {
+      lookupResults.push({
+        entity: entityObj,
+        data: null
+      });
+      return nextEntity(null);
+    }
+
+    const result = {
+      summary: ['Knowledge Base Documents: ' + numAssets],
+      details: {
+        knowledgeBaseData: knowledgeBaseData.map((kbItem) => ({
+          ...kbItem,
+          link: `${options.url}/nav_to.do?uri=/kb_knowledge.do?sys_id=${kbItem.sys_id}`
+        }))
+      }
+    };
+    
+    lookupResults.push({
+      entity: entityObj,
+      data: result
+    });
+
+    nextEntity(null);
   });
 }
 
@@ -354,25 +416,25 @@ const linkIsProcessed = (resultValue) =>
 const valueIsLink = (resultValue) => resultValue !== null && typeof resultValue.link === 'string';
 
 const transformPropertyLinkValue = (propertyObj, value, parentObj) => ({
-    title: propertyObj.title,
-    value: propertyObj.title,
-    type: propertyObj.type,
-    link: value.link,
-    isLink: true,
-    isProcessed: true,
-    details: null,
-    sysId: value.value
-  })
+  title: propertyObj.title,
+  value: propertyObj.title,
+  type: propertyObj.type,
+  link: value.link,
+  isLink: true,
+  isProcessed: true,
+  details: null,
+  sysId: value.value
+});
 
 const transformPropertyValue = (propertyObj, value, parentObj) => ({
-    title: propertyObj.title,
-    value: value,
-    type: propertyObj.type,
-    isLink: false,
-    isProcessed: true,
-    details: null,
-    sysId: parentObj.sys_id
-  })
+  title: propertyObj.title,
+  value: value,
+  type: propertyObj.type,
+  isLink: false,
+  isProcessed: true,
+  details: null,
+  sysId: parentObj.sys_id
+});
 
 function getSummaryTags(entityObj, results) {
   let summaryProperties;

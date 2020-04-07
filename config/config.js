@@ -31,6 +31,10 @@ module.exports = {
       regex: /INC[0-9]{7,}/
     },
     {
+      key: 'knowledgeBase',
+      regex: /KB[0-9]{7,}/
+    },
+    {
       key: 'change',
       regex: /CHG[0-9]{7,}/
     }
