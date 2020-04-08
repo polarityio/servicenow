@@ -62,7 +62,11 @@ function doLookup(entities, options, cb) {
   async.each(
     entities,
     (entityObj, nextEntity) => {
-      if (entityObj.isDomain || entityObj.isIP) {
+      if (
+        entityObj.isDomain ||
+        entityObj.isIP ||
+        (entityObj.type === 'string' && options.shouldSearchString)
+      ) {
         queryAssets(entityObj, options, lookupResults, nextEntity, cb);
       } else if (
         entityObj.type === 'custom' &&

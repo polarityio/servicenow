@@ -24,7 +24,7 @@ module.exports = {
    */
   description:
     'ServiceNow automates and streamlines work and helps create great employee and customer experiences.',
-  entityTypes: ['ipv4', 'email', 'domain'],
+  entityTypes: ['ipv4', 'email', 'domain', 'string'],
   customTypes: [
     {
       key: 'incident',
@@ -130,6 +130,16 @@ module.exports = {
       description: 'The password to login to ServiceNow with',
       default: '',
       type: 'password',
+      userCanEdit: true,
+      adminOnly: false
+    },
+    {
+      key: 'shouldSearchString',
+      name: 'Search By String',
+      description:
+        "This will toggle whether or not to search the ServiceNow's Asset Table with strings found in your channels.",
+      default: false,
+      type: 'boolean',
       userCanEdit: true,
       adminOnly: false
     },

@@ -2,7 +2,7 @@
 
 ![image](https://img.shields.io/badge/status-beta-green.svg)
 
-Polarity's ServiceNow integration allows the lookup of system user emails, domains for asset information, ServiceNow change request IDs (e.g. CHG00000012), and ServiceNow incident IDs (e.g. INC00000154) against your instance of ServiceNow.  In addition, we can search for IPv4 addresses against custom fields that you specify.
+Polarity's ServiceNow integration allows the lookup of system user emails, domains, IPv4s, and optionally strings from channels for incident and/or asset information, ServiceNow change request IDs (e.g. CHG00000012), ServiceNow incident IDs (e.g. INC00000154), and ServiceNow Knowledge Base IDs (e.g. KB0000008) against your instance of ServiceNow.  In addition, we can search for IPv4 addresses against custom fields that you specify when searching Incidents.
 
 To learn more about ServiceNow, visit the [offical website](https://servicenow.com).
 
@@ -21,6 +21,9 @@ The username of the Service Now user you want the integration to authenticate as
 
 ### Password
 The password for the provided username you want the integration to authenticate as.
+
+### Search By String
+This will toggle whether or not to search the ServiceNow's Asset Table with strings found in your channels.
 
 ### Search Field for Asset Lookups
 A comma separated list of fields to search domains and IPs by in ServiceNow's Asset Table. Default is dns_domain, sys_domain_path, ip_address.
