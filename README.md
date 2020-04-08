@@ -23,7 +23,7 @@ The username of the Service Now user you want the integration to authenticate as
 The password for the provided username you want the integration to authenticate as.
 
 ### Search Field for Asset Lookups
-Field to search for asset lookups in ServiceNow. The default is dns_domain.
+A comma separated list of fields to search domains and IPs by in ServiceNow's Asset Table. Default is dns_domain, sys_domain_path, ip_address.
 
 ### Custom IPv4 Fields
 A comma separated list of fields to lookup on IP matches. See below for use.

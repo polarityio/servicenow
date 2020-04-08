@@ -390,12 +390,12 @@ function parseResult(type, result, withDetails, options, cb) {
         }
       },
       (err) => {
-        Logger.trace({ parsedResults }, 'checking parsedresults in the function');
+        Logger.trace({ parsedResult }, 'checking parsed result in the function');
         cb(err, parsedResult);
       }
     );
   } else {
-    Logger.trace({ parsedResults }, 'checking parsedresults outside the function');
+    Logger.trace({ parsedResult }, 'checking parsed result outside the function');
     cb(null, parsedResult);
   }
 }
