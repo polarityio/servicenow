@@ -206,27 +206,29 @@ function queryAssets(entityObj, options, lookupResults, nextEntity, cb) {
     let assetData = body.records;
     let numAssets = assetData && assetData.length;
 
-    if (numAssets === 0) {
+    if (numAssets === 0 && !entityObj.isIP) {
       lookupResults.push({
         entity: entityObj,
         data: null
       });
       return nextEntity(null);
-    }
-
-    const result = {
-      summary: ['Assets: ' + numAssets],
-      details: { assetData }
-    };
-    if (entityObj.isIP) {
-      queryIncidents(entityObj, options, lookupResults, nextEntity, cb, result);
+    } else if (numAssets === 0 && entityObj.isIP) {
+      queryIncidents(entityObj, options, lookupResults, nextEntity, cb);
     } else {
-      lookupResults.push({
-        entity: entityObj,
-        data: result
-      });
+      const result = {
+        summary: ['Assets: ' + numAssets],
+        details: { assetData }
+      };
+      if (entityObj.isIP) {
+        queryIncidents(entityObj, options, lookupResults, nextEntity, cb, result);
+      } else {
+        lookupResults.push({
+          entity: entityObj,
+          data: result
+        });
 
-      nextEntity(null);
+        nextEntity(null);
+      }
     }
   });
 }
@@ -275,7 +277,7 @@ function queryKnowledgeBase(entityObj, options, lookupResults, nextEntity, cb) {
         }))
       }
     };
-    
+
     lookupResults.push({
       entity: entityObj,
       data: result
