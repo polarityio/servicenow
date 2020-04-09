@@ -119,48 +119,55 @@ function queryIncidents(entityObj, options, lookupResults, nextEntity, cb, prior
         );
       }
 
-      if (body.result.length === 0) {
+      if (body.result.length === 0 && !priorQueryResult) {
         lookupResults.push({
           entity: entityObj,
           data: null
         });
         return nextEntity(null);
-      }
-      Logger.trace({ body: body }, 'Passing through all others lookup');
-      const serviceNowObjectType = getServiceNowObjectType(entityObj);
+      } else if (body.result.length === 0 && priorQueryResult) {
+        lookupResults.push({
+          entity: entityObj,
+          data: priorQueryResult
+        });
+        return nextEntity(null);
+      } else {
+        Logger.trace({ body: body }, 'Passing through all others lookup');
+        const serviceNowObjectType = getServiceNowObjectType(entityObj);
 
-      parseResults(serviceNowObjectType, body.result, false, options, (err, parsedResults) => {
-        if (err) {
-          return nextEntity(err);
-        }
-        if (priorQueryResult) {
-          lookupResults.push({
-            entity: entityObj,
-            data: {
-              summary: getSummaryTags(entityObj, body.result).concat(priorQueryResult.summary),
-              details: {
-                ...priorQueryResult.details,
-                serviceNowObjectType: serviceNowObjectType,
-                layout: layoutMap[serviceNowObjectType],
-                results: parsedResults
+        parseResults(serviceNowObjectType, body.result, false, options, (err, parsedResults) => {
+          if (err) {
+            return nextEntity(err);
+          }
+          if (priorQueryResult) {
+            lookupResults.push({
+              entity: entityObj,
+              data: {
+                summary: getSummaryTags(entityObj, body.result).concat(priorQueryResult.summary),
+                details: {
+                  ...priorQueryResult.details,
+                  serviceNowObjectType: serviceNowObjectType,
+                  layout: layoutMap[serviceNowObjectType],
+                  results: parsedResults
+                }
               }
-            }
-          });
-        } else {
-          lookupResults.push({
-            entity: entityObj,
-            data: {
-              summary: getSummaryTags(entityObj, body.result),
-              details: {
-                serviceNowObjectType: serviceNowObjectType,
-                layout: layoutMap[serviceNowObjectType],
-                results: parsedResults
+            });
+          } else {
+            lookupResults.push({
+              entity: entityObj,
+              data: {
+                summary: getSummaryTags(entityObj, body.result),
+                details: {
+                  serviceNowObjectType: serviceNowObjectType,
+                  layout: layoutMap[serviceNowObjectType],
+                  results: parsedResults
+                }
               }
-            }
-          });
-        }
-        nextEntity(null);
-      });
+            });
+          }
+          nextEntity(null);
+        });
+      }
     });
   } else if (priorQueryResult) {
     lookupResults.push({
