@@ -102,7 +102,8 @@ function queryIncidents(entityObj, options, lookupResults, nextEntity, cb, prior
       qs: {
         sysparm_query: queryObj.query,
         sysparm_limit: 10
-      }
+      },
+      json: true
     };
 
     requestWithDefaults(requestOptions, (err, resp, body) => {
@@ -119,13 +120,14 @@ function queryIncidents(entityObj, options, lookupResults, nextEntity, cb, prior
         );
       }
 
-      if (body.result.length === 0 && !priorQueryResult) {
+      const queryResult = body.result || [];
+      if (queryResult.length === 0 && !priorQueryResult) {
         lookupResults.push({
           entity: entityObj,
           data: null
         });
         return nextEntity(null);
-      } else if (body.result.length === 0 && priorQueryResult) {
+      } else if (queryResult.length === 0 && priorQueryResult) {
         lookupResults.push({
           entity: entityObj,
           data: priorQueryResult
@@ -135,7 +137,7 @@ function queryIncidents(entityObj, options, lookupResults, nextEntity, cb, prior
         Logger.trace({ body: body }, 'Passing through all others lookup');
         const serviceNowObjectType = getServiceNowObjectType(entityObj);
 
-        parseResults(serviceNowObjectType, body.result, false, options, (err, parsedResults) => {
+        parseResults(serviceNowObjectType, queryResult, false, options, (err, parsedResults) => {
           if (err) {
             return nextEntity(err);
           }
@@ -143,7 +145,7 @@ function queryIncidents(entityObj, options, lookupResults, nextEntity, cb, prior
             lookupResults.push({
               entity: entityObj,
               data: {
-                summary: getSummaryTags(entityObj, body.result).concat(priorQueryResult.summary),
+                summary: getSummaryTags(entityObj, queryResult).concat(priorQueryResult.summary),
                 details: {
                   ...priorQueryResult.details,
                   serviceNowObjectType: serviceNowObjectType,
@@ -264,8 +266,8 @@ function queryKnowledgeBase(entityObj, options, lookupResults, nextEntity, cb) {
     }
     Logger.trace({ body }, 'Checking body from request options');
 
-    let knowledgeBaseData = body.records;
-    let numAssets = knowledgeBaseData && knowledgeBaseData.length;
+    let knowledgeBaseData = body.records || [];
+    let numAssets = knowledgeBaseData.length;
 
     if (numAssets === 0) {
       lookupResults.push({
