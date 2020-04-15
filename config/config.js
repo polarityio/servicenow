@@ -24,11 +24,15 @@ module.exports = {
    */
   description:
     'ServiceNow automates and streamlines work and helps create great employee and customer experiences.',
-  entityTypes: ['ipv4', 'email'],
+  entityTypes: ['ipv4', 'email', 'domain', 'string'],
   customTypes: [
     {
       key: 'incident',
       regex: /INC[0-9]{7,}/
+    },
+    {
+      key: 'knowledgeBase',
+      regex: /KB[0-9]{7,}/
     },
     {
       key: 'change',
@@ -104,7 +108,8 @@ module.exports = {
     {
       key: 'url',
       name: 'URL',
-      description: 'The URL of the ServiceNow instance to connect to including the schema (i.e., https://)',
+      description:
+        'The URL of the ServiceNow instance to connect to including the schema (i.e., https://)',
       default: '',
       type: 'text',
       userCanEdit: true,
@@ -125,6 +130,26 @@ module.exports = {
       description: 'The password to login to ServiceNow with',
       default: '',
       type: 'password',
+      userCanEdit: true,
+      adminOnly: false
+    },
+    {
+      key: 'shouldSearchString',
+      name: 'Search By String',
+      description:
+        "This will toggle whether or not to search the ServiceNow's Asset Table with strings found in your channels.",
+      default: false,
+      type: 'boolean',
+      userCanEdit: true,
+      adminOnly: false
+    },
+    {
+      key: 'assetTableFields',
+      name: 'Search Fields for Asset Lookups',
+      description:
+        "A comma separated list of fields to search domains and IPs by in ServiceNow's Asset Table.",
+      default: 'dns_domain, sys_domain_path, ip_address',
+      type: 'text',
       userCanEdit: true,
       adminOnly: false
     },

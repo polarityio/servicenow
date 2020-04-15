@@ -1,7 +1,7 @@
 {
   "main": "./integration.js",
   "name": "service-now",
-  "version": "3.0.0-beta",
+  "version": "3.1.0-beta",
   "private": true,
   "license": "MIT",
   "author": "Polarity",
@@ -13,7 +13,7 @@
     "bunyan": "^1.8.12",
     "chai": "^4.1.2",
     "mocha": "^5.1.1",
-    "mountebank": "^1.14.0"
+    "mountebank": "^2.2.0"
   },
   "scripts": {
     "pretest": "mb start --configfile imposters.json --mock &",
