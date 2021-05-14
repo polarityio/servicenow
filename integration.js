@@ -4,6 +4,10 @@ const config = require('./config/config');
 const fs = require('fs');
 const incidentLayout = require('./models/incident-layout');
 const incidentModel = require('./models/incident-model');
+const requestLayout = require('./models/request-layout');
+const requestModel = require('./models/request-model');
+const itemLayout = require('./models/item-layout');
+const itemModel = require('./models/item-model');
 const changeLayout = require('./models/change-layout');
 const changeModel = require('./models/change-model');
 const userLayout = require('./models/user-layout');
@@ -13,12 +17,16 @@ let Logger;
 
 const layoutMap = {
   incident: incidentLayout,
+  sc_request: requestLayout,
+  sc_req_item: itemLayout,
   change_request: changeLayout,
   sys_user: userLayout
 };
 
 const propertyMap = {
   incident: incidentModel,
+  sc_request: requestModel,
+  sc_req_item: itemModel,
   change_request: changeModel,
   sys_user: {
     name: {
@@ -74,17 +82,16 @@ function doLookup(entities, options, cb) {
       ) {
         queryKnowledgeBase(entityObj, options, lookupResults, nextEntity, cb);
       } else {
-        queryIncidents(entityObj, options, lookupResults, nextEntity, cb);
+        queryTable(entityObj, options, lookupResults, nextEntity, cb);
       }
     },
     (err) => {
-      Logger.trace({ lookupREsults: lookupResults }, 'Checking the final payload coming through');
       cb(err, lookupResults);
     }
   );
 }
 
-function queryIncidents(entityObj, options, lookupResults, nextEntity, cb, priorQueryResult) {
+function queryTable(entityObj, options, lookupResults, nextEntity, cb, priorQueryResult) {
   const queryObj = getQueries(entityObj, options);
   if (queryObj.error) {
     return nextEntity({
@@ -101,12 +108,14 @@ function queryIncidents(entityObj, options, lookupResults, nextEntity, cb, prior
       },
       qs: {
         sysparm_query: queryObj.query,
-        sysparm_limit: 10
+        sysparm_limit: 1000
       },
       json: true
     };
 
     requestWithDefaults(requestOptions, (err, resp, body) => {
+      //Logger.trace({ resp: resp }, 'Checking the resp');
+      //Logger.trace({ body: body }, 'Checking the body');
       if (err || resp.statusCode != 200) {
         Logger.error('error during entity lookup', {
           error: err,
@@ -121,6 +130,7 @@ function queryIncidents(entityObj, options, lookupResults, nextEntity, cb, prior
       }
 
       const queryResult = body.result || [];
+      //Logger.trace({ queryResult }, 'Log QueryResult');
       if (queryResult.length === 0 && !priorQueryResult) {
         lookupResults.push({
           entity: entityObj,
@@ -134,7 +144,7 @@ function queryIncidents(entityObj, options, lookupResults, nextEntity, cb, prior
         });
         return nextEntity(null);
       } else {
-        Logger.trace({ body: body }, 'Passing through all others lookup');
+        //Logger.trace({ body: body }, 'Passing through all others lookup');
         const serviceNowObjectType = getServiceNowObjectType(entityObj);
 
         parseResults(serviceNowObjectType, queryResult, false, options, (err, parsedResults) => {
@@ -167,6 +177,7 @@ function queryIncidents(entityObj, options, lookupResults, nextEntity, cb, prior
               }
             });
           }
+          Logger.trace({ lookupResults }, 'Results');
           nextEntity(null);
         });
       }
@@ -179,6 +190,7 @@ function queryIncidents(entityObj, options, lookupResults, nextEntity, cb, prior
         details: priorQueryResult.details
       }
     });
+    Logger.trace({ lookupResults }, 'Results');
     nextEntity(null);
   }
 }
@@ -210,7 +222,6 @@ function queryAssets(entityObj, options, lookupResults, nextEntity, cb) {
         }
       );
     }
-    Logger.trace({ body }, 'Checking body from request options');
 
     let assetData = body.records;
     let numAssets = assetData && assetData.length;
@@ -222,14 +233,14 @@ function queryAssets(entityObj, options, lookupResults, nextEntity, cb) {
       });
       return nextEntity(null);
     } else if (numAssets === 0 && entityObj.isIP) {
-      queryIncidents(entityObj, options, lookupResults, nextEntity, cb);
+      queryTable(entityObj, options, lookupResults, nextEntity, cb);
     } else {
       const result = {
         summary: ['Assets: ' + numAssets],
         details: { assetData }
       };
       if (entityObj.isIP) {
-        queryIncidents(entityObj, options, lookupResults, nextEntity, cb, result);
+        queryTable(entityObj, options, lookupResults, nextEntity, cb, result);
       } else {
         lookupResults.push({
           entity: entityObj,
@@ -264,7 +275,6 @@ function queryKnowledgeBase(entityObj, options, lookupResults, nextEntity, cb) {
         }
       );
     }
-    Logger.trace({ body }, 'Checking body from request options');
 
     let knowledgeBaseData = body.records || [];
     let numAssets = knowledgeBaseData.length;
@@ -300,6 +310,10 @@ function getServiceNowObjectType(entityObj) {
   if (entityObj.type === 'custom') {
     if (entityObj.types.indexOf('custom.incident') >= 0) {
       return 'incident';
+    } else if (entityObj.types.indexOf('custom.request') >= 0) {
+      return 'sc_request';
+    } else if (entityObj.types.indexOf('custom.requestedItem') >= 0) {
+      return 'sc_req_item';
     } else {
       return 'change_request';
     }
@@ -405,12 +419,10 @@ function parseResult(type, result, withDetails, options, cb) {
         }
       },
       (err) => {
-        Logger.trace({ parsedResult }, 'checking parsed result in the function');
         cb(err, parsedResult);
       }
     );
   } else {
-    Logger.trace({ parsedResult }, 'checking parsed result outside the function');
     cb(null, parsedResult);
   }
 }
@@ -506,6 +518,12 @@ function getQueries(entityObj, options) {
   } else if (entityObj.types.indexOf('custom.incident') > -1) {
     result.table = 'incident';
     result.query = `number=${entityObj.value}`;
+  } else if (entityObj.types.indexOf('custom.request') > -1) {
+    result.table = 'sc_request';
+    result.query = `number=${entityObj.value}`;
+  } else if (entityObj.types.indexOf('custom.requestedItem') > -1) {
+    result.table = 'sc_req_item';
+    result.query = `number=${entityObj.value}`;
   }
 
   return result;
@@ -521,7 +539,6 @@ function onDetails(lookupObject, options, cb) {
       if (err) {
         return cb(err, lookupObject.data);
       } else {
-        Logger.debug('onDetails', { results: lookupObject.data.details.results });
         cb(null, lookupObject.data);
       }
     }

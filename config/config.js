@@ -37,6 +37,14 @@ module.exports = {
     {
       key: 'change',
       regex: /CHG[0-9]{7,}/
+    },
+    {
+      key: 'request',
+      regex: /REQ[0-9]{7,}/
+    },
+    {
+      key: 'requestedItem',
+      regex: /RITM[0-9]{7,}/
     }
   ],
   /**
