@@ -22,6 +22,10 @@ The username of the Service Now user you want the integration to authenticate as
 ### Password
 The password for the provided username you want the integration to authenticate as.
 
+### API Key
+The API Key used to access ServiceNows Rest API.  If this is being used, then you will not need to use a Username and Password. This API Key will be prioritized over the username password combination. For more information, checkout [This Link Here](https://developer.servicenow.com/dev.do#!/learn/learning-plans/paris/servicenow_application_developer/app_store_learnv2_rest_paris_creating_credentials).
+
+
 ### Search By String
 This will toggle whether or not to search the ServiceNow's Asset Table with strings found in your channels.
 
