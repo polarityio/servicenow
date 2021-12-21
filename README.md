@@ -22,10 +22,6 @@ The username of the Service Now user you want the integration to authenticate as
 ### Password
 The password for the provided username you want the integration to authenticate as.
 
-### API Key
-The API Key used to access ServiceNows Rest API.  If this is being used, then you will not need to use a Username and Password. This API Key will be prioritized over the username password combination. For more information, checkout [This Link Here](https://developer.servicenow.com/dev.do#!/learn/learning-plans/paris/servicenow_application_developer/app_store_learnv2_rest_paris_creating_credentials).
-
-
 ### Search By String
 This will toggle whether or not to search the ServiceNow's Asset Table with strings found in your channels.
 
@@ -38,7 +34,7 @@ A comma separated list of fields to lookup on IP matches. See below for use.
 ## IP Lookups
 Because ServiceNow is often customized to fit specific needs, Polarity's ServiceNow Integration offers the ability to look up IPv4 matches on custom Incident and Asset fields. Simply add a comma separated list of custom fields to the `Custom Fields` integration option, and when Polarity recognizes an IP address, it will look up the address in the custom fields you listed and display the results.  To determine what value you should put in this field your can reference our guide [**Here**](./HowToFindCustomFields.md) using the dashboard, or you can use the ServiceNow REST API Explorer to examine an incident and look for the custom field on the response object. They are usually prepended with a `u_` and then the name of the custom field, in lower case, underscore (`_`) separated.
 
-|![image](./example-custom-field.png)
+|![image](./assets/example-custom-field.png)
 |---|
 |*Custom Field Example*|
 

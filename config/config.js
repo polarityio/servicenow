@@ -135,20 +135,6 @@ module.exports = {
       adminOnly: false
     },
     {
-      key: 'apiKey',
-      name: 'API Key',
-      description:
-        'The API Key used to access ServiceNows Rest API.  If this is being used, then you ' +
-        'will not need to use a Username and Password. This API Key will be prioritized ' +
-        'over the username password combination. For more information, checkout this ' +
-        'link here: https://developer.servicenow.com/dev.do#!/learn/learning-plans/paris/' +
-        'servicenow_application_developer/app_store_learnv2_rest_paris_creating_credentials',
-      default: '',
-      type: 'password',
-      userCanEdit: true,
-      adminOnly: false
-    },
-    {
       key: 'shouldSearchString',
       name: 'Search By String',
       description:
