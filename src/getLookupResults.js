@@ -2,7 +2,7 @@ const fp = require('lodash/fp');
 
 const { splitOutIgnoredIps } = require('./dataTransformations');
 const createLookupResults = require('./createLookupResults');
-const { QUERY_FUNCTION_BY_TYPE } = require('./constants');
+const { QUERY_FUNCTION_BY_TYPE, getQueryFunctionType } = require('./constants');
 
 const getLookupResults = async (entities, options, requestWithDefaults, Logger) => {
 
@@ -28,20 +28,16 @@ const _getFoundEntities = async (
 ) =>
   Promise.all(
     fp.map(async (entity) => {
-      const queryFunction = QUERY_FUNCTION_BY_TYPE[getType(entity, options)];
+      if (entity.type === 'string' && !options.shouldSearchString)
+        return { entity, results: {} };
+
+      const queryFunction = QUERY_FUNCTION_BY_TYPE[getQueryFunctionType(entity)];
       
       const result = await queryFunction(entity, options, requestWithDefaults, Logger);
 
       return { entity, result };
     }, entitiesPartition)
   );
-
-const getType = ({ type, types }, { shouldSearchString }) => 
-  type === 'custom' && types.indexOf('custom.knowledgeBase') >= 0 
-    ? 'knowledgeBase' :
-  type === 'string' && !shouldSearchString 
-    ? 'temporarilyIgnore' :
-  type
 
 module.exports = {
   getLookupResults

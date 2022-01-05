@@ -1,4 +1,4 @@
-const { flow, split, trim, join, getOr, first, last, size } = require('lodash/fp');
+const { flow, split, getOr, first, last, size } = require('lodash/fp');
 const {
   LAYOUT_MAP,
   DEFAULT_TABLE_BY_TYPE,
@@ -51,7 +51,7 @@ const getQueries = (entity, options) => flow(getType, (type) => ({
     query: DEFAULT_QUERY_BY_TYPE[type](entity, options)
   }))(entity)
 
-
+// Always uses the specific custom type
 const getType = ({ type, types }) =>
   type === 'custom' ? flow(first, split('.'), last)(types) : type;
 

@@ -1,18 +1,6 @@
-const {
-  flow,
-  map,
-  get,
-  size,
-  __,
-  concat,
-  uniq,
-  mapValues,
-  some,
-  identity,
-  compact
-} = require('lodash/fp');
+const { flow, map, size, mapValues, some, identity } = require('lodash/fp');
 
-const { SUMMARY_PROPERTIES_BY_TYPE } = require('./constants');
+const { CREATE_SUMMARY_TAGS_BY_TYPE, getSummaryType } = require('./constants');
 
 const createLookupResults = (foundEntities, options, Logger) =>
   map(({ entity, result }) => {
@@ -35,39 +23,18 @@ const createLookupResults = (foundEntities, options, Logger) =>
     return lookupResult;
   }, foundEntities);
 
-const createSummary = (entity, { assetData, knowledgeBaseData, tableQueryData }) => {
-  const tableQueryDataSummaryTags = flow(
-    flatMap((tableQueryDataResult) =>
-      flow(
-        get(entity.type),
-        map(get(__, tableQueryDataResult)),
-        concat(
-          !tableQueryDataResult.active
-            ? []
-            : tableQueryDataResult.active === 'true'
-            ? 'active'
-            : 'inactive'
-        )
-      )(SUMMARY_PROPERTIES_BY_TYPE)
-    ),
-    compact,
-    uniq
-  )(tableQueryData);
+const createSummary = (entity, result) => {
+  const type = getSummaryType(entity);
 
-  return []
-    .concat(size(assetData) ? `Assets: ${size(assetData)}` : [])
-    .concat(
-      size(knowledgeBaseData)
-        ? `Knowledge Base Documents: ${size(knowledgeBaseData)}`
-        : []
-    )
-    .concat(tableQueryDataSummaryTags);
+  const createSummaryTagFunction = CREATE_SUMMARY_TAGS_BY_TYPE[type];
+
+  return createSummaryTagFunction(result);
 };
 
-const formatQueryResult = (results) => {
-  const resultsNotEmpty = flow(mapValues(size), some(identity))(results);
+const formatQueryResult = (result) => {
+  const resultNotEmpty = flow(mapValues(size), some(identity))(result);
 
-  return resultsNotEmpty && results;
+  return resultNotEmpty && result;
 };
 
 module.exports = createLookupResults;

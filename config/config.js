@@ -24,7 +24,7 @@ module.exports = {
    */
   description:
     'ServiceNow automates and streamlines work and helps create great employee and customer experiences.',
-  entityTypes: ['ipv4', 'email', 'domain', 'string'],
+  entityTypes: ['IPv4', 'email', 'domain', 'string'],
   customTypes: [
     {
       key: 'incident',
@@ -157,7 +157,8 @@ module.exports = {
     {
       key: 'customIpFields',
       name: 'Custom IPv4 Fields',
-      description: 'A comma separated list of custom fields to query IP against incidents',
+      description:
+        'A comma separated list of custom fields to query IP against incidents',
       default: '',
       type: 'text',
       userCanEdit: true,

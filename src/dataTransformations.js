@@ -1,3 +1,4 @@
+const { isEmpty } = require('lodash');
 const _ = require('lodash');
 const {
   keys,
@@ -7,7 +8,10 @@ const {
   first,
   omit,
   mapKeys,
-  reduce
+  reduce,
+  size,
+  negate,
+  curry
 } = require('lodash/fp');
 
 const { IGNORED_IPS } = require('./constants');
@@ -79,14 +83,30 @@ const transpose2DArray = reduce(
   [[], []]
 );
 
-const mapObject = async (func, obj) => {
+const or =
+  (...[func, ...funcs]) =>
+  (x) =>
+    func(x) || (funcs.length && or(...funcs)(x));
+
+const and =
+  (...[func, ...funcs]) =>
+  (x) =>
+    func(x) && (funcs.length ? and(...funcs)(x) : true);
+
+
+const mapObject = curry(async (func, obj) => {
   // func: (value, key) => [newKey, newValue], obj: { key1:value1, key2:value2 }
   // return { newKey1: newValue1, newKey2: newValue2 }
   const unzippedResults = await Promise.all(
     mapKeys(async (key) => await func(obj[key], key), obj)
   );
-  return flow(transpose2DArray, zipObject)(unzippedResults);
-};
+  return flow(
+    //TODO: Eventually will need filtering conditions for the key side of the tuples being incorrect
+    filter(and(negate(isEmpty), flow(size, eq(2)))),
+    transpose2DArray,
+    zipObject
+  )(unzippedResults);
+});
 
 
 module.exports = {

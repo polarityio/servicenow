@@ -4,21 +4,220 @@ const {
   get,
   join,
   mapKeys,
-  zipObject,
   compact,
-  reduce
+  reduce,
+  size,
+  __,
+  concat,
+  uniq,
+  merge
 } = require('lodash/fp');
+
+const { entityTypes, customTypes } = require('../config/config');
+
+const { mapObject } = require('./dataTransformations');
 
 const queryAssets = require('./querying/queryAssets');
 const queryKnowledgeBase = require('./querying/queryKnowledgeBase');
 const queryDefaultTable = require('./querying/queryDefaultTable');
-const transpose2DArray = reduce(
-  (agg, [key, value]) => [
-    [...agg[0], key],
-    [...agg[1], value]
-  ],
-  [[], []]
+
+//TODO: merge with standar object and do this for custom types
+const DEFAULT_MAPPING_OBJECT = {
+  customQueryFunction: queryDefaultTable,
+  customQueryTableName: 'incidents',
+  createCustomTableQuery: numberTableQueryString,
+  createSummaryTags: getTableQueryDataSummaryTags
+};
+
+const DEFAULT_STANDARD_MAPPING = reduce(
+  (agg, entityType) => ({ ...agg, [entityType]: DEFAULT_MAPPING_OBJECT }),
+  {},
+  entityTypes
 );
+
+const DEFAULT_CUSTOM_MAPPING = flow(
+  map(get('key')),
+  reduce((agg, entityType) => ({ ...agg, [entityType]: DEFAULT_MAPPING_OBJECT }), {
+    custom: DEFAULT_MAPPING_OBJECT
+  })
+)(customTypes);
+
+
+// TODO: Things to Add
+// mapping layout and property maps by type
+/**
+ * TODO:
+ * change do comments and variable names to make sense
+ * 
+ */
+const ENTITY_TYPE_BASED_MAPPING = {
+  /**
+   * [result of entity.type check]: { // This object that describes querying and formatting functionality for this entity type
+   *   customQueryFunction: [optional, default = queryDefaultTable]
+   *     async (entity, options, requestWithDefaults, Logger) => ({
+   *       ...Query code
+   *       returns {
+   *         [unique key used in the details object to access query data]:
+   *           data to go into the details object in the lookup results, and is passed into createSummaryTags
+   *       }
+   *     }), check out use in ./getLookupResults for more
+   *   NOTE: It is recommended you create this function in the ./querying folder and import it here.
+   *
+   *   customQueryTableName: [optional, default = "incidents"]
+   *     "String used to specify the table name for the Table Query"
+   *      NOTE: Omit this key if you use a customQueryFunction that does not execute queryDefaultTable.
+   *   createCustomTableQuery: [optional, default = numberTableQueryString]
+   *     (entity, options) => "String used to specify the query string for the Table Query"
+   *      NOTE: Omit this key if you use a customQueryFunction that does not execute queryDefaultTable.
+   *   tableQuerySummaryTagPaths: [optional]
+   *     ["List of string paths of properties you would like to display from Table Query results"]
+   *      NOTE: Omit this key if you use a customQueryFunction that does not execute queryDefaultTable.
+   *        Or if there are no summary tags needed for this entity type
+   *
+   *   createSummaryTags: [optional, default = getTableQueryDataSummaryTags]
+   *     (results) => {
+   *       return ["Summary Tags generated from results for this entity type"];
+   *     }
+   *     results is the result object generated in the query function
+   * }
+   * 
+   * NOTE: If you would like to just use the defaults for an entity type, it can just be omitted from this object.
+   */
+  IPv4: {
+    customQueryFunction: async (entity, options, requestWithDefaults, Logger) => ({
+      ...(await queryAssets(entity, options, requestWithDefaults, Logger)),
+      ...(await queryDefaultTable(entity, options, requestWithDefaults, Logger))
+    }),
+    createCustomTableQuery: ({ value }, { customIpFields }) =>
+      flow(
+        split(','),
+        map((field) => `${trim(field)}=${value}`),
+        join('^NQ')
+      )(customIpFields),
+
+    tableQuerySummaryTagPaths: ['number'],
+    createSummaryTags: (results) =>
+      getTableQueryDataSummaryTags(results).concat(getTotalAssetSummaryTag(results))
+  },
+  domain: {
+    customQueryFunction: queryAssets,
+    createSummaryTags: getTotalAssetSummaryTag
+  },
+  string: {
+    customQueryFunction: queryAssets,
+    createSummaryTags: getTotalAssetSummaryTag
+  },
+  email: {
+    customQueryTableName: 'sys_user',
+    createCustomTableQuery: ({ value }) => `email=${value}`,
+    tableQuerySummaryTagPaths: ['name']
+  }
+};
+
+const CUSTOM_ENTITY_TYPE_BASED_MAPPING = {
+  /**
+   * Custom Types work the same as standard entity types with the added stipulation that
+   *   properties in "custom" get passed along to to all specific custom types, but can
+   *   be overridden if specified on the individual custom type level.
+   * 
+   * NOTE: If you would like to just use the defaults for an entity type, it can just be omitted from this object.
+   */
+  // All Custom Types
+  custom: {
+    tableQuerySummaryTagPaths: ['sys_class_name', 'category', 'phase']
+  },
+
+  // Specific Custom Types
+  knowledgeBase: {
+    customQueryFunction: queryKnowledgeBase,
+    createSummaryTags: getTotalKbDocsSummaryTag
+  },
+
+  change: {
+    customQueryTableName: 'change_request'
+  },
+  request: {
+    customQueryTableName: 'sc_request'
+  },
+  requestedItem: {
+    customQueryTableName: 'sc_req_item'
+  }
+};
+
+const getCustomTypesWithKey = (key) =>
+  flow(
+    omit('custom'),
+    mapKeys(
+      (customEntityType) =>
+        get([customEntityType, key], CUSTOM_ENTITY_TYPE_BASED_MAPPING) && customEntityType
+    ),
+    compact
+  )(CUSTOM_ENTITY_TYPE_BASED_MAPPING);
+
+const customEntityTypesWithCustomQueryFunction = getCustomTypesWithKey('createSummaryTags') 
+const customEntityTypesWithCustomTagCreation = getCustomTypesWithKey('createSummaryTags') 
+
+const createTypeCheckFunction =
+  (customEntityTypesWithCustomFunctionality) =>
+  ({ type, types }) =>
+    size(customEntityTypesWithCustomFunctionality)
+      ? reduce(
+          (result, customType) =>
+            type === 'custom' && types.indexOf(`custom.${customType}`) >= 0
+              ? customType
+              : result,
+          type,
+          customEntityTypesWithCustomFunctionality
+        )
+      : type;
+
+const getQueryFunctionType = createTypeCheckFunction(customEntityTypesWithCustomQueryFunction);
+const getSummaryType = createTypeCheckFunction(customEntityTypesWithCustomTagCreation);
+
+const asdf = {
+  ...merge(DEFAULT_STANDARD_MAPPING, ENTITY_TYPE_BASED_MAPPING),
+  ...merge(DEFAULT_CUSTOM_MAPPING, CUSTOM_ENTITY_TYPE_BASED_MAPPING)
+};
+
+//TODO: make comments explaining this if you wanted to add a custom key
+const getKeyFromEntityTypeMapping = (typeMappingPropertyPath) => mapObject((typeMappingObj, type)=> {
+  const propertyValueForThisType = get(typeMappingPropertyPath, typeMappingObj);
+  return !!propertyValueForThisType && [type, propertyValueForThisType];
+}, asdf)
+
+const QUERY_FUNCTION_BY_TYPE = getKeyFromEntityTypeMapping('customQueryFunction');
+const DEFAULT_TABLE_BY_TYPE = getKeyFromEntityTypeMapping('customQueryTableName');
+const DEFAULT_QUERY_BY_TYPE = getKeyFromEntityTypeMapping('customQueryTableName');
+const TABLE_QUERY_SUMMARY_TAG_PATHS = getKeyFromEntityTypeMapping('tableQuerySummaryTagPaths');
+const CREATE_SUMMARY_TAGS_BY_TYPE = getKeyFromEntityTypeMapping('createSummaryTags');
+
+const getTableQueryDataSummaryTags = flow(
+  get('tableQueryData'),
+  flatMap((tableQueryDataResult) =>
+    flow(
+      get(entity.type),
+      map(get(__, tableQueryDataResult)),
+      concat(
+        !tableQueryDataResult.active
+          ? []
+          : tableQueryDataResult.active === 'true'
+          ? 'active'
+          : 'inactive'
+      )
+    )(TABLE_QUERY_SUMMARY_TAG_PATHS)
+  ),
+  compact,
+  uniq
+);
+
+const getTotalAssetSummaryTag = ({ assetData }) =>
+  size(assetData) ? `Assets: ${size(assetData)}` : [];
+
+const getTotalKbDocsSummaryTag = ({ knowledgeBaseData }) =>
+  size(knowledgeBaseData) ? `Knowledge Base Documents: ${size(knowledgeBaseData)}` : [];
+
+
+
 
 const IGNORED_IPS = new Set(['127.0.0.1', '255.255.255.255', '0.0.0.0']);
 const SUCCESSFUL_ROUNDED_REQUEST_STATUS_CODES = [200];
@@ -87,131 +286,6 @@ const PROPERTY_MAP = {
   }
 };
 
-// TODO: Things to Add
-// mapping summary tag creation logic by type. see createLookupResults.ls createSummary for reference
-// mapping layout and property maps by type
-
-const ENTITY_TYPE_BASED_MAPPING = {
-  /**
-   * [Key For Type Check To Match On]: {
-   *   queryFunction: async (entity, options, requestWithDefaults, Logger) => ({
-   *     returns data to go into the details object in the lookup results
-   *   }), check out ./getLookupResults for use
-   *   defaultQueryTable: table to query on.  check out ./querying/queryDefaultTable.js for use
-   *   defaultTableQuery (entity, options) => returns string query to use in default table query.  check out ./querying/queryDefaultTable.js for use
-   *   summaryProperties: ['string of property path in defaultTableQuery result to add to summary tags']
-   * }
-   */
-  IPv4: {
-    queryFunction: async (entity, options, requestWithDefaults, Logger) => ({
-      ...(await queryAssets(entity, options, requestWithDefaults, Logger)),
-      ...(await queryDefaultTable(entity, options, requestWithDefaults, Logger))
-    }),
-    defaultQueryTable: 'incident',
-    defaultTableQuery: ({ value }, { customIpFields }) =>
-      flow(
-        split(','),
-        map((field) => `${trim(field)}=${value}`),
-        join('^NQ')
-      )(customIpFields),
-    summaryProperties: ['number']
-  },
-  domain: {
-    queryFunction: queryAssets,
-    defaultQueryTable: 'incident',
-    defaultTableQuery: numberTableQueryString,
-  },
-  string: {
-    queryFunction: queryAssets,
-    defaultQueryTable: 'incident',
-    defaultTableQuery: numberTableQueryString,
-  },
-  email: {
-    queryFunction: queryDefaultTable,
-    defaultQueryTable: 'sys_user',
-    defaultTableQuery: ({ value }) => `email=${value}`,
-    summaryProperties: ['name']
-  },
-  custom: {
-    queryFunction: queryDefaultTable,
-    summaryProperties: ['sys_class_name', 'category', 'phase']
-  },
-
-  // Specific Custom Types
-  knowledgeBase: {
-    queryFunction: queryKnowledgeBase,
-    defaultQueryTable: 'incident',
-    defaultTableQuery: numberTableQueryString
-  },
-
-  incident: {
-    defaultTableQuery: numberTableQueryString,
-    defaultQueryTable: 'incident'
-  },
-  change: {
-    defaultTableQuery: numberTableQueryString,
-    defaultQueryTable: 'change_request'
-  },
-  request: {
-    defaultTableQuery: numberTableQueryString,
-    defaultQueryTable: 'sc_request'
-  },
-  requestedItem: {
-    defaultTableQuery: numberTableQueryString,
-    defaultQueryTable: 'sc_req_item'
-  },
-
-  // MISC
-  temporarilyIgnore: {
-    queryFunction: () => {}
-  }
-};
-
- /**
-   * key: key found inside of each type mapping.  For example queryFunction
-   * return {
-   *    [type for each mapping object that contains the key]: the value of the key for this type
-   * }
-   * 
-   * Example: 
-   * if key === 'defaultQueryTable' then output will be
-   * {
-      IPv4: 'incident',
-      domain: 'incident',
-      string: 'incident',
-      email: 'sys_user',
-      knowledgeBase: 'incident',
-      incident: 'incident',
-      change: 'change_request',
-      request: 'sc_request',
-      requestedItem: 'sc_req_item'
-    };
-   * if key === 'summaryProperties' then output will be
-   * {
-      IPv4: ['number'],
-      email: ['name'],
-      custom: ['sys_class_name', 'category', 'phase']
-    };
-   */
-
-const getKeyFromEntityTypeMapping = (key) =>
-  flow(
-    mapKeys((type) => {
-      const keysValue = get([type, key], ENTITY_TYPE_BASED_MAPPING);
-      return !!keysValue && [type, keysValue];
-    }),
-    compact,
-    (x) => transpose2DArray(x),
-    zipObject
-  )(ENTITY_TYPE_BASED_MAPPING);
-
-const QUERY_FUNCTION_BY_TYPE = getKeyFromEntityTypeMapping('queryFunction');
-const DEFAULT_TABLE_BY_TYPE = getKeyFromEntityTypeMapping('defaultQueryTable');
-const DEFAULT_QUERY_BY_TYPE = getKeyFromEntityTypeMapping('defaultTableQuery');
-const SUMMARY_PROPERTIES_BY_TYPE = getKeyFromEntityTypeMapping('summaryProperties');
-
-
-
 module.exports = {
   IGNORED_IPS,
   LAYOUT_MAP,
@@ -220,5 +294,8 @@ module.exports = {
   QUERY_FUNCTION_BY_TYPE,
   DEFAULT_TABLE_BY_TYPE,
   DEFAULT_QUERY_BY_TYPE,
-  SUMMARY_PROPERTIES_BY_TYPE
+  SUMMARY_PROPERTIES_BY_TYPE,
+  CREATE_SUMMARY_TAGS_BY_TYPE,
+  getSummaryType,
+  getQueryFunctionType
 };
