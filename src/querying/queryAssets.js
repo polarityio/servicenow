@@ -1,4 +1,5 @@
 const { flow, get, split, trim, join, getOr, size } = require('lodash/fp');
+const { parseErrorToReadableJSON } = require('../dataTransformations');
 
 const queryAssets = async (entity, options, requestWithDefaults, Logger) => {
   try {
@@ -22,7 +23,7 @@ const queryAssets = async (entity, options, requestWithDefaults, Logger) => {
 
     return { assetsData };
   } catch (error) {
-    const err = JSON.parse(JSON.stringify(error, Object.getOwnPropertyNames(error)));
+    const err = parseErrorToReadableJSON(error);
     Logger.error(
       {
         detail: 'Failed to Query Assets',

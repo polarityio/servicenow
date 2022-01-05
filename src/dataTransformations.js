@@ -108,6 +108,9 @@ const mapObject = curry(async (func, obj) => {
   )(unzippedResults);
 });
 
+const parseErrorToReadableJSON = (error) =>
+  JSON.parse(JSON.stringify(error, Object.getOwnPropertyNames(error)));
+
 
 module.exports = {
   getKeys,
@@ -116,5 +119,6 @@ module.exports = {
   objectPromiseAll,
   asyncObjectReduce,
   mapObject,
-  transpose2DArray
+  transpose2DArray,
+  parseErrorToReadableJSON
 };

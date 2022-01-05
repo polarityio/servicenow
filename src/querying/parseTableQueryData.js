@@ -1,6 +1,7 @@
 const { map } = require('lodash/fp');
 const { mapObject } = require('../dataTransformations');
 const { PROPERTY_MAP } = require('../constants');
+const { parseErrorToReadableJSON } = require('../dataTransformations');
 
 const parseTableQueryData = async (
   results,
@@ -49,7 +50,7 @@ const parseTableQueryRow = (type, options, requestWithDefaults) => async (result
           : parsedResult
       ];
     } catch (error) {
-      const err = JSON.parse(JSON.stringify(error, Object.getOwnPropertyNames(error)));
+      const err = parseErrorToReadableJSON(error);
       Logger.error(
         {
           detail: 'Failed to Parse Result',

@@ -1,9 +1,8 @@
 'use strict';
-const fp = require('lodash/fp');
-
 const validateOptions = require('./src/validateOptions');
 const createRequestWithDefaults = require('./src/createRequestWithDefaults');
 const parseTableQueryData = require('./src/querying/parseTableQueryData');
+const { parseErrorToReadableJSON } = require('./src/dataTransformations');
 
 const { getLookupResults } = require('./src/getLookupResults');
 const { size } = require('lodash/fp');
@@ -23,7 +22,7 @@ const doLookup = async (entities, options, cb) => {
   try {
     lookupResults = await getLookupResults(entities, options, requestWithDefaults, Logger);
   } catch (error) {
-    const err = JSON.parse(JSON.stringify(error, Object.getOwnPropertyNames(error)));
+    const err = parseErrorToReadableJSON(error)
     Logger.error({ error, formattedError: err }, 'Get Lookup Results Failed');
     return cb({ detail: error.message || 'Command Failed', err });
   }

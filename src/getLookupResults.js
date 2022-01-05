@@ -1,14 +1,25 @@
-const fp = require('lodash/fp');
+const { map, flow, first, split, last } = require('lodash/fp');
 
 const { splitOutIgnoredIps } = require('./dataTransformations');
+
+const { queryEntityByType } = require('./entityTypeToFunctionalityMapping/index');
+
 const createLookupResults = require('./createLookupResults');
-const { QUERY_FUNCTION_BY_TYPE, getQueryFunctionType } = require('./constants');
+
 
 const getLookupResults = async (entities, options, requestWithDefaults, Logger) => {
+  const entitiesWithCustomTypesSpecified = map(
+    ({ type, types, ...entity }) => ({
+      ...entity,
+      type: type === 'custom' ? flow(first, split('.'), last)(types) : type
+    }),
+    entities
+  );
+  const { entitiesPartition, ignoredIpLookupResults } = splitOutIgnoredIps(
+    entitiesWithCustomTypesSpecified
+  );
 
-  const { entitiesPartition, ignoredIpLookupResults } = splitOutIgnoredIps(entities);
-
-  const foundEntities = await _getFoundEntities(
+  const foundEntities = await _getEntityResults(
     entitiesPartition,
     options,
     requestWithDefaults,
@@ -20,20 +31,18 @@ const getLookupResults = async (entities, options, requestWithDefaults, Logger) 
   return lookupResults.concat(ignoredIpLookupResults);
 };
 
-const _getFoundEntities = async (
+const _getEntityResults = async (
   entitiesPartition,
   options,
   requestWithDefaults,
   Logger
 ) =>
   Promise.all(
-    fp.map(async (entity) => {
+    map(async (entity) => {
       if (entity.type === 'string' && !options.shouldSearchString)
         return { entity, results: {} };
 
-      const queryFunction = QUERY_FUNCTION_BY_TYPE[getQueryFunctionType(entity)];
-      
-      const result = await queryFunction(entity, options, requestWithDefaults, Logger);
+      const result = await queryEntityByType(entity, options, requestWithDefaults, Logger);
 
       return { entity, result };
     }, entitiesPartition)

@@ -1,4 +1,5 @@
 const { getOr, size } = require('lodash/fp');
+const { parseErrorToReadableJSON } = require('../dataTransformations');
 
 const queryKnowledgeBase = async (entity, options, requestWithDefaults, Logger) => {
   try {
@@ -23,7 +24,7 @@ const queryKnowledgeBase = async (entity, options, requestWithDefaults, Logger) 
       )
     };
   } catch (error) {
-    const err = JSON.parse(JSON.stringify(error, Object.getOwnPropertyNames(error)));
+    const err = parseErrorToReadableJSON(error);
     Logger.error(
       {
         detail: 'Failed to Query Knowledge Base',
