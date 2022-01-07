@@ -1,11 +1,13 @@
 'use strict';
+
+
 const validateOptions = require('./src/validateOptions');
 const createRequestWithDefaults = require('./src/createRequestWithDefaults');
 const parseTableQueryData = require('./src/querying/parseTableQueryData');
 const { parseErrorToReadableJSON } = require('./src/dataTransformations');
 
 const { getLookupResults } = require('./src/getLookupResults');
-const { size } = require('lodash/fp');
+const { size, get } = require('lodash/fp');
 
 let Logger;
 let requestWithDefaults;
@@ -33,15 +35,6 @@ const doLookup = async (entities, options, cb) => {
 
 
 const onDetails = async (lookupObject, options, cb) => {
-  const tableQueryData = get('data.details.tableQueryData', lookupObject);
-  if (size(tableQueryData)) {
-    lookupObject.data.details.tableQueryData = await parseTableQueryData(
-      tableQueryData,
-      get('data.details.serviceNowObjectType', lookupObject),
-      options,
-      requestWithDefaults
-    );
-  }
   
   return cb(null, lookupObject.data);
 };

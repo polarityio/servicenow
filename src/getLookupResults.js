@@ -2,10 +2,9 @@ const { map, flow, first, split, last } = require('lodash/fp');
 
 const { splitOutIgnoredIps } = require('./dataTransformations');
 
-const { queryEntityByType } = require('./entityTypeToFunctionalityMapping/index');
+const { queryEntityByType } = require('./functionalityByEntityType/index');
 
 const createLookupResults = require('./createLookupResults');
-
 
 const getLookupResults = async (entities, options, requestWithDefaults, Logger) => {
   const entitiesWithCustomTypesSpecified = map(
@@ -15,23 +14,24 @@ const getLookupResults = async (entities, options, requestWithDefaults, Logger) 
     }),
     entities
   );
+
   const { entitiesPartition, ignoredIpLookupResults } = splitOutIgnoredIps(
     entitiesWithCustomTypesSpecified
   );
-
-  const foundEntities = await _getEntityResults(
+  
+  const entitiesResults = await _getEntitiesResults(
     entitiesPartition,
     options,
     requestWithDefaults,
     Logger
   );
 
-  const lookupResults = createLookupResults(foundEntities, options, Logger);
+  const lookupResults = createLookupResults(entitiesResults, options, Logger);
 
   return lookupResults.concat(ignoredIpLookupResults);
 };
 
-const _getEntityResults = async (
+const _getEntitiesResults = async (
   entitiesPartition,
   options,
   requestWithDefaults,
@@ -42,7 +42,12 @@ const _getEntityResults = async (
       if (entity.type === 'string' && !options.shouldSearchString)
         return { entity, results: {} };
 
-      const result = await queryEntityByType(entity, options, requestWithDefaults, Logger);
+      const result = await queryEntityByType(
+        entity,
+        options,
+        requestWithDefaults,
+        Logger
+      );
 
       return { entity, result };
     }, entitiesPartition)

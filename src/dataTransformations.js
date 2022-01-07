@@ -1,17 +1,19 @@
-const { isEmpty } = require('lodash');
 const _ = require('lodash');
 const {
+  flow,
   keys,
   values,
   zipObject,
   map,
   first,
   omit,
-  mapKeys,
   reduce,
   size,
   negate,
-  curry
+  curry,
+  filter,
+  eq,
+  isEmpty
 } = require('lodash/fp');
 
 const { IGNORED_IPS } = require('./constants');
@@ -93,24 +95,36 @@ const and =
   (x) =>
     func(x) && (funcs.length ? and(...funcs)(x) : true);
 
+// func: (value, key) => [newKey, newValue], obj: { key1:value1, key2:value2 }
+// return { newKey1: newValue1, newKey2: newValue2 }
+const mapObject = curry((func, obj) =>
+  flow(
+    //TODO: Eventually will need filtering conditions for the key side of the tuples being incorrect
+    Object.entries,
+    map(([key, value]) => func(value, key)),
+    filter(and(negate(isEmpty), flow(size, eq(2)))),
+    transpose2DArray,
+    ([keys, values]) => zipObject(keys, values)
+  )(obj)
+);
 
-const mapObject = curry(async (func, obj) => {
+const mapObjectAsync = curry(async (func, obj) => {
   // func: (value, key) => [newKey, newValue], obj: { key1:value1, key2:value2 }
   // return { newKey1: newValue1, newKey2: newValue2 }
   const unzippedResults = await Promise.all(
-    mapKeys(async (key) => await func(obj[key], key), obj)
+    map(async ([key, value]) => await func(value, key), Object.entries(obj))
   );
+
   return flow(
     //TODO: Eventually will need filtering conditions for the key side of the tuples being incorrect
     filter(and(negate(isEmpty), flow(size, eq(2)))),
     transpose2DArray,
-    zipObject
+    ([keys, values]) => zipObject(keys, values)
   )(unzippedResults);
 });
 
 const parseErrorToReadableJSON = (error) =>
   JSON.parse(JSON.stringify(error, Object.getOwnPropertyNames(error)));
-
 
 module.exports = {
   getKeys,
@@ -119,6 +133,7 @@ module.exports = {
   objectPromiseAll,
   asyncObjectReduce,
   mapObject,
+  mapObjectAsync,
   transpose2DArray,
   parseErrorToReadableJSON
 };

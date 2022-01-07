@@ -17,7 +17,8 @@ const createRequestWithDefaults = (Logger) => {
     ...(_configFieldIsValid(key) && { key: fs.readFileSync(key) }),
     ...(_configFieldIsValid(passphrase) && { passphrase }),
     ...(_configFieldIsValid(proxy) && { proxy }),
-    ...(typeof rejectUnauthorized === 'boolean' && { rejectUnauthorized })
+    ...(typeof rejectUnauthorized === 'boolean' && { rejectUnauthorized }),
+    json: true
   };
 
   const requestWithDefaults = (

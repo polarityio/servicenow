@@ -1,4 +1,4 @@
-const { flow, get, split, trim, join, getOr, size } = require('lodash/fp');
+const { flow, get, map, split, trim, join, getOr, size } = require('lodash/fp');
 const { parseErrorToReadableJSON } = require('../dataTransformations');
 
 const queryAssets = async (entity, options, requestWithDefaults, Logger) => {
@@ -21,7 +21,7 @@ const queryAssets = async (entity, options, requestWithDefaults, Logger) => {
 
     if (!size(assetsData)) return;
 
-    return { assetsData };
+    return { assetsData: assetsData };
   } catch (error) {
     const err = parseErrorToReadableJSON(error);
     Logger.error(

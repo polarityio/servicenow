@@ -1,15 +1,23 @@
-const { map, flow, join, merge } = require('lodash/fp');
+const { map, flow, join, split, trim, merge, omit, compact } = require('lodash/fp');
 
 const { mapObject } = require('../dataTransformations');
 
 const queryAssets = require('../querying/queryAssets');
 const queryKnowledgeBase = require('../querying/queryKnowledgeBase');
-const queryDefaultTable = require('../querying/queryDefaultTable');
+const queryTableData = require('../querying/queryTableData');
 
 const {
+  getTableQueryDataSummaryTags,
   getTotalAssetSummaryTag,
   getTotalKbDocsSummaryTag
 } = require('./createSummaryTagsFunctions');
+
+const {
+  assetsDisplayStructure,
+  knowledgeBaseDisplayStructure,
+  tableQueryDisplayStructure,
+  usersDisplayStructure
+} = require('../displayStructures/index');
 
 /** CUSTOM_FUNCTIONALITY_FOR_STANDARD_ENTITY_TYPES
  * This is where all the magic stems from.  This object is where can you specify custom 
@@ -22,25 +30,25 @@ const {
  *    [result of entity.type check]: { 
  *      This object that describes querying and formatting functionality for this entity type
  *      
- *      queryFunction: [optional, default = queryDefaultTable]
- *        async (entity, options, requestWithDefaults, Logger) => ({
+ *      queryFunction: [optional, default = queryTableData]
+ *        async (entity, options, requestWithDefaults, Logger) => {
  *          ...Query code
  *          returns {
  *            [unique key used in the details object to access query data]:
  *              data to go into the details object in the lookup results, and is passed into createSummaryTags
  *          }
- *        }), check out use in getLookupResults.js for more info
+ *        }, check out use in getLookupResults.js for more info
  *        NOTE: It is recommended you create this function in the ./querying folder and import it here.
  * 
  *      tableQueryTableName: [optional, default = "incidents"]
  *        "String used to specify the table name for the Table Query"
- *         NOTE: Omit this key if you use a queryFunction that does not execute queryDefaultTable.
+ *         NOTE: Omit this key if you use a queryFunction that does not execute queryTableData.
  *      tableQueryQueryString: [optional, default = numberTableQueryString]
  *        (entity, options) => "String used to specify the query string for the Table Query"
- *         NOTE: Omit this key if you use a queryFunction that does not execute queryDefaultTable.
+ *         NOTE: Omit this key if you use a queryFunction that does not execute queryTableData.
  *      tableQuerySummaryTagPaths: [optional]
  *        ["List of string paths of properties you would like to display from Table Query results"]
- *         NOTE: Omit this key if you use a queryFunction that does not execute queryDefaultTable.
+ *         NOTE: Omit this key if you use a queryFunction that does not execute queryTableData.
  *           Or if there are no summary tags needed for this entity type
  * 
  *      createSummaryTags: [optional, default = getTableQueryDataSummaryTags]
@@ -55,35 +63,52 @@ const {
  *   omitted from this object.  If you would like to understand the defaults better you 
  *   check out the DEFAULT_FUNCTIONALITY_OBJECT in defaultFunctionalityByType.js
  */
+
+// TODO write docs on displayTabNames and displayStructure,
 const CUSTOM_FUNCTIONALITY_FOR_STANDARD_ENTITY_TYPES = {
   IPv4: {
     queryFunction: async (entity, options, requestWithDefaults, Logger) => ({
       ...(await queryAssets(entity, options, requestWithDefaults, Logger)),
-      ...(await queryDefaultTable(entity, options, requestWithDefaults, Logger))
+      ...(await queryTableData(entity, options, requestWithDefaults, Logger))
     }),
     tableQueryQueryString: ({ value }, { customIpFields }) =>
+      customIpFields &&
+      typeof customIpFields === 'string' &&
+      customIpFields.length !== 0 &&
       flow(
         split(','),
+        compact,
         map((field) => `${trim(field)}=${value}`),
         join('^NQ')
       )(customIpFields),
 
     tableQuerySummaryTagPaths: ['number'],
     createSummaryTags: (results) =>
-      getTableQueryDataSummaryTags(results).concat(getTotalAssetSummaryTag(results))
+      getTableQueryDataSummaryTags(results).concat(getTotalAssetSummaryTag(results)),
+    displayTabNames: { assetData: 'Assets', tableQueryData: 'Incidents' },
+    displayStructure: {
+      assetData: assetsDisplayStructure,
+      tableQueryData: tableQueryDisplayStructure
+    }
   },
   domain: {
     queryFunction: queryAssets,
-    createSummaryTags: getTotalAssetSummaryTag
+    createSummaryTags: getTotalAssetSummaryTag,
+    displayTabNames: { assetData: 'Assets' },
+    displayStructure: { assetData: assetsDisplayStructure }
   },
   string: {
     queryFunction: queryAssets,
-    createSummaryTags: getTotalAssetSummaryTag
+    createSummaryTags: getTotalAssetSummaryTag,
+    displayTabNames: { assetData: 'Assets' },
+    displayStructure: { assetData: assetsDisplayStructure }
   },
   email: {
     tableQueryTableName: 'sys_user',
     tableQueryQueryString: ({ value }) => `email=${value}`,
-    tableQuerySummaryTagPaths: ['name']
+    tableQuerySummaryTagPaths: ['name'],
+    displayTabNames: { tableQueryData: 'Users' },
+    displayStructure: { tableQueryData: usersDisplayStructure }
   }
 };
 
@@ -107,7 +132,9 @@ const CUSTOM_FUNCTIONALITY_FOR_CUSTOM_ENTITY_TYPES = {
   // Specific Custom Types
   knowledgeBase: {
     queryFunction: queryKnowledgeBase,
-    createSummaryTags: getTotalKbDocsSummaryTag
+    createSummaryTags: getTotalKbDocsSummaryTag,
+    displayTabNames: { knowledgeBaseData: 'Knowledge Base' },
+    displayStructure: { knowledgeBaseData: knowledgeBaseDisplayStructure }
   },
 
   change: {

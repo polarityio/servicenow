@@ -66,10 +66,10 @@ module.exports = {
    */
   block: {
     component: {
-      file: './components/service-now-block.js'
+      file: './components/block.js'
     },
     template: {
-      file: './templates/service-now-block.hbs'
+      file: './templates/block.hbs'
     }
   },
   request: {
@@ -96,7 +96,7 @@ module.exports = {
     rejectUnauthorized: true
   },
   logging: {
-    level: 'info' //trace, debug, info, warn, error, fatal
+    level: 'trace' //trace, debug, info, warn, error, fatal
   },
   /**
    * Options that are displayed to the user/admin in the Polarity integration user-interface.  Should be structured
@@ -159,7 +159,7 @@ module.exports = {
       name: 'Custom IPv4 Fields',
       description:
         'A comma separated list of custom fields to query IP against incidents',
-      default: '',
+      default: 'u_ip_addr_2',
       type: 'text',
       userCanEdit: true,
       adminOnly: false

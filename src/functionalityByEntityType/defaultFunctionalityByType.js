@@ -2,17 +2,20 @@ const { map, flow, get, reduce } = require('lodash/fp');
 
 const { entityTypes, customTypes } = require('../../config/config');
 
-const queryDefaultTable = require('../querying/queryDefaultTable');
+const queryTableData = require('../querying/queryTableData');
 
 const numberTableQueryString = ({ value }) => `number=${value}`;
 
 const { getTableQueryDataSummaryTags } = require('./createSummaryTagsFunctions');
+const { tableQueryDisplayStructure } = require('../displayStructures/index');
 
 const DEFAULT_FUNCTIONALITY_OBJECT = {
-  queryFunction: queryDefaultTable,
-  tableQueryTableName: 'incidents',
+  queryFunction: queryTableData,
+  tableQueryTableName: 'incident',
   tableQueryQueryString: numberTableQueryString,
-  createSummaryTags: getTableQueryDataSummaryTags
+  createSummaryTags: getTableQueryDataSummaryTags,
+  displayTabNames: { tableQueryData: 'Table Data' },
+  displayStructure: { tableQueryData: tableQueryDisplayStructure }
 };
 
 const defaultFunctionalityForStandardEntityTypes = reduce(

@@ -1,8 +1,7 @@
-const { map, flow, get, compact, __, uniq } = require('lodash/fp');
+const { map, flatMap, flow, get, getOr, compact, __, uniq, size } = require('lodash/fp');
 const { mapObject } = require('../dataTransformations');
 
 const customFunctionalityByType = require('./customFunctionalityByType');
-
 
 // Custom Summary Creation Functions
 const getTotalAssetSummaryTag = ({ assetData }) =>
@@ -10,7 +9,6 @@ const getTotalAssetSummaryTag = ({ assetData }) =>
 
 const getTotalKbDocsSummaryTag = ({ knowledgeBaseData }) =>
   size(knowledgeBaseData) ? `Knowledge Base Documents: ${size(knowledgeBaseData)}` : [];
-
 
 const TABLE_QUERY_SUMMARY_TAG_PATHS_BY_TYPE = mapObject((typeMappingObj, type) => {
   const propertyValueForThisType = get('tableQuerySummaryTagPaths', typeMappingObj);
@@ -23,7 +21,7 @@ const getTableQueryDataSummaryTags = (result, entity) =>
     flatMap((tableQueryDataResult) => {
       const type = getTableQuerySummaryTagPathsType(entity);
       const summaryTagPathsTypeForThisType = TABLE_QUERY_SUMMARY_TAG_PATHS_BY_TYPE[type];
-      
+
       const allTableQueryPathValuesForThisResult = map(
         get(__, tableQueryDataResult),
         summaryTagPathsTypeForThisType
@@ -40,7 +38,6 @@ const getTableQueryDataSummaryTags = (result, entity) =>
     compact,
     uniq
   )(result);
-
 
 module.exports = {
   getTableQueryDataSummaryTags,
