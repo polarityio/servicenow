@@ -99,7 +99,6 @@ const and =
 // return { newKey1: newValue1, newKey2: newValue2 }
 const mapObject = curry((func, obj) =>
   flow(
-    //TODO: Eventually will need filtering conditions for the key side of the tuples being incorrect
     Object.entries,
     map(([key, value]) => func(value, key)),
     filter(and(negate(isEmpty), flow(size, eq(2)))),
@@ -116,7 +115,6 @@ const mapObjectAsync = async (func, obj) => {
   );
 
   return flow(
-    //TODO: Eventually will need filtering conditions for the key side of the tuples being incorrect
     filter(and(negate(isEmpty), flow(size, eq(2)))),
     transpose2DArray,
     ([keys, values]) => zipObject(keys, values)

@@ -14,7 +14,7 @@ const DEFAULT_FUNCTIONALITY_OBJECT = {
   tableQueryTableName: 'incident',
   tableQueryQueryString: numberTableQueryString,
   createSummaryTags: getTableQueryDataSummaryTags,
-  displayTabNames: { tableQueryData: 'Table Data' },
+  displayTabNames: { tableQueryData: 'Incidents' },
   displayStructure: { tableQueryData: tableQueryDisplayStructure }
 };
 

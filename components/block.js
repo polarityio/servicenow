@@ -9,10 +9,12 @@ polarity.export = PolarityComponent.extend({
     const tabKeys = Object.keys(this.get('displayTabNames'));
     this.set('tabKeys', tabKeys);
 
+    const details = this.get('details');
     this.set(
       'activeTab',
-      tabKeys.find((tabKey) => this.get('details')[tabKey])
+      tabKeys.find((tabKey) => details[tabKey] && details[tabKey].length)
     );
+
     this._super(...arguments);
   },
   actions: {

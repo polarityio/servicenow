@@ -30,7 +30,7 @@ const {
  *    [result of entity.type check]: { 
  *      This object that describes querying and formatting functionality for this entity type
  *      
- *      queryFunction: [optional, default = queryTableData]
+ *      queryFunction: [default = queryTableData]
  *        async (entity, options, requestWithDefaults, Logger) => {
  *          ...Query code
  *          returns {
@@ -40,31 +40,37 @@ const {
  *        }, check out use in getLookupResults.js for more info
  *        NOTE: It is recommended you create this function in the ./querying folder and import it here.
  * 
- *      tableQueryTableName: [optional, default = "incidents"]
+ *      tableQueryTableName: [default = "incidents"]
  *        "String used to specify the table name for the Table Query"
  *         NOTE: Omit this key if you use a queryFunction that does not execute queryTableData.
- *      tableQueryQueryString: [optional, default = numberTableQueryString]
+ *      tableQueryQueryString: [default = numberTableQueryString]
  *        (entity, options) => "String used to specify the query string for the Table Query"
  *         NOTE: Omit this key if you use a queryFunction that does not execute queryTableData.
- *      tableQuerySummaryTagPaths: [optional]
+ *      tableQuerySummaryTagPaths: [default = ["sys_class_name", "category"]]
  *        ["List of string paths of properties you would like to display from Table Query results"]
- *         NOTE: Omit this key if you use a queryFunction that does not execute queryTableData.
- *           Or if there are no summary tags needed for this entity type
+ *         NOTE: The defaults will always be added to your result. Also, omit this key if 
+ *         you use a queryFunction that does not execute queryTableData Or if only the 
+ *         default paths are needed.
  * 
- *      createSummaryTags: [optional, default = getTableQueryDataSummaryTags]
+ *      createSummaryTags: [default = getTableQueryDataSummaryTags]
  *        (entity, results) => {
  *          return ["Summary Tags generated from results for this entity type"];
  *        }
  *        results is the result object generated in the query function
  *        NOTE: It is recommended you add your custom functionality to createSummaryTagsFunctions.js
- *    }
- * }
+ * 
+ *      displayTabNames: [default = { tableQueryData: "Incidents" }]
+ *        { [key returned from queryFunction]: "Tab name for this query result"}
+ *      displayStructure: [default = { tableQueryData: tableQueryDisplayStructure }]
+ *        { [key returned from queryFunction]: [{displayStructure}]}
+ *        NOTE: A Display Structure shows how we format the data for the front end to display.
+ *         Look to ./displayStructures/tableQuery for reference.
+* }
  * NOTE: If you would like to just use the defaults for an entity type, it can just be 
  *   omitted from this object.  If you would like to understand the defaults better you 
  *   check out the DEFAULT_FUNCTIONALITY_OBJECT in defaultFunctionalityByType.js
  */
 
-// TODO write docs on displayTabNames and displayStructure,
 const CUSTOM_FUNCTIONALITY_FOR_STANDARD_ENTITY_TYPES = {
   IPv4: {
     queryFunction: async (entity, options, requestWithDefaults, Logger) => ({
@@ -78,13 +84,15 @@ const CUSTOM_FUNCTIONALITY_FOR_STANDARD_ENTITY_TYPES = {
       flow(
         split(','),
         compact,
-        map((field) => `${trim(field)}=${value}`),
+        map((field) => `${trim(field)}CONTAINS${value}`),
         join('^NQ')
       )(customIpFields),
 
     tableQuerySummaryTagPaths: ['number'],
-    createSummaryTags: (results) =>
-      getTableQueryDataSummaryTags(results).concat(getTotalAssetSummaryTag(results)),
+    createSummaryTags: (results, entity, Logger) =>
+      getTableQueryDataSummaryTags(results, entity, Logger).concat(
+        getTotalAssetSummaryTag(results, entity, Logger)
+      ),
     displayTabNames: { assetData: 'Assets', tableQueryData: 'Incidents' },
     displayStructure: {
       assetData: assetsDisplayStructure,
@@ -137,9 +145,6 @@ const CUSTOM_FUNCTIONALITY_FOR_CUSTOM_ENTITY_TYPES = {
     displayStructure: { knowledgeBaseData: knowledgeBaseDisplayStructure }
   },
 
-  incident: {
-    displayTabNames: { tableQueryData: 'Incidents' }
-  },
   change: {
     tableQueryTableName: 'change_request',
     displayTabNames: { tableQueryData: 'Changes' }
