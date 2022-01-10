@@ -1,5 +1,15 @@
-const { map, flatMap, flow, get, getOr, compact, __, uniq, size } = require('lodash/fp');
-const { mapObject } = require('../dataTransformations');
+const {
+  map,
+  flatMap,
+  flow,
+  get,
+  getOr,
+  compact,
+  __,
+  uniq,
+  size,
+  capitalize
+} = require('lodash/fp');
 
 const customFunctionalityByType = require('./customFunctionalityByType');
 
@@ -10,34 +20,33 @@ const getTotalAssetSummaryTag = ({ assetData }) =>
 const getTotalKbDocsSummaryTag = ({ knowledgeBaseData }) =>
   size(knowledgeBaseData) ? `Knowledge Base Documents: ${size(knowledgeBaseData)}` : [];
 
-const TABLE_QUERY_SUMMARY_TAG_PATHS_BY_TYPE = mapObject((typeMappingObj, type) => {
-  const propertyValueForThisType = get('tableQuerySummaryTagPaths', typeMappingObj);
-  return !!propertyValueForThisType && [type, propertyValueForThisType];
-}, customFunctionalityByType);
+const getTableQueryDataSummaryTags = (result, entity, Logger) => {
+  const { getTableQuerySummaryTagPathsType } = require('./index');
 
-const getTableQueryDataSummaryTags = (result, entity) =>
-  flow(
+  return flow(
     getOr([], 'tableQueryData'),
     flatMap((tableQueryDataResult) => {
-      const type = getTableQuerySummaryTagPathsType(entity);
-      const summaryTagPathsTypeForThisType = TABLE_QUERY_SUMMARY_TAG_PATHS_BY_TYPE[type];
+      const summaryTagPathsForThisType = getTableQuerySummaryTagPathsType(
+        entity.type
+      );
 
       const allTableQueryPathValuesForThisResult = map(
-        get(__, tableQueryDataResult),
-        summaryTagPathsTypeForThisType
+        flow(get(__, tableQueryDataResult), capitalize),
+        ['sys_class_name', 'category'].concat(summaryTagPathsForThisType)
       );
 
       const activityTabForThisResult = !tableQueryDataResult.active
         ? []
-        : tableQueryDataResult.active === 'true'
-        ? 'active'
-        : 'inactive';
+        : tableQueryDataResult.active
+        ? 'Active'
+        : 'Inactive';
 
       return allTableQueryPathValuesForThisResult.concat(activityTabForThisResult);
     }),
     compact,
     uniq
   )(result);
+};
 
 module.exports = {
   getTableQueryDataSummaryTags,

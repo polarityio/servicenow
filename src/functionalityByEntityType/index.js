@@ -17,10 +17,11 @@ const queryEntityByType = (entity, options, requestWithDefaults, Logger) =>
     customFunctionalityWithDefaults
   )(entity, options, requestWithDefaults, Logger);
 
-const createSummaryByType = (entity, formattedQueryResult) =>
+const createSummaryByType = (entity, formattedQueryResult, Logger) =>
   get([entity.type, 'createSummaryTags'], customFunctionalityWithDefaults)(
+    formattedQueryResult,
     entity,
-    formattedQueryResult
+    Logger
   );
 
 const getTableQueryTableNameByType = (type) =>
@@ -31,6 +32,9 @@ const getTableQueryQueryStringByType = (entity, options) =>
     entity,
     options
   );
+
+const getTableQuerySummaryTagPathsType = (type) =>
+  get([type, 'tableQuerySummaryTagPaths'], customFunctionalityWithDefaults);
 
 const getDisplayStructureByType = (type) =>
   get([type, 'displayStructure'], customFunctionalityWithDefaults);
@@ -44,5 +48,6 @@ module.exports = {
   getTableQueryTableNameByType,
   getTableQueryQueryStringByType,
   getDisplayStructureByType,
-  getDisplayTabNamesByType
+  getDisplayTabNamesByType,
+  getTableQuerySummaryTagPathsType
 };

@@ -137,14 +137,20 @@ const CUSTOM_FUNCTIONALITY_FOR_CUSTOM_ENTITY_TYPES = {
     displayStructure: { knowledgeBaseData: knowledgeBaseDisplayStructure }
   },
 
+  incident: {
+    displayTabNames: { tableQueryData: 'Incidents' }
+  },
   change: {
-    tableQueryTableName: 'change_request'
+    tableQueryTableName: 'change_request',
+    displayTabNames: { tableQueryData: 'Changes' }
   },
   request: {
-    tableQueryTableName: 'sc_request'
+    tableQueryTableName: 'sc_request',
+    displayTabNames: { tableQueryData: 'Requests' }
   },
   requestedItem: {
-    tableQueryTableName: 'sc_req_item'
+    tableQueryTableName: 'sc_req_item',
+    displayTabNames: { tableQueryData: 'Requested Items' }
   }
 };
 

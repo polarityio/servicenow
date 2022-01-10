@@ -3,11 +3,10 @@
 
 const validateOptions = require('./src/validateOptions');
 const createRequestWithDefaults = require('./src/createRequestWithDefaults');
-const parseTableQueryData = require('./src/querying/parseTableQueryData');
+const { getDisplayStructureNestedLinkData } = require('./src/displayStructures/index');
 const { parseErrorToReadableJSON } = require('./src/dataTransformations');
 
 const { getLookupResults } = require('./src/getLookupResults');
-const { size, get } = require('lodash/fp');
 
 let Logger;
 let requestWithDefaults;
@@ -35,8 +34,14 @@ const doLookup = async (entities, options, cb) => {
 
 
 const onDetails = async (lookupObject, options, cb) => {
-  
-  return cb(null, lookupObject.data);
+  const displayStructureNestedLinkData = await getDisplayStructureNestedLinkData(
+    lookupObject,
+    options,
+    requestWithDefaults,
+    Logger
+  );
+
+  return cb(null, displayStructureNestedLinkData);
 };
 module.exports = {
   startup,

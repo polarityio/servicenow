@@ -15,14 +15,15 @@ const createLookupResults = (foundEntities, options, Logger) => {
 
     const lookupResult = {
       entity,
-      data: formattedQueryResult
+      data: !!formattedQueryResult
         ? {
-            summary: createSummaryByType(entity, formattedQueryResult),
+            summary: createSummaryByType(entity, formattedQueryResult, Logger),
             details: {
               ...putResultsInDisplayStructureIgnoringMoreDataLinks(
                 entity,
                 formattedQueryResult,
-                options
+                options,
+                Logger
               ),
               displayTabNames: getDisplayTabNamesByType(entity.type)
             }

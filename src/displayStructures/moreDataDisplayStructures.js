@@ -5,14 +5,14 @@ const MORE_DATA_DISPLAY_STRUCTURE_BY_LINK_TYPE = {
     { label: 'Email', path: 'email' },
     {
       label: 'Department',
-      path: 'department',
+      path: 'department.link',
       pathIsLinkToMoreData: true,
       moreDataLinkType: 'cmn_department',
       pathToOnePropertyFromMoreDataToDisplay: 'name'
     },
     {
       label: 'Location',
-      path: 'location',
+      path: 'location.link',
       pathIsLinkToMoreData: true,
       moreDataLinkType: 'cmn_location',
       pathToOnePropertyFromMoreDataToDisplay: 'name'

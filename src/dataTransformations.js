@@ -108,7 +108,7 @@ const mapObject = curry((func, obj) =>
   )(obj)
 );
 
-const mapObjectAsync = curry(async (func, obj) => {
+const mapObjectAsync = async (func, obj) => {
   // func: (value, key) => [newKey, newValue], obj: { key1:value1, key2:value2 }
   // return { newKey1: newValue1, newKey2: newValue2 }
   const unzippedResults = await Promise.all(
@@ -121,7 +121,7 @@ const mapObjectAsync = curry(async (func, obj) => {
     transpose2DArray,
     ([keys, values]) => zipObject(keys, values)
   )(unzippedResults);
-});
+};
 
 const parseErrorToReadableJSON = (error) =>
   JSON.parse(JSON.stringify(error, Object.getOwnPropertyNames(error)));

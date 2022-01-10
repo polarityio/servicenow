@@ -1,193 +1,91 @@
-{{!-- TODO, make dynamically generated tab structure --}}
-{{#each details.tableQueryData as |result index|}}
-  {{#if (gt index 0)}}
-    <hr />
-  {{/if}}
-  {{#each details.layout as |layout index|}}
-    {{#if (get result (concat layout.path ".value"))}}
-      {{#if (eq layout.type "title")}}
-        <h1 class="p-title pl-{{layout.depth}}">
-          {{#if layout.icon}}
-            {{fa-icon layout.icon fixedWidth=true}}
-          {{/if}}
-          {{#if layout.link}}
-            <a
-              class="p-link"
-              href="{{block.userOptions.url}}/nav_to.do?uri={{get
-                result
-                (concat layout.path ".type")
-              }}.do?sys_id={{get result (concat layout.path ".sysId")}}"
-            >
-              {{get result (concat layout.path ".value")}}
-            </a>
-            {{fa-icon "external-link" class="p-link ml-1"}}
-          {{else}}
-            {{get result (concat layout.path ".value")}}
-          {{/if}}
-        </h1>
-      {{else if (eq layout.type "block")}}
-        <div class="block p-key pl-{{layout.depth}}">
-          {{get result (concat layout.path ".value")}}
-        </div>
-      {{else}}
-        <div class="pl-{{layout.depth}}">
-          <span class="p-key">{{get result (concat layout.path ".title")}}:</span>
-          <span class="p-value">{{get result (concat layout.path ".value")}}</span>
-        </div>
-      {{/if}}
+<ul class="nav nav-tabs">
+  {{#each tabKeys as |tabKey|}}
+    {{#if (get details tabKey "length")}}
+      <li class="nav-item">
+        <a
+          {{action "changeTab" tabKey}}
+          class="nav-link {{if (eq activeTab tabKey) "active"}}"
+          href="#"
+        >
+          {{get displayTabNames tabKey}}
+        </a>
+      </li>
     {{/if}}
   {{/each}}
-{{/each}}
-
-{{#each block.data.details.assetData as |result index|}}
-  {{#if (gt index 0)}}
-    <hr />
-  {{/if}}
-
-  {{#if result.asset.link}}
-    <div>
-      <span class="p-value"><a href="{{result.asset.link}}"> View Asset</a></span>
-    </div>
-  {{/if}}
-
-  {{#if result.name}}
-    <div>
-      <span class="p-key">Asset Name: </span>
-      <span class="p-value">{{result.name}}</span>
-    </div>
-  {{/if}}
-  {{#if result.subcategory}}
-    <div>
-      <span class="p-key">Asset Subcategory: </span>
-      <span class="p-value">{{result.subcategory}}</span>
-    </div>
-  {{/if}}
-  {{#if result.serial_number}}
-    <div>
-      <span class="p-key">Serial Number: </span>
-      <span class="p-value">{{result.serial_number}}</span>
-    </div>
-  {{/if}}
-  {{#if result.asset_tag}}
-    <div>
-      <span class="p-key">Asset Tag: </span>
-      <span class="p-value">{{result.asset_tag}}</span>
-    </div>
-  {{/if}}
-
-  {{#if result.delivery_date}}
-    <div>
-      <span class="p-key">Asset Delivered On: </span>
-      <span class="p-value">{{result.delivery_date}}</span>
-    </div>
-  {{/if}}
-
-  {{#if result.sys_updated_on}}
-    <div>
-      <span class="p-key">System Last Updated On: </span>
-      <span class="p-value">{{result.sys_updated_on}}</span>
-    </div>
-  {{/if}}
-
-  {{#if result.warranty_expiration}}
-    <div>
-      <span class="p-key">Asset Sub-Warrenty Expires On: </span>
-      <span class="p-value">{{result.warranty_expiration}}</span>
-    </div>
-  {{/if}}
-
-  {{#if result.os}}
-    <div>
-      <span class="p-key">Asset Operating System: </span>
-      <span class="p-value">{{result.os}}</span>
-    </div>
-  {{/if}}
-  {{#if result.delivery_date}}
-    <div>
-      <span class="p-key">Asset Delivered On: </span>
-      <span class="p-value">{{result.delivery_date}}</span>
-    </div>
-  {{/if}}
-  {{#if result.po_number}}
-    <div>
-      <span class="p-key">PO Number: </span>
-      <span class="p-value">{{result.po_number}}</span>
-    </div>
-  {{/if}}
-{{/each}}
-
-{{#each block.data.details.knowledgeBaseData as |result index|}}
-  {{#if (gt index 0)}}
-    <hr />
-  {{/if}}
-
-  {{#if result.number}}
-    <div>
-      <span class="p-key">Number: </span>
-      <span class="p-value">{{result.number}}</span>
-    </div>
-  {{/if}}
-
-  {{#if result.topic}}
-    <div>
-      <span class="p-key">Topic: </span>
-      <span class="p-value">{{result.topic}}</span>
-    </div>
-  {{/if}}
-
-  {{#if result.kb_category}}
-    <div>
-      <span class="p-key">Category: </span>
-      <span class="p-value">{{result.kb_category}}</span>
-    </div>
-  {{/if}}
-
-  {{#if result.short_description}}
-    <div>
-      <span class="p-key">Description: </span>
-      <span class="p-value">{{result.short_description}}</span>
-    </div>
-  {{/if}}
-
-  {{#if result.author}}
-    <div>
-      <span class="p-key">Author: </span>
-      <span class="p-value">{{result.author}}</span>
-    </div>
-  {{/if}}
-
-  {{#if result.sys_created_on}}
-    <div>
-      <span class="p-key">Create On: </span>
-      <span class="p-value">{{result.sys_created_on}}</span>
-    </div>
-  {{/if}}
-
-  {{#if result.sys_created_by}}
-    <div>
-      <span class="p-key">Create By: </span>
-      <span class="p-value">{{result.sys_created_by}}</span>
-    </div>
-  {{/if}}
-
-  {{#if result.sys_updated_on}}
-    <div>
-      <span class="p-key">Updated On: </span>
-      <span class="p-value">{{result.sys_updated_on}}</span>
-    </div>
-  {{/if}}
-
-  {{#if result.sys_updated_by}}
-    <div>
-      <span class="p-key">Updated By: </span>
-      <span class="p-value">{{result.sys_updated_by}}</span>
-    </div>
-  {{/if}}
-
-  {{#if result.link}}
-    <div>
-      <span class="p-value"><a href="{{result.link}}">
-          View Knowledge Base Document</a></span>
-    </div>
+</ul>
+{{#each tabKeys as |tabKey|}}
+  {{#if (eq activeTab tabKey)}}
+    {{#each (get details tabKey) as |displayField|}}
+      {{#if displayField.isTitle}}
+        {{#if (and displayField.displayLink (or displayField.value displayField.label))}}
+          <h1 class="p-title pl-{{displayField.indent}}">
+            {{#if displayField.icon}}
+              {{fa-icon displayField.icon fixedWidth=true}}
+            {{/if}}
+            <a
+              class="p-link"
+              href="{{displayField.displayLink}}"
+            >
+              {{#if displayField.capitalize}}
+                {{capitalize (or displayField.label displayField.value)}}
+              {{else}}
+                {{or displayField.label displayField.value}}
+              {{/if}}
+            </a>
+            {{fa-icon "external-link" class="p-link ml-1"}}
+          </h1>
+        {{else}}
+          <h1>
+            {{#if displayField.displayLink}}
+              <a
+                class="p-link"
+                href="{{displayField.displayLink}}"
+              >
+                {{or displayField.label displayField.value}}
+              </a>
+            {{else}}
+              {{or displayField.label displayField.value}}
+            {{/if}}
+            {{#if (and displayField.pathIsLinkToMoreData (not displayField.moreDataIsPopulated)) }}
+              {{fa-icon "spinner-third" fixedWidth=true spin=true}}
+            {{/if}}
+          </h1>
+        {{/if}}
+      {{else if displayField.isTextBlock}}
+        <div class="block p-key pl-{{displayField.indent}}">
+          {{#if displayField.capitalize}}
+            {{capitalize displayField.value}}
+          {{else}}
+            {{displayField.value}}
+          {{/if}}
+        </div>
+      {{else}}
+        <div class="pl-{{displayField.indent}}">
+          <span class="p-key">{{displayField.label}}:</span>
+          <span class="p-value">
+            {{#if displayField.isDate}}
+              {{moment-format displayField.value "MM/DD/YYYY HH:mm:ss" timeZone=timezone}}
+            {{else if displayField.displayLink}}
+              <a
+                class="p-link"
+                href="{{displayField.displayLink}}"
+              >
+              {{#if displayField.capitalize}}
+                {{capitalize displayField.value}}
+              {{else}}
+                {{displayField.value}}
+              {{/if}}
+              </a>
+            {{else}}
+              {{#if displayField.capitalize}}
+                {{capitalize displayField.value}}
+              {{else}}
+                {{displayField.value}}
+              {{/if}}
+            {{/if}}
+          </span>
+        </div>
+      {{/if}}
+    {{/each}}
   {{/if}}
 {{/each}}
