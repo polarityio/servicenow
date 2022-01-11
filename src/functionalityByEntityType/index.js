@@ -1,15 +1,36 @@
-const { get, merge } = require('lodash/fp');
+const { get } = require('lodash/fp');
 
 const customFunctionalityByType = require('./customFunctionalityByType');
 const defaultFunctionalityByType = require('./defaultFunctionalityByType');
+const { mapObject } = require('../dataTransformations');
 
 /**
  * NOTE: To Add or Modify an Entity Type's functionality go to customFunctionalityByType.js
  */
-const customFunctionalityWithDefaults = merge(
-  defaultFunctionalityByType,
-  customFunctionalityByType
+const customFunctionalityWithDefaults = mapObject(
+  (functionalityForThisEntityType, entityType) => {
+    if (!get(entityType, customFunctionalityByType))
+      return [entityType, functionalityForThisEntityType];
+
+    const customFunctionalityWithDefaultsForThisType = mapObject(
+      (functionalityProperty, functionalityKey) => {
+        const customTypeFunctionalityProperty = get(
+          [entityType, functionalityKey],
+          customFunctionalityByType
+        );
+        return [
+          functionalityKey,
+          customTypeFunctionalityProperty || functionalityProperty
+        ];
+      },
+      defaultFunctionalityByType[entityType]
+    );
+
+    return [entityType, customFunctionalityWithDefaultsForThisType];
+  },
+  defaultFunctionalityByType
 );
+
 
 const queryEntityByType = (entity, options, requestWithDefaults, Logger) =>
   get(
@@ -49,5 +70,9 @@ module.exports = {
   getTableQueryQueryStringByType,
   getDisplayStructureByType,
   getDisplayTabNamesByType,
-  getTableQuerySummaryTagPathsType
+  getTableQuerySummaryTagPathsType,
+
+  customFunctionalityWithDefaults,
+  customFunctionalityByType,
+  defaultFunctionalityByType
 };

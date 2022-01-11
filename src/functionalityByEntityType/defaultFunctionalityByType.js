@@ -26,9 +26,10 @@ const defaultFunctionalityForStandardEntityTypes = reduce(
 
 const defaultFunctionalityForCustomEntityTypes = flow(
   map(get('key')),
-  reduce((agg, entityType) => ({ ...agg, [entityType]: DEFAULT_FUNCTIONALITY_OBJECT }), {
-    custom: DEFAULT_FUNCTIONALITY_OBJECT
-  })
+  reduce(
+    (agg, entityType) => ({ ...agg, [entityType]: DEFAULT_FUNCTIONALITY_OBJECT }),
+    {}
+  )
 )(customTypes);
 
 const defaultFunctionalityByType = {

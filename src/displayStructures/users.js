@@ -7,7 +7,7 @@ const USER_DISPLAY_STRUCTURE = [
   },
   { label: 'Title', path: 'title' },
   { label: 'Email', path: 'email' },
-  { label: 'VIP', path: 'vip' },
+  { label: 'VIP', path: 'vip', capitalize: true },
   { label: 'Active', path: 'active', capitalize: true },
   { label: 'Gender', path: 'gender' },
   { label: 'Education Status', path: 'edu_status' },

@@ -63,24 +63,28 @@
         <div class="pl-{{displayField.indent}}">
           <span class="p-key">{{displayField.label}}:</span>
           <span class="p-value">
-            {{#if displayField.isDate}}
-              {{moment-format displayField.value "MM/DD/YYYY HH:mm:ss" timeZone=timezone}}
-            {{else if displayField.displayLink}}
-              <a
-                class="p-link"
-                href="{{displayField.displayLink}}"
-              >
-              {{#if displayField.capitalize}}
-                {{capitalize displayField.value}}
-              {{else}}
-                {{displayField.value}}
-              {{/if}}
-              </a>
+            {{#if displayField.pathToOnePropertyFromMoreDataToDisplay}}
+              {{fa-icon "spinner-third" fixedWidth=true spin=true}}
             {{else}}
-              {{#if displayField.capitalize}}
-                {{capitalize displayField.value}}
+              {{#if displayField.isDate}}
+                {{moment-format displayField.value "MM/DD/YYYY HH:mm:ss" timeZone=timezone}}
+              {{else if displayField.displayLink}}
+                <a
+                  class="p-link"
+                  href="{{displayField.displayLink}}"
+                >
+                {{#if displayField.capitalize}}
+                  {{capitalize displayField.value}}
+                {{else}}
+                  {{displayField.value}}
+                {{/if}}
+                </a>
               {{else}}
-                {{displayField.value}}
+                {{#if displayField.capitalize}}
+                  {{capitalize displayField.value}}
+                {{else}}
+                  {{displayField.value}}
+                {{/if}}
               {{/if}}
             {{/if}}
           </span>
