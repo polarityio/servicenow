@@ -1,23 +1,12 @@
 {
   "main": "./integration.js",
   "name": "service-now",
-  "version": "3.2.0-beta",
+  "version": "3.3.0-beta",
   "private": true,
   "license": "MIT",
   "author": "Polarity",
   "dependencies": {
-    "async": "^3.2.0",
-    "request": "^2.88.2"
-  },
-  "devDependencies": {
-    "bunyan": "^1.8.15",
-    "chai": "^4.3.4",
-    "mocha": "^8.4.0",
-    "mountebank": "^2.4.0"
-  },
-  "scripts": {
-    "pretest": "mb start --configfile imposters.json --mock &",
-    "test": "mocha --recursive || mb stop",
-    "posttest": "mb stop"
+    "lodash": "^4.17.21",
+    "postman-request": "^2.88.1-postman.30"
   }
 }

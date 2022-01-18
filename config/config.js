@@ -24,7 +24,7 @@ module.exports = {
    */
   description:
     'ServiceNow automates and streamlines work and helps create great employee and customer experiences.',
-  entityTypes: ['ipv4', 'email', 'domain', 'string'],
+  entityTypes: ['IPv4', 'email', 'domain', 'string'],
   customTypes: [
     {
       key: 'incident',
@@ -47,6 +47,7 @@ module.exports = {
       regex: /RITM[0-9]{7,}/
     }
   ],
+  defaultColor: 'light-purple',
   /**
    * An array of style files (css or less) that will be included for your integration. Any styles specified in
    * the below files can be used in your custom template.
@@ -54,7 +55,7 @@ module.exports = {
    * @type Array
    * @optional
    */
-  styles: ['./styles/service-now.less'],
+  styles: ['./styles/styles.less'],
   /**
    * Provide custom component logic and template for rendering the integration details block.  If you do not
    * provide a custom template and/or component then the integration will display data as a table of key value
@@ -65,10 +66,10 @@ module.exports = {
    */
   block: {
     component: {
-      file: './components/service-now-block.js'
+      file: './components/block.js'
     },
     template: {
-      file: './templates/service-now-block.hbs'
+      file: './templates/block.hbs'
     }
   },
   request: {
@@ -95,14 +96,6 @@ module.exports = {
     rejectUnauthorized: true
   },
   logging: {
-    // directory is relative to the this integrations directory
-    // e.g., if the integration is in /app/polarity-server/integrations/servicenow
-    // and you set directoryPath to be `integration-logs` then your logs will go to
-    // `/app/polarity-server/integrations/integration-logs`
-    // You can also set an absolute path.  If you set an absolute path you must ensure that
-    // the directory you specify is writable by the `polarityd:polarityd` user and group.
-
-    //directoryPath: '/var/log/polarity-integrations',
     level: 'info' //trace, debug, info, warn, error, fatal
   },
   /**
@@ -164,8 +157,9 @@ module.exports = {
     {
       key: 'customIpFields',
       name: 'Custom IPv4 Fields',
-      description: 'A comma separated list of custom fields to query IP against incidents',
-      default: '',
+      description:
+        'A comma separated list of custom fields to query IP against incidents',
+      default: 'u_ip_addr_2',
       type: 'text',
       userCanEdit: true,
       adminOnly: false
