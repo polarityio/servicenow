@@ -1,4 +1,4 @@
-const { map, flatMap, get, flow, filter, isEmpty } = require('lodash/fp');
+const { map, flatMap, get, flow, filter, isEmpty, isPlainObject } = require('lodash/fp');
 
 
 const { mapObject } = require('../../dataTransformations');
@@ -67,8 +67,22 @@ const getDisplayLink = (displayStructureField, queryFunctionResult, options) =>
     displayLink: `${options.url}/nav_to.do?uri=${queryFunctionResult.sys_class_name}.do?sys_id=${queryFunctionResult.sys_id}`
   };
 
-const processField = (field, pathResult) =>
-  field.process ? field.process(pathResult) : pathResult;
+const processField = (field, pathResult) => {
+  const processedResult = field.process ? field.process(pathResult) : pathResult;
+
+  return isPlainObject(processedResult)
+    ? JSON.stringify({
+        ...(processedResult.link && {
+          PolarityMessage:
+            'It is recommended you add `.link` to your `path` field, and ' +
+            '`pathIsLinkToMoreData: true` to you Display Structure for this field.  ' +
+            'If you do that you will also need to add `moreDataDisplayStructure`, or the ' +
+            '`pathToOnePropertyFromMoreDataToDisplay` property as well.'
+        }),
+        ...processedResult
+      })
+    : processedResult;
+}
 
 const hasRequiredValueOrIsTitle = (displayStructureField) => {
   const hasResultValue = !isEmpty(
