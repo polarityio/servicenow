@@ -43,10 +43,12 @@ const {
  *      tableQueryTableName: [default = "incidents"]
  *        "String used to specify the table name for the Table Query"
  *         NOTE: Omit this key if you use a queryFunction that does not execute queryTableData.
+ *          Can be found one an individual record for the table on the dashboard under the 
+ *          "uri" query parameter in the dashboard url excluding the / or %2F, and the ".do"
  *      tableQueryQueryString: [default = numberTableQueryString]
  *        (entity, options) => "String used to specify the query string for the Table Query"
  *         NOTE: Omit this key if you use a queryFunction that does not execute queryTableData.
- *      tableQuerySummaryTagPaths: [default = ["sys_class_name", "category"]]
+ *      tableQuerySummaryTagPaths: [default = ["category"]]
  *        ["List of string paths of properties you would like to display from Table Query results"]
  *         NOTE: The defaults will always be added to your result. Also, omit this key if 
  *         you use a queryFunction that does not execute queryTableData Or if only the 

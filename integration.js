@@ -25,7 +25,14 @@ const doLookup = async (entities, options, cb) => {
   } catch (error) {
     const err = parseErrorToReadableJSON(error)
     Logger.error({ error, formattedError: err }, 'Get Lookup Results Failed');
-    return cb({ detail: error.message || 'Command Failed', err });
+    
+    return cb({
+      detail:
+        (error.message === 'read ECONNRESET'
+          ? 'ECONNRESET.  This can occur from an ServiceNow Instance hibernating.'
+          : error.message) || 'Command Failed',
+      err
+    });
   }
 
   Logger.trace({ lookupResults }, 'Lookup Results');
@@ -33,15 +40,35 @@ const doLookup = async (entities, options, cb) => {
 };
 
 
-const onDetails = async (lookupObject, options, cb) => {
-  const displayStructureNestedLinkData = await getDisplayStructureNestedLinkData(
-    lookupObject,
-    options,
-    requestWithDefaults,
-    Logger
-  );
+const onDetails = async (lookupObject, options, cb) => {  
+  try {
+    const displayStructureNestedLinkData = await getDisplayStructureNestedLinkData(
+      lookupObject,
+      options,
+      requestWithDefaults,
+      Logger
+    );
 
-  return cb(null, displayStructureNestedLinkData);
+    return cb(null, displayStructureNestedLinkData);
+  } catch (error) {
+    const err = parseErrorToReadableJSON(error);
+    Logger.error({ error, formattedError: err }, 'On Details Failed');
+
+    if (/Invalid URI .*/ig.test(error.message)) {
+      cb();
+      throw new Error(
+        "A Display Field's link property is coming up to an invalid url. Hint: Most link paths include a `.link` at the end." +
+          (err.displayFieldTitle
+            ? ` The Display Field with the bad link is '${err.displayFieldTitle}'`
+            : '')
+      );
+    }
+    
+    return cb({
+      detail: error.message || 'Command Failed',
+      err
+    });
+  }
 };
 module.exports = {
   startup,

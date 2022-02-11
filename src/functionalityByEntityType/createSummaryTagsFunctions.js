@@ -11,8 +11,6 @@ const {
   capitalize
 } = require('lodash/fp');
 
-const customFunctionalityByType = require('./customFunctionalityByType');
-
 // Custom Summary Creation Functions
 const getTotalAssetSummaryTag = ({ assetData }) =>
   size(assetData) ? `Assets: ${size(assetData)}` : [];
@@ -20,24 +18,25 @@ const getTotalAssetSummaryTag = ({ assetData }) =>
 const getTotalKbDocsSummaryTag = ({ knowledgeBaseData }) =>
   size(knowledgeBaseData) ? `Knowledge Base Documents: ${size(knowledgeBaseData)}` : [];
 
+
+const SUMMARY_TAG_DEFAULT_PATHS = ['category'];
+
 const getTableQueryDataSummaryTags = (result, entity, Logger) => {
   const { getTableQuerySummaryTagPathsType } = require('./index');
 
   return flow(
     getOr([], 'tableQueryData'),
     flatMap((tableQueryDataResult) => {
-      const summaryTagPathsForThisType = getTableQuerySummaryTagPathsType(
-        entity.type
-      );
+      const summaryTagPathsForThisType = getTableQuerySummaryTagPathsType(entity.type);
 
       const allTableQueryPathValuesForThisResult = map(
         flow(get(__, tableQueryDataResult), capitalize),
-        ['sys_class_name', 'category'].concat(summaryTagPathsForThisType)
+        SUMMARY_TAG_DEFAULT_PATHS.concat(summaryTagPathsForThisType)
       );
 
       const activityTabForThisResult = !tableQueryDataResult.active
         ? []
-        : tableQueryDataResult.active
+        : tableQueryDataResult.active == 'true'
         ? 'Active'
         : 'Inactive';
 

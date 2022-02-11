@@ -10,7 +10,7 @@ const {
 
 const moreDataDisplayStructures = require('../moreDataDisplayStructures');
 
-const { mapObjectAsync } = require('../../dataTransformations');
+const { mapObjectAsync, parseErrorToReadableJSON } = require('../../dataTransformations');
 const {
   populateDisplayStructureIgnoringLinks,
   getDisplayLink
@@ -54,7 +54,7 @@ const populateDisplayStructureWithLinks = async (
   requestWithDefaults,
   Logger
 ) => {
-  const displayStructureWithNestedPopulatedLinkDisplayStuctures = await Promise.all(
+  const displayStructureWithNestedPopulatedLinkDisplayStructures = await Promise.all(
     map(
       async (displayStructureField) =>
         displayStructureField.linkToMoreData
@@ -72,7 +72,7 @@ const populateDisplayStructureWithLinks = async (
   const displayStructureWithNestedStructuresFlattened = flow(
     compact,
     flatten
-  )(displayStructureWithNestedPopulatedLinkDisplayStuctures);
+  )(displayStructureWithNestedPopulatedLinkDisplayStructures);
 
   return displayStructureWithNestedStructuresFlattened;
 };
@@ -94,14 +94,26 @@ const getMoreDataAndAddToDisplayStructure = async (
   if (!(unpopulatedMoreDataDisplayStructure || pathToOnePropertyFromMoreDataToDisplay))
     return;
 
-  const moreData = getOr(
-    {},
-    'body.result',
-    await requestWithDefaults({
-      uri: linkToMoreData,
-      options
-    })
-  );
+  let moreData;
+  try {
+    moreData = getOr(
+      {},
+      'body.result',
+      await requestWithDefaults({
+        uri: linkToMoreData,
+        options
+      })
+    );
+  } catch (error) {
+    const err = parseErrorToReadableJSON(error);
+    Logger.error({ error, formattedError: err }, 'Error Getting More Data From Nested Link');
+
+    if(!pathToOnePropertyFromMoreDataToDisplay) throw error;
+
+    const errorWithDisplayFieldTitle = new Error(error.message);
+    errorWithDisplayFieldTitle.displayFieldTitle = displayStructureField.label;
+    throw errorWithDisplayFieldTitle;
+  }
 
   let pathResult;
   if (pathToOnePropertyFromMoreDataToDisplay) {

@@ -15,7 +15,9 @@ const DEFAULT_FUNCTIONALITY_OBJECT = {
   tableQueryQueryString: numberTableQueryString,
   createSummaryTags: getTableQueryDataSummaryTags,
   displayTabNames: { tableQueryData: 'Incidents' },
-  displayStructure: { tableQueryData: tableQueryDisplayStructure }
+  displayStructure: { tableQueryData: tableQueryDisplayStructure },
+  // Empty Defaults
+  tableQuerySummaryTagPaths: false,
 };
 
 const defaultFunctionalityForStandardEntityTypes = reduce(
