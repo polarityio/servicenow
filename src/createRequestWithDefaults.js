@@ -73,7 +73,15 @@ const createRequestWithDefaults = (Logger) => {
   });
 
   const checkForStatusError = ({ statusCode, body }, requestOptions) => {
-    Logger.trace({ requestOptions: {...requestOptions, auth: 'Not Logging It!'} , statusCode, body});
+    Logger.trace({
+      requestOptions: {
+        ...requestOptions,
+        auth: '************',
+        options: '************'
+      },
+      statusCode,
+      body
+    });
 
     const roundedStatus = Math.round(statusCode / 100) * 100;
     if (!SUCCESSFUL_ROUNDED_REQUEST_STATUS_CODES.includes(roundedStatus)) {
