@@ -1,6 +1,5 @@
 'use strict';
 
-
 const validateOptions = require('./src/validateOptions');
 const createRequestWithDefaults = require('./src/createRequestWithDefaults');
 const { getDisplayStructureNestedLinkData } = require('./src/displayStructures/index');
