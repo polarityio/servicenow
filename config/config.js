@@ -145,21 +145,25 @@ module.exports = {
       adminOnly: false
     },
     {
-      key: 'assetTableFields',
-      name: 'Search Fields for Asset Lookups',
+      key: 'incidentQueryFields',
+      name: 'Incident Query Fields',
       description:
-        "A comma separated list of fields to search domains and IPs by in ServiceNow's Asset Table.",
-      default: 'dns_domain, sys_domain_path, ip_address',
+        'A comma separated list of Fields to query against Incidents.  \n' +
+        'NOTE: If a field is not in this list, it will not be searched on Incident Queries.\n' +
+        '(This applies to IP Addresses, Domains, and String searches)',
+      default: 'u_ip_addr_2, u_destination_ip, short_description, work_notes',
       type: 'text',
       userCanEdit: true,
       adminOnly: false
     },
     {
-      key: 'customIpFields',
-      name: 'Custom IPv4 Fields',
+      key: 'assetTableFields',
+      name: 'Asset Query Fields',
       description:
-        'A comma separated list of custom fields to query IP against incidents',
-      default: 'u_ip_addr_2',
+        "A comma separated list of fields to search domains and IPs by in ServiceNow's Asset Table.  \n" +
+        "NOTE: If a field is not in this list, it will not be searched on for in ServiceNow's Asset Table.\n" +
+        '(This applies to IP Addresses, Domains, and String searches)',
+      default: 'dns_domain, sys_domain_path, ip_address, short_description',
       type: 'text',
       userCanEdit: true,
       adminOnly: false

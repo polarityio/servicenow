@@ -5,7 +5,9 @@ const validateOptions = (options, callback) => {
   const stringOptionsErrorMessages = {
     url: 'You must provide a valid URL from your ServiceNow Account',
     username: 'You must provide a valid Username from your ServiceNow Account',
-    password: 'You must provide a valid Password from your ServiceNow Account'
+    password: 'You must provide a valid Password from your ServiceNow Account',
+    incidentQueryFields: 'You must provide at least one field to search for Incidents',
+    assetTableFields: 'You must provide at least one field to search for Assets'
   };
 
   const stringValidationErrors = _validateStringOptions(stringOptionsErrorMessages, options);

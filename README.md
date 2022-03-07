@@ -2,7 +2,7 @@
 
 ![image](https://img.shields.io/badge/status-beta-green.svg)
 
-Polarity's ServiceNow integration allows the lookup of system user emails, domains, IPv4s, and optionally strings from channels for incident and/or asset information, ServiceNow change request IDs (e.g. CHG00000012), ServiceNow incident IDs (e.g. INC00000154), ServiceNow Request IDs (e.g. REQ00000155), ServiceNow Requested Item IDs (e.g. RITM00000123), and ServiceNow Knowledge Base IDs (e.g. KB0000008) against your instance of ServiceNow.  In addition, we can search for IPv4 addresses against custom fields that you specify when searching Incidents.
+Polarity's ServiceNow integration allows the lookup of Domains, IPv4s, and optionally Strings from channels for Incident and Asset information.  This Integration also allows for Emails to be searched in the users system. ServiceNow change request IDs (e.g. CHG00000012), ServiceNow incident IDs (e.g. INC00000154), ServiceNow Request IDs (e.g. REQ00000155), ServiceNow Requested Item IDs (e.g. RITM00000123), and ServiceNow Knowledge Base IDs (e.g. KB0000008) are also searched against your instance of ServiceNow.  In addition, you have the ability to add Custom Fields to search on Assets and Incidents in the user options.
 
 To learn more about ServiceNow, visit the [official website](https://servicenow.com).
 
@@ -25,18 +25,26 @@ The password for the provided username you want the integration to authenticate 
 ### Search By String
 This will toggle whether or not to search the ServiceNow's Asset Table with strings found in your channels.
 
-### Search Field for Asset Lookups
-A comma separated list of fields to search domains and IPs by in ServiceNow's Asset Table. Default is dns_domain, sys_domain_path, ip_address.
+### Incident Query Fields
+A comma separated list of Fields to query against Incidents. 
+> NOTE: If a field is not in this list, it will not be searched on on in ServiceNow's Incident Table.
+> (This applies to IP Addresses, Domains, and String searches)
+      
+### Asset Query Fields
+A comma separated list of fields to search domains and IPs by in ServiceNow's Asset Table.
+> NOTE: If a field is not in this list, it will not be searched on in ServiceNow's Asset Table.
+> (This applies to IP Addresses, Domains, and String searches)
 
-### Custom IPv4 Fields
-A comma separated list of fields to lookup on IP matches. See below for use.
+## IP Lookups and Finding Query Fields
+Because ServiceNow is often customized to fit specific needs, Polarity's ServiceNow Integration offers the ability to look up IPv4 matches on custom Incident and Asset fields. Simply add a comma separated list of custom fields to the `Custom Fields` integration option, and when Polarity recognizes an IP address, it will look up the address in the custom fields you listed and display the results.  To determine what value you should put in this field your can reference our guide [**Here**](./HowToFindCustomFields.md) using the dashboard.
 
-## IP Lookups
-Because ServiceNow is often customized to fit specific needs, Polarity's ServiceNow Integration offers the ability to look up IPv4 matches on custom Incident and Asset fields. Simply add a comma separated list of custom fields to the `Custom Fields` integration option, and when Polarity recognizes an IP address, it will look up the address in the custom fields you listed and display the results.  To determine what value you should put in this field your can reference our guide [**Here**](./HowToFindCustomFields.md) using the dashboard, or you can use the ServiceNow REST API Explorer to examine an incident and look for the custom field on the response object. They are usually prepended with a `u_` and then the name of the custom field, in lower case, underscore (`_`) separated.
+You can also use the ***ServiceNow REST API Explorer*** to examine an incident and look for the custom field on the response object. The ***ServiceNow REST API Explorer*** can be found by searching `REST API Explorer` in your ServiceNow dashboard or by going to  `<your-servicenow-instance-url>/nav_to.do?uri=%2F$restapi.do`. 
+
+They are usually prepended with a `u_` and then the name of the custom field, in lower case, underscore (`_`) separated.
 
 |![image](./assets/example-custom-field.png)
 |---|
-|*Custom Field Example*|
+|*Custom Query Field Example*|
 
 ## Polarity
 

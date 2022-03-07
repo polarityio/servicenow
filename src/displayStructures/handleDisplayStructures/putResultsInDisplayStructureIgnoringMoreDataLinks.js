@@ -64,7 +64,11 @@ const getDisplayLink = (displayStructureField, queryFunctionResult, options) =>
   !displayStructureField.pathIsLinkToMoreData &&
   queryFunctionResult.sys_class_name &&
   queryFunctionResult.sys_id && {
-    displayLink: `${options.url}/nav_to.do?uri=${queryFunctionResult.sys_class_name}.do?sys_id=${queryFunctionResult.sys_id}`
+    displayLink: `${options.url}/nav_to.do?uri=${
+      queryFunctionResult.sys_class_name === 'Knowledge'
+        ? 'kb_knowledge'
+        : queryFunctionResult.sys_class_name
+    }.do?sys_id=${queryFunctionResult.sys_id}`
   };
 
 const processField = (field, pathResult) => {
