@@ -20,7 +20,7 @@ const queryTableData = async (entity, options, requestWithDefaults, Logger) => {
         options,
         qs: {
           sysparm_query: queryString,
-          sysparm_limit: 1000
+          sysparm_limit: 10
         }
       })
     );

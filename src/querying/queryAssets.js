@@ -14,7 +14,7 @@ const queryAssets = async (entity, options, requestWithDefaults, Logger) => {
       [],
       'body.records',
       await requestWithDefaults({
-        uri: `${options.url}/cmdb_ci_list.do?JSONv2=&displayvalue=true&sysparm_query=${assetTableQuery}`,
+        uri: `${options.url}/cmdb_ci_list.do?JSONv2=&displayvalue=true&sysparm_query=${assetTableQuery}&sysparm_limit=10`,
         options
       })
     );
