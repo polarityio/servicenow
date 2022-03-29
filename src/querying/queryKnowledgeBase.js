@@ -1,4 +1,4 @@
-const { getOr, size } = require('lodash/fp');
+const { getOr, size, map } = require('lodash/fp');
 const { parseErrorToReadableJSON } = require('../dataTransformations');
 
 const queryKnowledgeBase = async (entity, options, requestWithDefaults, Logger) => {

@@ -5,8 +5,19 @@ const STANDARD_TABLE_QUERY_DISPLAY_STRUCTURE = [
     path: 'number',
     isDisplayLink: true
   },
-  { isTextBlock: true, path: 'short_description' },
+  { isTextBlock: true, path: 'description' },
+  { label: 'Short Description', path: 'short_description' },
+  {
+    label: 'Item',
+    path: 'cat_item.link',
+    pathIsLinkToMoreData: true,
+    isDisplayLink: true,
+    moreDataLinkType: 'sc_cat_item',
+    pathToOnePropertyFromMoreDataToDisplay: 'name'
+  },
+  { label: 'Work Notes', path: 'work_notes', capitalize: true },
   { label: 'Active', path: 'active', capitalize: true },
+  { label: 'Approval', path: 'approval', capitalize: true },
   { label: 'Category', path: 'category', capitalize: true },
   {
     label: 'Impact',
@@ -27,6 +38,14 @@ const STANDARD_TABLE_QUERY_DISPLAY_STRUCTURE = [
     label: 'Severity',
     path: 'severity',
     process: (severity) => FIVE_LEVEL_FIELD[severity]
+  },
+  {
+    label: 'Assignment Group',
+    path: 'assignment_group.link',
+    pathIsLinkToMoreData: true,
+    isDisplayLink: true,
+    moreDataLinkType: 'sys_user_group',
+    pathToOnePropertyFromMoreDataToDisplay: 'name'
   },
   { label: 'Opened At', path: 'opened_at', isDate: true },
   { label: 'Resolved At', path: 'resolved_at', isDate: true },
@@ -68,7 +87,6 @@ const STANDARD_TABLE_QUERY_DISPLAY_STRUCTURE = [
     pathIsLinkToMoreData: true,
     moreDataDisplayStructure: 'sys_user'
   },
-
   { label: 'Close Code', path: 'close_code' },
   { label: 'Close Notes', path: 'close_notes' }
 ];

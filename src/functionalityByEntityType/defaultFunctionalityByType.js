@@ -6,6 +6,7 @@ const queryTableData = require('../querying/queryTableData');
 
 const numberTableQueryString = ({ value }) => `number=${value}`;
 
+
 const { getTableQueryDataSummaryTags } = require('./createSummaryTagsFunctions');
 const { tableQueryDisplayStructure } = require('../displayStructures/index');
 
@@ -17,7 +18,7 @@ const DEFAULT_FUNCTIONALITY_OBJECT = {
   displayTabNames: { tableQueryData: 'Incidents' },
   displayStructure: { tableQueryData: tableQueryDisplayStructure },
   // Empty Defaults
-  tableQuerySummaryTagPaths: false,
+  tableQuerySummaryTagPaths: false
 };
 
 const defaultFunctionalityForStandardEntityTypes = reduce(

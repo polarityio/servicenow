@@ -1,23 +1,18 @@
-const { map, flow, join, split, trim, merge, omit, compact } = require('lodash/fp');
+const { flow, merge, omit } = require('lodash/fp');
 
 const { mapObject } = require('../dataTransformations');
 
-const queryAssets = require('../querying/queryAssets');
 const queryKnowledgeBase = require('../querying/queryKnowledgeBase');
-const queryTableData = require('../querying/queryTableData');
+
+const { getTotalKbDocsSummaryTag } = require('./createSummaryTagsFunctions');
+
+const assetsAndIncidentCustomFunctionality = require('./assetsAndIncidentCustomFunctionality');
 
 const {
-  getTableQueryDataSummaryTags,
-  getTotalAssetSummaryTag,
-  getTotalKbDocsSummaryTag
-} = require('./createSummaryTagsFunctions');
-
-const {
-  assetsDisplayStructure,
   knowledgeBaseDisplayStructure,
-  tableQueryDisplayStructure,
   usersDisplayStructure
 } = require('../displayStructures/index');
+
 
 /** CUSTOM_FUNCTIONALITY_FOR_STANDARD_ENTITY_TYPES
  * This is where all the magic stems from.  This object is where can you specify custom 
@@ -74,45 +69,9 @@ const {
  */
 
 const CUSTOM_FUNCTIONALITY_FOR_STANDARD_ENTITY_TYPES = {
-  IPv4: {
-    queryFunction: async (entity, options, requestWithDefaults, Logger) => ({
-      ...(await queryAssets(entity, options, requestWithDefaults, Logger)),
-      ...(await queryTableData(entity, options, requestWithDefaults, Logger))
-    }),
-    tableQueryQueryString: ({ value }, { customIpFields }) =>
-      customIpFields &&
-      typeof customIpFields === 'string' &&
-      customIpFields.length !== 0 &&
-      flow(
-        split(','),
-        compact,
-        map((field) => `${trim(field)}CONTAINS${value}`),
-        join('^NQ')
-      )(customIpFields),
-
-    tableQuerySummaryTagPaths: ['number'],
-    createSummaryTags: (results, entity, Logger) =>
-      getTableQueryDataSummaryTags(results, entity, Logger).concat(
-        getTotalAssetSummaryTag(results, entity, Logger)
-      ),
-    displayTabNames: { assetData: 'Assets', tableQueryData: 'Incidents' },
-    displayStructure: {
-      assetData: assetsDisplayStructure,
-      tableQueryData: tableQueryDisplayStructure
-    }
-  },
-  domain: {
-    queryFunction: queryAssets,
-    createSummaryTags: getTotalAssetSummaryTag,
-    displayTabNames: { assetData: 'Assets' },
-    displayStructure: { assetData: assetsDisplayStructure }
-  },
-  string: {
-    queryFunction: queryAssets,
-    createSummaryTags: getTotalAssetSummaryTag,
-    displayTabNames: { assetData: 'Assets' },
-    displayStructure: { assetData: assetsDisplayStructure }
-  },
+  IPv4: assetsAndIncidentCustomFunctionality,
+  domain: assetsAndIncidentCustomFunctionality,
+  string: assetsAndIncidentCustomFunctionality,
   email: {
     tableQueryTableName: 'sys_user',
     tableQueryQueryString: ({ value }) => `email=${value}`,
@@ -136,7 +95,7 @@ const CUSTOM_FUNCTIONALITY_FOR_STANDARD_ENTITY_TYPES = {
 const CUSTOM_FUNCTIONALITY_FOR_CUSTOM_ENTITY_TYPES = {
   // All Custom Types
   defaults: {
-    tableQuerySummaryTagPaths: ['sys_class_name', 'category', 'phase']
+    tableQuerySummaryTagPaths: ['category', 'phase']
   },
 
   // Specific Custom Types
