@@ -27,6 +27,10 @@ const queryTableData = async (entity, options, requestWithDefaults, Logger) => {
 
     if (!size(tableQueryData)) return;
 
+    Logger.trace({
+      MESSAGE: '****** Getting Fields For UI Adjustment ******',
+      tableQueryData
+    });
     return { tableQueryData };
   } catch (error) {
     const err = parseErrorToReadableJSON(error);

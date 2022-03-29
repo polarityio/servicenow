@@ -62,11 +62,14 @@ const populateDisplayStructureField =
 const getDisplayLink = (displayStructureField, queryFunctionResult, options) =>
   displayStructureField.isDisplayLink &&
   !displayStructureField.pathIsLinkToMoreData &&
-  queryFunctionResult.sys_class_name &&
+  (queryFunctionResult.sys_class_name ||
+    displayStructureField.moreDataLinkType === 'sys_user_group') &&
   queryFunctionResult.sys_id && {
     displayLink: `${options.url}/nav_to.do?uri=${
       queryFunctionResult.sys_class_name === 'Knowledge'
         ? 'kb_knowledge'
+        : displayStructureField.moreDataLinkType === 'sys_user_group'
+        ? 'sys_user_group'
         : queryFunctionResult.sys_class_name
     }.do?sys_id=${queryFunctionResult.sys_id}`
   };

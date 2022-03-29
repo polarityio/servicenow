@@ -1,6 +1,8 @@
 const fs = require('fs');
+const { identity, omit } = require('lodash/fp');
 const request = require('postman-request');
 const config = require('../config/config');
+const { parseErrorToReadableJSON } = require('./dataTransformations');
 
 const SUCCESSFUL_ROUNDED_REQUEST_STATUS_CODES = [200];
 
@@ -93,7 +95,23 @@ const createRequestWithDefaults = (Logger) => {
     }
   };
 
-  const requestDefaultsWithInterceptors = requestWithDefaults(handleAuth);
+  const requestDefaultsWithInterceptors = requestWithDefaults(
+    handleAuth,
+    identity,
+    (error) => {
+      const err = parseErrorToReadableJSON(error);
+      if (err.requestOptions && ['{', '['].includes(err.requestOptions[0]))
+        err.requestOptions = omit(['options', 'auth'], JSON.parse(err.requestOptions));
+
+      Logger.error({ err });
+      let newError = new Error(err.message);
+      newError.status = err.status;
+      newError.requestOptions = err.requestOptions;
+      newError.description = err.description;
+      newError.stack = err.stack;
+      throw newError;
+    }
+  );
 
   return requestDefaultsWithInterceptors
 };
