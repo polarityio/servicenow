@@ -37,7 +37,6 @@ const queryTableData = async (entity, options, requestWithDefaults, Logger) => {
     Logger.error(
       {
         detail: 'Failed to Query Table',
-        options,
         formattedError: err
       },
       'Query Table Failed'
