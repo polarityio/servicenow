@@ -28,7 +28,6 @@ const queryKnowledgeBase = async (entity, options, requestWithDefaults, Logger) 
     Logger.error(
       {
         detail: 'Failed to Query Knowledge Base',
-        options,
         formattedError: err
       },
       'Quering Knowledge Base Failed'

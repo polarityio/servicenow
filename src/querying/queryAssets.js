@@ -27,7 +27,6 @@ const queryAssets = async (entity, options, requestWithDefaults, Logger) => {
     Logger.error(
       {
         detail: 'Failed to Query Assets',
-        options,
         formattedError: err
       },
       'Query Assets Failed'
