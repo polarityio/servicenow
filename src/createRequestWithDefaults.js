@@ -75,13 +75,16 @@ const createRequestWithDefaults = (Logger) => {
   });
 
   const checkForStatusError = ({ statusCode, body }, requestOptions) => {
+    const requestOptionsWithoutSensitiveData = {
+      ...requestOptions,
+      auth: '************',
+      options: '************'
+    };
+
     Logger.trace({
-      requestOptions: {
-        ...requestOptions,
-        auth: '************',
-        options: '************'
-      },
+      MESSAGE: 'checkForStatusError',
       statusCode,
+      requestOptions: requestOptionsWithoutSensitiveData,
       body
     });
 
@@ -90,28 +93,12 @@ const createRequestWithDefaults = (Logger) => {
       const requestError = Error('Request Error');
       requestError.status = statusCode;
       requestError.description = JSON.stringify(body);
-      requestError.requestOptions = JSON.stringify(requestOptions);
+      requestError.requestOptions = JSON.stringify(requestOptionsWithoutSensitiveData);
       throw requestError;
     }
   };
 
-  const requestDefaultsWithInterceptors = requestWithDefaults(
-    handleAuth,
-    identity,
-    (error) => {
-      const err = parseErrorToReadableJSON(error);
-      if (err.requestOptions && ['{', '['].includes(err.requestOptions[0]))
-        err.requestOptions = omit(['options', 'auth'], JSON.parse(err.requestOptions));
-
-      Logger.error({ err });
-      let newError = new Error(err.message);
-      newError.status = err.status;
-      newError.requestOptions = err.requestOptions;
-      newError.description = err.description;
-      newError.stack = err.stack;
-      throw newError;
-    }
-  );
+  const requestDefaultsWithInterceptors = requestWithDefaults(handleAuth);
 
   return requestDefaultsWithInterceptors
 };
