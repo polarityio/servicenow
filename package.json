@@ -1,7 +1,7 @@
 {
-  "main": "./integration.js",
   "name": "service-now",
-  "version": "3.3.6-beta",
+  "version": "3.3.7-beta",
+  "main": "./integration.js",
   "private": true,
   "license": "MIT",
   "author": "Polarity",
