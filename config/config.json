@@ -1,13 +1,9 @@
 {
   "name": "ServiceNow",
   "acronym": "SN",
+  "defaultColor": "light-purple",
   "description": "ServiceNow automates and streamlines work and helps create great employee and customer experiences.",
-  "entityTypes": [
-    "IPv4",
-    "email",
-    "domain",
-    "string"
-  ],
+  "entityTypes": ["IPv4", "email", "domain", "string"],
   "customTypes": [
     {
       "key": "incident",
@@ -30,10 +26,7 @@
       "regex": "RITM[0-9]{7,}"
     }
   ],
-  "defaultColor": "light-purple",
-  "styles": [
-    "./styles/styles.less"
-  ],
+  "styles": ["./styles/styles.less"],
   "block": {
     "component": {
       "file": "./components/block.js"
