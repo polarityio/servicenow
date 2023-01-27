@@ -136,9 +136,9 @@ module.exports = {
     },
     {
       key: 'shouldSearchString',
-      name: 'Search By String',
+      name: 'Search By Annotated Entities',
       description:
-        "This will toggle whether or not to search the ServiceNow's Asset Table with strings found in your channels.",
+        "This will toggle whether or not to search the ServiceNow's Asset Table with annotated entities found in your channels.",
       default: false,
       type: 'boolean',
       userCanEdit: true,
