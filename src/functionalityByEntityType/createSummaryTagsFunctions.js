@@ -14,8 +14,8 @@ const {
 } = require('lodash/fp');
 
 // Custom Summary Creation Functions
-const getTotalAssetSummaryTag = ({ assetData }) =>
-  size(assetData) ? [`Assets: ${size(assetData)}`] : [];
+const getTotalAssetSummaryTag = ({ assetsData }) =>
+  size(assetsData) ? [`Assets: ${size(assetsData)}`] : [];
 
 const getTotalKbDocsSummaryTag = ({ knowledgeBaseData }) =>
   size(knowledgeBaseData) ? [`Knowledge Base Documents: ${size(knowledgeBaseData)}`] : [];
