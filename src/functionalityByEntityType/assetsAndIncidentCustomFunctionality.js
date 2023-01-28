@@ -13,7 +13,6 @@ const {
   tableQueryDisplayStructure
 } = require('../displayStructures/index');
 
-
 const assetsAndIncidentCustomFunctionality = {
   queryFunction: async (entity, options, requestWithDefaults, Logger) => ({
     ...(await queryAssets(entity, options, requestWithDefaults, Logger)),
@@ -34,9 +33,9 @@ const assetsAndIncidentCustomFunctionality = {
       getTotalAssetSummaryTag(results, entity, Logger)
     ),
   tableQuerySummaryTagPaths: ['number'],
-  displayTabNames: { assetData: 'Assets', tableQueryData: 'Incidents' },
+  displayTabNames: { assetsData: 'Assets', tableQueryData: 'Incidents' },
   displayStructure: {
-    assetData: assetsDisplayStructure,
+    assetsData: assetsDisplayStructure,
     tableQueryData: tableQueryDisplayStructure
   }
 };

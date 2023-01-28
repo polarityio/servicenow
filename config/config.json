@@ -1,0 +1,105 @@
+{
+  "name": "ServiceNow",
+  "acronym": "SN",
+  "defaultColor": "light-purple",
+  "description": "ServiceNow automates and streamlines work and helps create great employee and customer experiences.",
+  "entityTypes": ["IPv4", "email", "domain", "string"],
+  "customTypes": [
+    {
+      "key": "incident",
+      "regex": "INC[0-9]{7,}"
+    },
+    {
+      "key": "knowledgeBase",
+      "regex": "KB[0-9]{7,}"
+    },
+    {
+      "key": "change",
+      "regex": "CHG[0-9]{7,}"
+    },
+    {
+      "key": "request",
+      "regex": "REQ[0-9]{7,}"
+    },
+    {
+      "key": "requestedItem",
+      "regex": "RITM[0-9]{7,}"
+    }
+  ],
+  "styles": ["./styles/styles.less"],
+  "block": {
+    "component": {
+      "file": "./components/block.js"
+    },
+    "template": {
+      "file": "./templates/block.hbs"
+    }
+  },
+  "request": {
+    "cert": "",
+    "key": "",
+    "passphrase": "",
+    "ca": "",
+    "proxy": "",
+    "rejectUnauthorized": true
+  },
+  "logging": {
+    "level": "info"
+  },
+  "options": [
+    {
+      "key": "url",
+      "name": "URL",
+      "description": "The URL of the ServiceNow instance to connect to including the schema (i.e., https://)",
+      "default": "",
+      "type": "text",
+      "userCanEdit": true,
+      "adminOnly": false
+    },
+    {
+      "key": "username",
+      "name": "Username",
+      "description": "The username to login to ServiceNow with",
+      "default": "",
+      "type": "text",
+      "userCanEdit": true,
+      "adminOnly": false
+    },
+    {
+      "key": "password",
+      "name": "Password",
+      "description": "The password to login to ServiceNow with",
+      "default": "",
+      "type": "password",
+      "userCanEdit": true,
+      "adminOnly": false
+    },
+    {
+      "key": "shouldSearchString",
+      "name": "Search By Annotated Entities",
+      "description": "This will toggle whether or not to search the ServiceNow's Asset Table with annotated entities found in your channels.",
+      "default": false,
+      "type": "boolean",
+      "userCanEdit": true,
+      "adminOnly": false
+    },
+    {
+      "key": "incidentQueryFields",
+      "name": "Incident Query Fields",
+      "description": "A comma separated list of Fields to query against Incidents.  \nNOTE: If a field is not in this list, it will not be searched on Incident Queries.\n(This applies to IP Addresses, Domains, and String searches)",
+      "default": "u_ip_addr_2, u_destination_ip, short_description, work_notes",
+      "type": "text",
+      "userCanEdit": true,
+      "adminOnly": false
+    },
+    {
+      "key": "assetTableFields",
+      "name": "Asset Query Fields",
+      "description": "A comma separated list of fields to search domains and IPs by in ServiceNow's Asset Table.  \nNOTE: If a field is not in this list, it will not be searched on for in ServiceNow's Asset Table.\n(This applies to IP Addresses, Domains, and String searches)",
+      "default": "dns_domain, sys_domain_path, ip_address, short_description",
+      "type": "text",
+      "userCanEdit": true,
+      "adminOnly": false
+    }
+  ]
+}

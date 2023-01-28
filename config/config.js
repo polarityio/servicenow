@@ -16,6 +16,7 @@ module.exports = {
    * @required
    */
   acronym: 'SN',
+  defaultColor: 'light-purple',
   /**
    * Description for this integration which is displayed in the Polarity integrations user interface
    *
@@ -47,7 +48,6 @@ module.exports = {
       regex: /RITM[0-9]{7,}/
     }
   ],
-  defaultColor: 'light-purple',
   /**
    * An array of style files (css or less) that will be included for your integration. Any styles specified in
    * the below files can be used in your custom template.
@@ -136,9 +136,9 @@ module.exports = {
     },
     {
       key: 'shouldSearchString',
-      name: 'Search By String',
+      name: 'Search By Annotated Entities',
       description:
-        "This will toggle whether or not to search the ServiceNow's Asset Table with strings found in your channels.",
+        "This will toggle whether or not to search the ServiceNow's Asset Table with annotated entities found in your channels.",
       default: false,
       type: 'boolean',
       userCanEdit: true,
