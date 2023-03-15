@@ -5,15 +5,19 @@ const queryKnowledgeBase = async (entity, options, requestWithDefaults, Logger) 
   try {
     const knowledgeBaseData = getOr(
       [],
-      'body.records',
+      'body.result',
       await requestWithDefaults({
-        uri: `${options.url}/kb_knowledge_list.do?JSONv2=&displayvalue=true&sysparm_query=numberCONTAINS${entity.value}`,
+        uri: `${options.url}/api/now/table/kb_knowledge`,
+        qs: {
+          sysparm_query: `numberCONTAINS${entity.value}`,
+          sysparm_limit: 10
+        },
         options
       })
     );
 
     if (!size(knowledgeBaseData)) return;
-    
+
     return {
       knowledgeBaseData: map(
         (kbItem) => ({
