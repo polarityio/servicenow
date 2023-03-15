@@ -72,6 +72,7 @@ const CUSTOM_FUNCTIONALITY_FOR_STANDARD_ENTITY_TYPES = {
   IPv4: assetsAndIncidentCustomFunctionality,
   domain: assetsAndIncidentCustomFunctionality,
   string: assetsAndIncidentCustomFunctionality,
+  cve: assetsAndIncidentCustomFunctionality,
   email: {
     tableQueryTableName: 'sys_user',
     tableQueryQueryString: ({ value }) => `email=${value}`,
