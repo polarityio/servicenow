@@ -38,6 +38,8 @@ const groupEntities = (entities) =>
         ? 'sha1'
         : type === 'SHA256'
         ? 'sha256'
+        : type === 'cve'
+        ? 'cve'
         : 'unknown'
     )
     .omit('unknown')
