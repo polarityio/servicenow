@@ -150,7 +150,7 @@ module.exports = {
       description:
         'A comma separated list of Fields to query against Incidents.  \n' +
         'NOTE: If a field is not in this list, it will not be searched on Incident Queries.\n' +
-        '(This applies to IP Addresses, Domains, and String searches)',
+        '(This applies to IP address, domain, and annotated entity searches)',
       default: 'u_ip_addr_2, u_destination_ip, short_description, work_notes',
       type: 'text',
       userCanEdit: false,
