@@ -7,17 +7,20 @@ const queryAssets = async (entity, options, requestWithDefaults, Logger) => {
       get('assetTableFields'),
       split(','),
       map((field) => `${trim(field)}CONTAINS${entity.value}`),
-      join('^OR')
+      join('^NQ')
     )(options);
 
-    const assetsData = getOr(
-      [],
-      'body.records',
-      await requestWithDefaults({
-        uri: `${options.url}/cmdb_ci_list.do?JSONv2=&displayvalue=true&sysparm_query=${assetTableQuery}&sysparm_limit=10`,
-        options
-      })
-    );
+    const requestOptions = {
+      uri: `${options.url}/api/now/table/alm_asset`,
+      qs: {
+        sysparm_query: assetTableQuery,
+        sysparm_limit: 10
+      },
+      options
+    };
+
+    const response = await requestWithDefaults(requestOptions);
+    const assetsData = getOr([], 'body.result', response);
 
     if (!size(assetsData)) return;
 
