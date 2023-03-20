@@ -3,14 +3,7 @@
   "acronym": "SN",
   "defaultColor": "light-purple",
   "description": "ServiceNow automates and streamlines work and helps create great employee and customer experiences.",
-  "entityTypes": [
-    "IPv4",
-    "email",
-    "domain",
-    "string",
-    "cve"
-  ],
-  "customTypes": [
+  "entityTypes": ["IPv4", "email", "domain", "string", "cve"],"customTypes": [
     {
       "key": "incident",
       "regex": "INC[0-9]{7,}"
@@ -32,16 +25,10 @@
       "regex": "RITM[0-9]{7,}"
     }
   ],
-  "styles": [
-    "./styles/styles.less"
-  ],
+  "styles": ["./styles/styles.less"],
   "block": {
-    "component": {
-      "file": "./components/block.js"
-    },
-    "template": {
-      "file": "./templates/block.hbs"
-    }
+    "component": { "file": "./components/block.js" },
+    "template": { "file": "./templates/block.hbs" }
   },
   "request": {
     "cert": "",
@@ -51,9 +38,7 @@
     "proxy": "",
     "rejectUnauthorized": true
   },
-  "logging": {
-    "level": "info"
-  },
+  "logging": { "level": "info" },
   "options": [
     {
       "key": "url",
@@ -103,7 +88,7 @@
     {
       "key": "enableAssetSearch",
       "name": "Enable Asset Search",
-      "description": "If checked, the integration will search ServiceNow's Asset Table (alm_asset) for IP addresses, domains, and annotated entities.",
+      "description": "If checked, the integration will search ServiceNow's Asset Table (alm_asset) for IP Addresses, Domains, CVEs and annotated entities",
       "default": true,
       "type": "boolean",
       "userCanEdit": false,
@@ -112,7 +97,7 @@
     {
       "key": "assetTableFields",
       "name": "Asset Query Fields",
-      "description": "A comma separated list of fields to search domains and IPs by in ServiceNow's Asset Table.  \nNOTE: If a field is not in this list, it will not be searched on for in ServiceNow's Asset Table.\n(This applies to IP Addresses, Domains, and String searches)",
+      "description": "A comma separated list of fields to search domains and IPs by in ServiceNow's Asset Table.  \nNOTE: If a field is not in this list, the field will not be searched in ServiceNow's Asset Table.\n(This applies to IP Addresses, Domains, and String searches)",
       "default": "dns_domain, sys_domain_path, ip_address, short_description",
       "type": "text",
       "userCanEdit": false,

@@ -160,7 +160,7 @@ module.exports = {
       key: 'enableAssetSearch',
       name: 'Enable Asset Search',
       description:
-          "If checked, the integration will search ServiceNow's Asset Table (alm_asset) for IP addresses, domains, and annotated entities.",
+          "If checked, the integration will search ServiceNow's Asset Table (alm_asset) for IP Addresses, Domains, CVEs and annotated entities",
       default: true,
       type: 'boolean',
       userCanEdit: false,
