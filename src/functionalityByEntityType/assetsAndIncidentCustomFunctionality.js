@@ -15,7 +15,7 @@ const {
 
 const assetsAndIncidentCustomFunctionality = {
   queryFunction: async (entity, options, requestWithDefaults, Logger) => ({
-    ...(await queryAssets(entity, options, requestWithDefaults, Logger)),
+    ...(options.enableAssetSearch ? await queryAssets(entity, options, requestWithDefaults, Logger) : {}),
     ...(await queryTableData(entity, options, requestWithDefaults, Logger))
   }),
   tableQueryQueryString: ({ value }, { incidentQueryFields }) =>
