@@ -7,6 +7,7 @@ const ASSET_DISPLAY_STRUCTURE = [
     isDisplayLink: true
   },
   { label: 'Asset Name', path: 'name' },
+  { label: 'Display Name', path: 'display_name' },
   { label: 'Asset Subcategory', path: 'subcategory' },
   { label: 'Serial Number', path: 'serial_number' },
   { label: 'Asset Tag', path: 'asset_tag' },
@@ -15,7 +16,25 @@ const ASSET_DISPLAY_STRUCTURE = [
   { label: 'Asset Sub-Warranty Expires On', path: 'warranty_expiration', isDate: true },
   { label: 'Asset Operating System', path: 'os' },
   { label: 'Asset Delivered On', path: 'delivery_date', isDate: true },
-  { label: 'PO Number', path: 'po_number' }
+  { label: 'PO Number', path: 'po_number' },
+  { label: 'Comments', path: 'comments' },
+
+  {
+    isTitle: true,
+    label: 'Assigned To',
+    path: 'assigned_to.link',
+    icon: 'user',
+    isDisplayLink: true,
+    pathIsLinkToMoreData: true,
+    moreDataDisplayStructure: 'sys_user'
+  },
+  {
+    label: 'Department',
+    path: 'department.link',
+    pathIsLinkToMoreData: true,
+    moreDataLinkType: 'cmn_department',
+    pathToOnePropertyFromMoreDataToDisplay: 'name'
+  },
 ];
 
 module.exports = ASSET_DISPLAY_STRUCTURE;

@@ -29,7 +29,10 @@ This will toggle whether or not to search the ServiceNow's Asset Table with stri
 A comma separated list of Fields to query against Incidents. 
 > NOTE: If a field is not in this list, it will not be searched on on in ServiceNow's Incident Table.
 > (This applies to IP Addresses, Domains, and String searches)
-      
+
+### Enable Asset Search
+If checked, the integration will search ServiceNow's Asset Table (alm_asset) for IP Addresses, Domains, CVEs and annotated entities.
+
 ### Asset Query Fields
 A comma separated list of fields to search domains and IPs by in ServiceNow's Asset Table.
 > NOTE: If a field is not in this list, it will not be searched on in ServiceNow's Asset Table.
