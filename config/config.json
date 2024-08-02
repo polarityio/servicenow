@@ -4,7 +4,14 @@
   "acronym": "SN",
   "defaultColor": "light-purple",
   "description": "ServiceNow automates and streamlines work and helps create great employee and customer experiences.",
-  "entityTypes": ["IPv4", "email", "domain", "string", "cve"],"customTypes": [
+  "entityTypes": [
+    "IPv4",
+    "email",
+    "domain",
+    "string",
+    "cve"
+  ],
+  "customTypes": [
     {
       "key": "incident",
       "regex": "INC[0-9]{7,}"
@@ -24,12 +31,26 @@
     {
       "key": "requestedItem",
       "regex": "RITM[0-9]{7,}"
+    },
+    {
+      "key": "hostname",
+      "regex": "\\b[ablvswzuxpnghrcm](?:(?:[a-z0-9]{14,15})|(?:[a-z]{3}-[a-z0-9]{7}))\\b"
+    },
+    {
+      "key": "serverHostname",
+      "regex": "\\b[wl][a-z]{3}[a-z0-9]{11}\\b"
     }
   ],
-  "styles": ["./styles/styles.less"],
+  "styles": [
+    "./styles/styles.less"
+  ],
   "block": {
-    "component": { "file": "./components/block.js" },
-    "template": { "file": "./templates/block.hbs" }
+    "component": {
+      "file": "./components/block.js"
+    },
+    "template": {
+      "file": "./templates/block.hbs"
+    }
   },
   "request": {
     "cert": "",
@@ -38,7 +59,9 @@
     "ca": "",
     "proxy": ""
   },
-  "logging": { "level": "info" },
+  "logging": {
+    "level": "info"
+  },
   "options": [
     {
       "key": "url",

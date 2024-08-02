@@ -98,7 +98,7 @@ const CUSTOM_FUNCTIONALITY_FOR_CUSTOM_ENTITY_TYPES = {
   defaults: {
     tableQuerySummaryTagPaths: ['category', 'phase']
   },
-
+  assetAttribute: assetsAndIncidentCustomFunctionality,
   // Specific Custom Types
   knowledgeBase: {
     queryFunction: queryKnowledgeBase,

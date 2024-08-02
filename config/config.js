@@ -46,6 +46,10 @@ module.exports = {
     {
       key: 'requestedItem',
       regex: /RITM[0-9]{7,}/
+    },
+    {
+      key: 'assetAttribute',
+      regex: /^(?<!\n|\r\n)[ \t]*[a-zA-Z0-9\-_]{5,100}[ \t]*(?!\n|\r\n)$/
     }
   ],
   /**
@@ -87,10 +91,10 @@ module.exports = {
     ca: '',
     // An HTTP proxy to be used. Supports proxy Auth with Basic Auth, identical to support for
     // the url parameter (by embedding the auth info in the uri)
-    proxy: ""
+    proxy: ''
   },
   logging: {
-    level: 'info' //trace, debug, info, warn, error, fatal
+    level: 'trace' //trace, debug, info, warn, error, fatal
   },
   /**
    * Options that are displayed to the user/admin in the Polarity integration user-interface.  Should be structured
@@ -132,7 +136,7 @@ module.exports = {
       key: 'shouldSearchString',
       name: 'Search By Annotated Entities',
       description:
-        "This will toggle whether or not to search the ServiceNow for annotated entities found in your channels.",
+        'This will toggle whether or not to search the ServiceNow for annotated entities found in your channels.',
       default: false,
       type: 'boolean',
       userCanEdit: false,
@@ -154,7 +158,7 @@ module.exports = {
       key: 'enableAssetSearch',
       name: 'Enable Asset Search',
       description:
-          "If checked, the integration will search ServiceNow's Asset Table (alm_asset) for IP Addresses, Domains, CVEs and annotated entities",
+        "If checked, the integration will search ServiceNow's Asset Table (alm_asset) for IP Addresses, Domains, CVEs and annotated entities",
       default: true,
       type: 'boolean',
       userCanEdit: false,
