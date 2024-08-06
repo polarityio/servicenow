@@ -4,7 +4,7 @@ const { mapObject } = require('../dataTransformations');
 
 const queryKnowledgeBase = require('../querying/queryKnowledgeBase');
 
-const { getTotalKbDocsSummaryTag } = require('./createSummaryTagsFunctions');
+const { getTotalKbDocsSummaryTag, getTableQueryDataSummaryTags} = require('./createSummaryTagsFunctions');
 
 const assetsAndIncidentCustomFunctionality = require('./assetsAndIncidentCustomFunctionality');
 
@@ -12,6 +12,8 @@ const {
   knowledgeBaseDisplayStructure,
   usersDisplayStructure
 } = require('../displayStructures/index');
+const queryTableData = require("../querying/queryTableData");
+const {tableQueryDisplayStructure} = require("../displayStructures");
 
 
 /** CUSTOM_FUNCTIONALITY_FOR_STANDARD_ENTITY_TYPES
@@ -116,6 +118,16 @@ const CUSTOM_FUNCTIONALITY_FOR_CUSTOM_ENTITY_TYPES = {
   requestedItem: {
     tableQueryTableName: 'sc_req_item',
     displayTabNames: { tableQueryData: 'Requested Items' }
+  },
+  incident: {
+    queryFunction: queryTableData,
+    tableQueryTableName: 'incident',
+    tableQueryQueryString: ({ value }) => `number=${value}`,
+    createSummaryTags: getTableQueryDataSummaryTags,
+    displayTabNames: { tableQueryData: 'Incidents' },
+    displayStructure: { tableQueryData: tableQueryDisplayStructure },
+    // Empty Defaults
+    tableQuerySummaryTagPaths: false
   }
 };
 
