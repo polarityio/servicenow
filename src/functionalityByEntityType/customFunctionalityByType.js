@@ -98,7 +98,6 @@ const CUSTOM_FUNCTIONALITY_FOR_CUSTOM_ENTITY_TYPES = {
   defaults: {
     tableQuerySummaryTagPaths: ['category', 'phase']
   },
-  assetAttribute: assetsAndIncidentCustomFunctionality,
   // Specific Custom Types
   knowledgeBase: {
     queryFunction: queryKnowledgeBase,
@@ -106,7 +105,6 @@ const CUSTOM_FUNCTIONALITY_FOR_CUSTOM_ENTITY_TYPES = {
     displayTabNames: { knowledgeBaseData: 'Knowledge Base' },
     displayStructure: { knowledgeBaseData: knowledgeBaseDisplayStructure }
   },
-
   change: {
     tableQueryTableName: 'change_request',
     displayTabNames: { tableQueryData: 'Changes' }

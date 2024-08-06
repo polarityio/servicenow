@@ -31,14 +31,6 @@
     {
       "key": "requestedItem",
       "regex": "RITM[0-9]{7,}"
-    },
-    {
-      "key": "hostname",
-      "regex": "\\b[ablvswzuxpnghrcm](?:(?:[a-z0-9]{14,15})|(?:[a-z]{3}-[a-z0-9]{7}))\\b"
-    },
-    {
-      "key": "serverHostname",
-      "regex": "\\b[wl][a-z]{3}[a-z0-9]{11}\\b"
     }
   ],
   "styles": [
@@ -93,8 +85,17 @@
     {
       "key": "shouldSearchString",
       "name": "Search By Annotated Entities",
-      "description": "This will toggle whether or not to search the ServiceNow for annotated entities found in your channels.",
+      "description": "This will toggle whether or not to search ServiceNow for annotated entities found in your channels.  The \"string\" Data Type must also be enabled for this option to have an effect.",
       "default": false,
+      "type": "boolean",
+      "userCanEdit": false,
+      "adminOnly": true
+    },
+    {
+      "key": "enableIncidentSearch",
+      "name": "Enable Incident Search",
+      "description": "If checked, the integration will search ServiceNow's Incident Table (incident) for IP Addresses, Domains, CVEs, annotated entities, and any added custom types",
+      "default": true,
       "type": "boolean",
       "userCanEdit": false,
       "adminOnly": true
@@ -102,16 +103,25 @@
     {
       "key": "incidentQueryFields",
       "name": "Incident Query Fields",
-      "description": "A comma separated list of Fields to query against Incidents.  \nNOTE: If a field is not in this list, it will not be searched on Incident Queries.\n(This applies to IP address, domain, and annotated entity searches)",
-      "default": "u_ip_addr_2, u_destination_ip, short_description, work_notes",
+      "description": "A comma separated list of fields to search when querying for Incidents.  Incident searches are done for IPs, domains, CVEs, annotated entities and any added custom types. NOTE: If a field is not in this list, it will not be searched for Incident Queries.",
+      "default": "short_description, description, work_notes",
       "type": "text",
+      "userCanEdit": false,
+      "adminOnly": true
+    },
+    {
+      "key": "incidentDaysAgoToSearch",
+      "name": "Days ",
+      "description": "Number of days back to search when searching incidents.  Filters based on the date that the Incident was opened. Defaults to 360.",
+      "default": 360,
+      "type": "number",
       "userCanEdit": false,
       "adminOnly": true
     },
     {
       "key": "enableAssetSearch",
       "name": "Enable Asset Search",
-      "description": "If checked, the integration will search ServiceNow's Asset Table (alm_asset) for IP Addresses, Domains, CVEs and annotated entities",
+      "description": "If checked, the integration will search ServiceNow's Asset Table (alm_asset) for IP Addresses, Domains, CVEs, annotated entities, and any added custom types",
       "default": true,
       "type": "boolean",
       "userCanEdit": false,
@@ -120,8 +130,8 @@
     {
       "key": "assetTableFields",
       "name": "Asset Query Fields",
-      "description": "A comma separated list of fields to search domains and IPs by in ServiceNow's Asset Table.  \nNOTE: If a field is not in this list, the field will not be searched in ServiceNow's Asset Table.\n(This applies to IP Addresses, Domains, and String searches)",
-      "default": "dns_domain, sys_domain_path, ip_address, short_description",
+      "description": "A comma separated list of fields to search when querying for Assets. Asset searches are done for IPs, domains, CVEs, annotated entities and any added custom types. NOTE: If a field is not in this list, the field will not be searched in ServiceNow's Asset Table.",
+      "default": "ci.name, ci.asset_tag, short_description",
       "type": "text",
       "userCanEdit": false,
       "adminOnly": true
