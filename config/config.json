@@ -111,7 +111,7 @@
     },
     {
       "key": "incidentDaysAgoToSearch",
-      "name": "Days ",
+      "name": "Incident Search Window in Days ",
       "description": "Number of days back to search when searching incidents.  Filters based on the date that the Incident was opened. Defaults to 360.",
       "default": 360,
       "type": "number",
