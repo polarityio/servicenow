@@ -79,7 +79,7 @@ module.exports = {
       key: 'shouldSearchString',
       name: 'Search By Annotated Entities',
       description:
-        'This will toggle whether or not to search ServiceNow for annotated entities found in your channels.  The "string" Data Type must also be enabled for this option to have an effect.',
+        'This will toggle whether to search ServiceNow for annotated entities found in your channels.  The "string" Data Type must also be enabled for this option to have an effect.',
       default: false,
       type: 'boolean',
       userCanEdit: false,
@@ -119,7 +119,7 @@ module.exports = {
       key: 'enableAssetSearch',
       name: 'Enable Asset Search',
       description:
-        "If checked, the integration will search ServiceNow's Asset Table (alm_asset) for IP Addresses, Domains, CVEs, annotated entities, and any added custom types",
+        "If checked, the integration will search ServiceNow's Asset Table (alm_asset) for IP Addresses, Domains, CVEs, annotated entities, and any added custom types.",
       default: true,
       type: 'boolean',
       userCanEdit: false,
