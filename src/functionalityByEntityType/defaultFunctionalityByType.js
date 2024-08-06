@@ -15,18 +15,15 @@ const assetsAndIncidentCustomFunctionality = require('./assetsAndIncidentCustomF
 
 // Not currently used but contains default values if you only want to search the Incident
 // table and not search the assets table.
-const DEFAULT_INCIDENT_ONLY_SEARCH_FUNCTIONALITY_OBJECT = {
+const DEFAULT_FUNCTIONALITY_OBJECT = {
   queryFunction: queryTableData,
   tableQueryTableName: 'incident',
   tableQueryQueryString: numberTableQueryString,
   createSummaryTags: getTableQueryDataSummaryTags,
   displayTabNames: { tableQueryData: 'Incidents' },
   displayStructure: { tableQueryData: tableQueryDisplayStructure },
-  // Empty Defaults
-  tableQuerySummaryTagPaths: false
+  tableQuerySummaryTagPaths: ['category', 'phase']
 };
-
-const DEFAULT_FUNCTIONALITY_OBJECT = assetsAndIncidentCustomFunctionality;
 
 const defaultFunctionalityForStandardEntityTypes = reduce(
   (agg, entityType) => ({ ...agg, [entityType]: DEFAULT_FUNCTIONALITY_OBJECT }),
