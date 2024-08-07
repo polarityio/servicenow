@@ -4,14 +4,13 @@ const { mergeAndRemoveDuplicates } = require('../dataTransformations');
 const { entityTypes, customTypes: customTypesJs } = require('../../config/config');
 const { customTypes: customTypesJson } = require('../../config/config.json');
 const customTypes = mergeAndRemoveDuplicates(customTypesJs, customTypesJson, 'key');
-
+const assetsAndIncidentCustomFunctionality = require('./assetsAndIncidentCustomFunctionality');
 const queryTableData = require('../querying/queryTableData');
 
 const numberTableQueryString = ({ value }) => `number=${value}`;
 
 const { getTableQueryDataSummaryTags } = require('./createSummaryTagsFunctions');
 const { tableQueryDisplayStructure } = require('../displayStructures/index');
-const assetsAndIncidentCustomFunctionality = require('./assetsAndIncidentCustomFunctionality');
 
 // Not currently used but contains default values if you only want to search the Incident
 // table and not search the assets table.
@@ -34,7 +33,7 @@ const defaultFunctionalityForStandardEntityTypes = reduce(
 const defaultFunctionalityForCustomEntityTypes = flow(
   map(get('key')),
   reduce(
-    (agg, entityType) => ({ ...agg, [entityType]: DEFAULT_FUNCTIONALITY_OBJECT }),
+    (agg, entityType) => ({ ...agg, [entityType]: assetsAndIncidentCustomFunctionality }),
     {}
   )
 )(customTypes);
