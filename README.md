@@ -42,6 +42,20 @@ A comma separated list of fields to search when querying for Assets. Asset searc
 
 This option defaults to searching the `ci.name` and `ci.asset_tag` fields.  The correct fields to search are dependent on your ServiceNow implementation.  A common additional field to add is `comments`.
 
+## Searching Assets
+
+Assets in ServiceNow are commonly found in the Assets table `alm_assets` or the Configuration Item table `cmdb_ci`.  The Polarity ServiceNow integration searches the `alm_assets` table as part of its asset search capability but fields within the `cmdb_ci` table can be referenced for searching by prepending the table's column name with `ci.`.  As an example, if you'd like to search the `asset_tag` field within the `cmdb_ci` table, you should set the "Asset Query Fields" option to `ci.asset_tag`.  
+
+Common "Asset Query Fields" include:
+
+* display_name
+* name
+* asset_tag
+* comments
+* ci.name
+* ci.display_name
+* ci.asset_tag
+
 ## IP Lookups and Finding Query Fields
 Because ServiceNow is often customized to fit specific needs, Polarity's ServiceNow Integration offers the ability to look up IPv4 matches on custom Incident and Asset fields. Simply add a comma separated list of custom fields to the `Custom Fields` integration option, and when Polarity recognizes an IP address, it will look up the address in the custom fields you listed and display the results.  To determine what value you should put in this field your can reference our guide [**Here**](./HowToFindCustomFields.md) using the dashboard.
 
