@@ -130,7 +130,7 @@ module.exports = {
       name: 'Asset Query Fields',
       description:
         "A comma separated list of fields to search when querying for Assets. Asset searches are done for IPs, domains, CVEs, annotated entities and any added custom types. NOTE: If a field is not in this list, the field will not be searched in ServiceNow's Asset Table.",
-      default: 'ci.name, ci.asset_tag, short_description',
+      default: 'name, display_name, asset_tag, ci.name, ci.asset_tag',
       type: 'text',
       userCanEdit: false,
       adminOnly: true
