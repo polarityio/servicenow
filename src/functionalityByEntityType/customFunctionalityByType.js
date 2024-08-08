@@ -110,33 +110,29 @@ const CUSTOM_FUNCTIONALITY_FOR_STANDARD_ENTITY_TYPES = {
  */
 const CUSTOM_FUNCTIONALITY_FOR_CUSTOM_ENTITY_TYPES = {
   // All Custom Type Defaults
-  defaults: assetsAndIncidentCustomFunctionality,
+  defaults: BUILT_IN_SERVICENOW_TYPE_DEFAULTS,
 
   // Specific Custom Types which override default above which is to search both incident and asset
   // tables.
   knowledgeBase: {
-    ...BUILT_IN_SERVICENOW_TYPE_DEFAULTS,
     queryFunction: queryKnowledgeBase,
     createSummaryTags: getTotalKbDocsSummaryTag,
     displayTabNames: { knowledgeBaseData: 'Knowledge Base' },
     displayStructure: { knowledgeBaseData: knowledgeBaseDisplayStructure }
   },
   change: {
-    ...BUILT_IN_SERVICENOW_TYPE_DEFAULTS,
     tableQueryTableName: 'change_request',
     displayTabNames: { tableQueryData: 'Changes' }
   },
   request: {
-    ...BUILT_IN_SERVICENOW_TYPE_DEFAULTS,
     tableQueryTableName: 'sc_request',
     displayTabNames: { tableQueryData: 'Requests' }
   },
   requestedItem: {
-    ...BUILT_IN_SERVICENOW_TYPE_DEFAULTS,
     tableQueryTableName: 'sc_req_item',
     displayTabNames: { tableQueryData: 'Requested Items' }
   },
-  incident: BUILT_IN_SERVICENOW_TYPE_DEFAULTS
+  incident: {}
 };
 
 const specificCustomTypesWithDefaults = flow(
