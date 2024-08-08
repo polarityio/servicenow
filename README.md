@@ -67,6 +67,14 @@ They are usually prepended with a `u_` and then the name of the custom field, in
 |---|
 |*Custom Query Field Example*|
 
+## Known Issues
+
+If adding additional custom types to the ServiceNow integration, please ensure the added custom types do not also match on the built-in custom types for Incidents, Change Requests, Knowledge Base, Request, and Request Item ids.
+
+As an example, if you add a new custom type that matches on the string `INC0001234`, this will conflict with the integration's built-in custom type for looking up incidents by ID.
+
+Ensure that newly added custom types (e.g., for hostnames), does not overlap with these custom types.
+
 ## Polarity
 
 Polarity is a memory-augmentation platform that improves and accelerates analyst decision making.  For more information about the Polarity platform please see:
