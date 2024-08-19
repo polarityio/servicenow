@@ -1,69 +1,33 @@
 module.exports = {
-  /**
-   * Name of the integration which is displayed in the Polarity integrations user interface
-   *
-   * @type String
-   * @required
-   */
   name: 'ServiceNow',
-  /**
-   * The acronym that appears in the notification window when information from this integration
-   * is displayed.  Note that the acronym is included as part of each "tag" in the summary information
-   * for the integration.  As a result, it is best to keep it to 4 or less characters.  The casing used
-   * here will be carried forward into the notification window.
-   *
-   * @type String
-   * @required
-   */
   acronym: 'SN',
   defaultColor: 'light-purple',
-  /**
-   * Description for this integration which is displayed in the Polarity integrations user interface
-   *
-   * @type String
-   * @optional
-   */
   description:
     'ServiceNow automates and streamlines work and helps create great employee and customer experiences.',
   entityTypes: ['IPv4', 'email', 'domain', 'string', 'cve'],
   customTypes: [
     {
       key: 'incident',
-      regex: /INC[0-9]{7,}/
+      regex: 'INC[0-9]{7,}'
     },
     {
       key: 'knowledgeBase',
-      regex: /KB[0-9]{7,}/
+      regex: 'KB[0-9]{7,}'
     },
     {
       key: 'change',
-      regex: /CHG[0-9]{7,}/
+      regex: 'CHG[0-9]{7,}'
     },
     {
       key: 'request',
-      regex: /REQ[0-9]{7,}/
+      regex: 'REQ[0-9]{7,}'
     },
     {
       key: 'requestedItem',
-      regex: /RITM[0-9]{7,}/
+      regex: 'RITM[0-9]{7,}'
     }
   ],
-  /**
-   * An array of style files (css or less) that will be included for your integration. Any styles specified in
-   * the below files can be used in your custom template.
-   *
-   * @type Array
-   * @optional
-   */
   styles: ['./styles/styles.less'],
-  /**
-   * Provide custom component logic and template for rendering the integration details block.  If you do not
-   * provide a custom template and/or component then the integration will display data as a table of key value
-   * pairs.
-   *
-   * @type Object
-   * @optional
-   */
   block: {
     component: {
       file: './components/block.js'
@@ -73,32 +37,15 @@ module.exports = {
     }
   },
   request: {
-    // Provide the path to your certFile. Leave an empty string to ignore this option.
-    // Relative paths are relative to the ServiceNow integration's root directory
     cert: '',
-    // Provide the path to your private key. Leave an empty string to ignore this option.
-    // Relative paths are relative to the ServiceNow integration's root directory
     key: '',
-    // Provide the key passphrase if required.  Leave an empty string to ignore this option.
-    // Relative paths are relative to the ServiceNow integration's root directory
     passphrase: '',
-    // Provide the Certificate Authority. Leave an empty string to ignore this option.
-    // Relative paths are relative to the ServiceNow integration's root directory
     ca: '',
-    // An HTTP proxy to be used. Supports proxy Auth with Basic Auth, identical to support for
-    // the url parameter (by embedding the auth info in the uri)
-    proxy: ""
+    proxy: ''
   },
   logging: {
-    level: 'info' //trace, debug, info, warn, error, fatal
+    level: 'info'
   },
-  /**
-   * Options that are displayed to the user/admin in the Polarity integration user-interface.  Should be structured
-   * as an array of option objects.
-   *
-   * @type Array
-   * @optional
-   */
   options: [
     {
       key: 'url',
@@ -132,8 +79,18 @@ module.exports = {
       key: 'shouldSearchString',
       name: 'Search By Annotated Entities',
       description:
-        "This will toggle whether or not to search the ServiceNow for annotated entities found in your channels.",
+        'This will toggle whether to search ServiceNow for annotated entities found in your channels.  The "string" Data Type must also be enabled for this option to have an effect.',
       default: false,
+      type: 'boolean',
+      userCanEdit: false,
+      adminOnly: true
+    },
+    {
+      key: 'enableIncidentSearch',
+      name: 'Enable Incident Search',
+      description:
+        "If checked, the integration will search ServiceNow's Incident Table (incident) for IP Addresses, Domains, CVEs, annotated entities, and any added custom types",
+      default: true,
       type: 'boolean',
       userCanEdit: false,
       adminOnly: true
@@ -142,11 +99,19 @@ module.exports = {
       key: 'incidentQueryFields',
       name: 'Incident Query Fields',
       description:
-        'A comma separated list of Fields to query against Incidents.  \n' +
-        'NOTE: If a field is not in this list, it will not be searched on Incident Queries.\n' +
-        '(This applies to IP address, domain, and annotated entity searches)',
-      default: 'u_ip_addr_2, u_destination_ip, short_description, work_notes',
+        'A comma separated list of fields to search when querying for Incidents.  Incident searches are done for IPs, domains, CVEs, annotated entities and any added custom types. NOTE: If a field is not in this list, it will not be searched for Incident Queries.',
+      default: 'short_description, description, work_notes',
       type: 'text',
+      userCanEdit: false,
+      adminOnly: true
+    },
+    {
+      key: 'incidentDaysAgoToSearch',
+      name: 'Incident Search Window in Days',
+      description:
+        'Number of days back to search when searching incidents.  Filters based on the date that the Incident was opened. Defaults to 360.',
+      default: 360,
+      type: 'number',
       userCanEdit: false,
       adminOnly: true
     },
@@ -154,7 +119,7 @@ module.exports = {
       key: 'enableAssetSearch',
       name: 'Enable Asset Search',
       description:
-          "If checked, the integration will search ServiceNow's Asset Table (alm_asset) for IP Addresses, Domains, CVEs and annotated entities",
+        "If checked, the integration will search ServiceNow's Asset Table (alm_asset) for IP Addresses, Domains, CVEs, annotated entities, and any added custom types.",
       default: true,
       type: 'boolean',
       userCanEdit: false,
@@ -164,10 +129,8 @@ module.exports = {
       key: 'assetTableFields',
       name: 'Asset Query Fields',
       description:
-        "A comma separated list of fields to search domains and IPs by in ServiceNow's Asset Table.  \n" +
-        "NOTE: If a field is not in this list, the field will not be searched in ServiceNow's Asset Table.\n" +
-        '(This applies to IP Addresses, Domains, and String searches)',
-      default: 'dns_domain, sys_domain_path, ip_address, short_description',
+        "A comma separated list of fields to search when querying for Assets. Asset searches are done for IPs, domains, CVEs, annotated entities and any added custom types. NOTE: If a field is not in this list, the field will not be searched in ServiceNow's Asset Table.",
+      default: 'name, display_name, asset_tag, ci.name, ci.asset_tag',
       type: 'text',
       userCanEdit: false,
       adminOnly: true

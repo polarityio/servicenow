@@ -61,7 +61,11 @@ const splitOutIgnoredIps = (_entitiesPartition) => {
   };
 };
 
-const objectPromiseAll = async (obj = { fn1: async () => {} }) => {
+const objectPromiseAll = async (
+  obj = {
+    fn1: async () => {}
+  }
+) => {
   const labels = keys(obj);
   const functions = values(obj);
   const executedFunctions = await Promise.all(map((func) => func(), functions));
@@ -126,6 +130,33 @@ const mapObjectAsync = async (func, obj) => {
 const parseErrorToReadableJSON = (error) =>
   JSON.parse(JSON.stringify(error, Object.getOwnPropertyNames(error)));
 
+/**
+ * Merges two arrays of objects and removes duplicates based on the equality of the
+ * given `mergeKey`
+ */
+const mergeAndRemoveDuplicates = (arr1, arr2, mergeKey) => {
+  // Merge the two arrays
+  const mergedArray = [...arr1, ...arr2];
+
+  // Sort the merged array based on the 'key' property
+  mergedArray.sort((a, b) => {
+    if (a[mergeKey] < b[mergeKey]) return -1;
+    if (a[mergeKey] > b[mergeKey]) return 1;
+    return 0;
+  });
+
+  // Filter out duplicates
+  const uniqueArray = [];
+  for (let i = 0; i < mergedArray.length; i++) {
+    // If it's the first element or different from the previous one, add it to the uniqueArray
+    if (i === 0 || mergedArray[i][mergeKey] !== mergedArray[i - 1][mergeKey]) {
+      uniqueArray.push(mergedArray[i]);
+    }
+  }
+
+  return uniqueArray;
+};
+
 module.exports = {
   getKeys,
   groupEntities,
@@ -135,5 +166,6 @@ module.exports = {
   mapObject,
   mapObjectAsync,
   transpose2DArray,
-  parseErrorToReadableJSON
+  parseErrorToReadableJSON,
+  mergeAndRemoveDuplicates
 };

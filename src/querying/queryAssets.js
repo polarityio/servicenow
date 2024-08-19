@@ -7,7 +7,7 @@ const queryAssets = async (entity, options, requestWithDefaults, Logger) => {
       get('assetTableFields'),
       split(','),
       map((field) => `${trim(field)}CONTAINS${entity.value}`),
-      join('^NQ')
+      join('^OR')
     )(options);
 
     const requestOptions = {

@@ -7,6 +7,7 @@ const ASSET_DISPLAY_STRUCTURE = [
     isDisplayLink: true
   },
   { label: 'Asset Name', path: 'name' },
+  { label: 'Name', path: 'ci.link', pathIsLinkToMoreData: true,  pathToOnePropertyFromMoreDataToDisplay: 'name'},
   { label: 'Display Name', path: 'display_name' },
   { label: 'Asset Subcategory', path: 'subcategory' },
   { label: 'Serial Number', path: 'serial_number' },

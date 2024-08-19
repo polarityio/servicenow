@@ -22,21 +22,39 @@ The username of the Service Now user you want the integration to authenticate as
 ### Password
 The password for the provided username you want the integration to authenticate as.
 
-### Search By String
-This will toggle whether or not to search the ServiceNow's Asset Table with strings found in your channels.
+### Search By Annotated Entities
+This will toggle whether to search ServiceNow for annotated entities found in your channels. The "string" Data Type must also be enabled for this option to have an effect.
+
+### Enable Incident Search
+If checked, the integration will search ServiceNow's Incident Table (incident) for IP Addresses, Domains, CVEs, annotated entities, and any added custom types
 
 ### Incident Query Fields
-A comma separated list of Fields to query against Incidents. 
-> NOTE: If a field is not in this list, it will not be searched on on in ServiceNow's Incident Table.
-> (This applies to IP Addresses, Domains, and String searches)
+A comma separated list of fields to search when querying for Incidents. Incident searches are done for IPs, domains, CVEs, annotated entities and any added custom types. NOTE: If a field is not in this list, it will not be searched for Incident Queries.
+
+### Incident Search Window in Days
+Number of days back to search when searching incidents. Filters based on the date that the Incident was opened. Defaults to 360.
 
 ### Enable Asset Search
-If checked, the integration will search ServiceNow's Asset Table (alm_asset) for IP Addresses, Domains, CVEs and annotated entities.
+If checked, the integration will search ServiceNow's Asset Table (alm_asset) for IP Addresses, Domains, CVEs, annotated entities, and any added custom types.
 
 ### Asset Query Fields
-A comma separated list of fields to search domains and IPs by in ServiceNow's Asset Table.
-> NOTE: If a field is not in this list, it will not be searched on in ServiceNow's Asset Table.
-> (This applies to IP Addresses, Domains, and String searches)
+A comma separated list of fields to search when querying for Assets. Asset searches are done for IPs, domains, CVEs, annotated entities and any added custom types. NOTE: If a field is not in this list, the field will not be searched in ServiceNow's Asset Table.
+
+This option defaults to searching the `ci.name` and `ci.asset_tag` fields.  The correct fields to search are dependent on your ServiceNow implementation.  A common additional field to add is `comments`.
+
+## Searching Assets
+
+Assets in ServiceNow are commonly found in the Assets table `alm_assets` or the Configuration Item table `cmdb_ci`.  The Polarity ServiceNow integration searches the `alm_assets` table as part of its asset search capability but fields within the `cmdb_ci` table can be referenced for searching by prepending the table's column name with `ci.`.  As an example, if you'd like to search the `asset_tag` field within the `cmdb_ci` table, you should set the "Asset Query Fields" option to `ci.asset_tag`.  
+
+Common "Asset Query Fields" include:
+
+* display_name
+* name
+* asset_tag
+* comments
+* ci.name
+* ci.display_name
+* ci.asset_tag
 
 ## IP Lookups and Finding Query Fields
 Because ServiceNow is often customized to fit specific needs, Polarity's ServiceNow Integration offers the ability to look up IPv4 matches on custom Incident and Asset fields. Simply add a comma separated list of custom fields to the `Custom Fields` integration option, and when Polarity recognizes an IP address, it will look up the address in the custom fields you listed and display the results.  To determine what value you should put in this field your can reference our guide [**Here**](./HowToFindCustomFields.md) using the dashboard.
@@ -48,6 +66,14 @@ They are usually prepended with a `u_` and then the name of the custom field, in
 |![image](./assets/example-custom-field.png)
 |---|
 |*Custom Query Field Example*|
+
+## Known Issues
+
+If adding additional custom types to the ServiceNow integration, ensure the added custom types do not also match on the built-in custom types for Incidents, Change Requests, Knowledge Base, Request, and Request Item ids.
+
+As an example, if you add a new custom type that matches on the string `INC0001234`, this will conflict with the integration's built-in custom type for looking up incidents by ID.
+
+Ensure that newly added custom types (e.g., for hostnames), do not overlap with these custom types.
 
 ## Polarity
 

@@ -15,10 +15,15 @@ const {
 
 const assetsAndIncidentCustomFunctionality = {
   queryFunction: async (entity, options, requestWithDefaults, Logger) => ({
-    ...(options.enableAssetSearch ? await queryAssets(entity, options, requestWithDefaults, Logger) : {}),
-    ...(await queryTableData(entity, options, requestWithDefaults, Logger))
+    ...(options.enableAssetSearch
+      ? await queryAssets(entity, options, requestWithDefaults, Logger)
+      : {}),
+    ...(options.enableIncidentSearch
+      ? await queryTableData(entity, options, requestWithDefaults, Logger)
+      : {})
   }),
-  tableQueryQueryString: ({ value }, { incidentQueryFields }) =>
+  tableQueryTableName: 'incident',
+  tableQueryQueryString: ({ value }, { incidentQueryFields, incidentDaysAgoToSearch }) =>
     incidentQueryFields &&
     typeof incidentQueryFields === 'string' &&
     incidentQueryFields.length !== 0 &&
@@ -26,7 +31,10 @@ const assetsAndIncidentCustomFunctionality = {
       split(','),
       compact,
       map((field) => `${trim(field)}CONTAINS${value}`),
-      join('^NQ')
+      join('^OR'),
+      (query) => {
+        return `${query}^opened_at>javascript:gs.daysAgoStart(${incidentDaysAgoToSearch})`;
+      }
     )(incidentQueryFields),
   createSummaryTags: (results, entity, Logger) =>
     getTableQueryDataSummaryTags(results, entity, Logger).concat(
