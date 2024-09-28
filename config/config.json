@@ -103,7 +103,7 @@
     {
       "key": "incidentQueryFields",
       "name": "Incident Query Fields",
-      "description": "A comma separated list of fields to search when querying for Incidents.  Incident searches are done for IPs, domains, CVEs, annotated entities and any added custom types. NOTE: If a field is not in this list, it will not be searched for Incident Queries.",
+      "description": "A comma separated list of fields to search when querying for Incidents.  Incident searches are done for IPs, domains, CVEs, annotated entities and any added custom types. IMPORTANT -- ServiceNow does not return an error if invalid fields are provided and will instead return all records.",
       "default": "short_description, description, work_notes",
       "type": "text",
       "userCanEdit": false,
