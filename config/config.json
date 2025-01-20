@@ -66,8 +66,8 @@
     },
     {
       "key": "username",
-      "name": "Username",
-      "description": "The username to login to ServiceNow with",
+      "name": "Username (Required)",
+      "description": "The username to login to ServiceNow. If using OAuth (i.e., Client ID and Secret are provided), the Username and Password should be for the OAuth Application User.",
       "default": "",
       "type": "text",
       "userCanEdit": false,
@@ -75,8 +75,26 @@
     },
     {
       "key": "password",
-      "name": "Password",
-      "description": "The password to login to ServiceNow with",
+      "name": "Password (Required)",
+      "description": "The password for the provided Username used to login to ServiceNow.  If using OAuth (i.e., Client Id and Secret are provided), the Username and Password should be for the OAuth Application User.",
+      "default": "",
+      "type": "password",
+      "userCanEdit": false,
+      "adminOnly": true
+    },
+    {
+      "key": "clientId",
+      "name": "OAuth Client ID (Optional)",
+      "description": "Optional Client ID which is required when authenticating to ServiceNow via OAuth.  If provided, a corresponding Client Secret must also be provided. Can be left blank when authenticating via Basic Auth.",
+      "default": "",
+      "type": "text",
+      "userCanEdit": false,
+      "adminOnly": true
+    },
+    {
+      "key": "clientSecret",
+      "name": "OAuth Client Secret (Optional)",
+      "description": "Optional Client Secret which is required when authenticating to ServiceNow via OAuth.  If provided, a corresponding Client ID must also be provided. Can be left blank when authenticating via Basic Auth.",
       "default": "",
       "type": "password",
       "userCanEdit": false,

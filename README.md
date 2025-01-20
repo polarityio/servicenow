@@ -16,11 +16,19 @@ To learn more about ServiceNow, visit the [official website](https://servicenow.
 ### Service Now Server URL
 The URL for your Service Now server which should include the schema (i.e., http, https) and port if required
 
-### Username
-The username of the Service Now user you want the integration to authenticate as.  The user should have permissions to access the `sys_user`, `incident`, `sc_request`, `sc_req_item` and `change_request` tables.
+### Username (Required)
+The username to login to ServiceNow. If using OAuth (i.e., Client ID and Secret are provided), the Username and Password should be for the OAuth Application User.
 
-### Password
-The password for the provided username you want the integration to authenticate as.
+> The user should have permissions to access the `sys_user`, `incident`, `sc_request`, `sc_req_item` and `change_request` tables.
+
+### Password (Required)
+The password for the provided Username used to login to ServiceNow.  If using OAuth (i.e., Client ID and Secret are provided), the Username and Password should be for the OAuth Application User.
+
+### OAuth Client ID (Optional)
+Optional Client ID which is required when authenticating to ServiceNow via OAuth.  If provided, a corresponding Client Secret must also be provided. Can be left blank when authenticating via Basic Auth.
+
+### OAuth Client Secret (Optional)
+Optional Client Secret which is required when authenticating to ServiceNow via OAuth.  If provided, a corresponding Client ID must also be provided. Can be left blank when authenticating via Basic Auth.
 
 ### Search By Annotated Entities
 This will toggle whether to search ServiceNow for annotated entities found in your channels. The "string" Data Type must also be enabled for this option to have an effect.
@@ -67,6 +75,54 @@ They are usually prepended with a `u_` and then the name of the custom field, in
 |---|
 |*Custom Query Field Example*|
 
+## Authentication Options
+
+The Polarity ServiceNow integration supports two authentication methods, basic auth and OAuth.
+
+### Basic Auth
+
+Basic authentication will authenticate the integration to ServiceNow as a specified user.  Basic Auth requires that the Username and Password options are provided.
+
+### OAuth
+
+OAuth authentication requires setting up a Polarity Integration OAuth Application within ServiceNow.  Authentication via OAuth requires the OAuth Application User's Username and Password along with the OAuth Application Client ID and Client Secret.
+
+#### Creating OAuth Credentials
+
+First navigate to the ServiceNow Application registry by searching for the term "oauth" in the navigation menu.
+
+![Application Registry](assets/oauth-application-registry.png)
+
+Once in the Application Registry, click on "new" in the top right corner.
+
+![New Application](assets/oauth-new-application.png)
+
+Click on "Create an OAuth API endpoint for external clients"
+
+![Create API Endpoint](assets/oauth-create-api-endpoint.png)
+
+By default, the OAuth Application User will be the user creating the OAuth application.  We recommend creating a Polarity specific OAuth Application User and then linking this user with the OAuth Application.  To add the OAuth user to the application you will need to add a new field to the OAuth Application using the Form Builder.
+
+Open Configure -> Form Builder
+
+![OAuth Form Builder](assets/oauth-form-builder.png)
+
+Once the Form Builder is open, search for the "OAuth Application User" field.
+
+![OAuth Form Builder](assets/oauth-application-user-field.png)
+
+Click and drag the field to the OAuth Application Form.
+
+![Add Application User Field](assets/oauth-add-application-user.png)
+
+Save your changes.  On the updated Application Form, fill in the Name field and under Client Type select "Integration as a Service".  Under "OAuth Application User", select the user you want to link the OAuth Application to.
+
+If you leave the Client Secret blank it will be automatically generated after creating the application.
+
+![OAuth Fields](assets/oauth-fields.png)
+
+After saving the application make note of the OAuth Application User Username and Password along with the Client ID and Client Secret.  These four values are required for the Polarity ServiceNow integration to authenticate with ServiceNow.
+
 ## Known Issues
 
 If adding additional custom types to the ServiceNow integration, ensure the added custom types do not also match on the built-in custom types for Incidents, Change Requests, Knowledge Base, Request, and Request Item ids.
@@ -74,6 +130,16 @@ If adding additional custom types to the ServiceNow integration, ensure the adde
 As an example, if you add a new custom type that matches on the string `INC0001234`, this will conflict with the integration's built-in custom type for looking up incidents by ID.
 
 Ensure that newly added custom types (e.g., for hostnames), do not overlap with these custom types.
+
+## Common Errors
+
+If you see the following error message:
+
+```
+Required to provide Auth information
+```
+
+This typically means the authentication credntials you have provided are incorrect.
 
 ## Polarity
 

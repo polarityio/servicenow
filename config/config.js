@@ -1,4 +1,5 @@
 module.exports = {
+  polarityIntegrationUuid: 'c480b2b0-cce1-11ed-aeee-075d3490155d',
   name: 'ServiceNow',
   acronym: 'SN',
   defaultColor: 'light-purple',
@@ -59,8 +60,9 @@ module.exports = {
     },
     {
       key: 'username',
-      name: 'Username',
-      description: 'The username to login to ServiceNow with',
+      name: 'Username (Required)',
+      description:
+        'The username to login to ServiceNow. If using OAuth (i.e., Client ID and Secret are provided), the Username and Password should be for the OAuth Application User.',
       default: '',
       type: 'text',
       userCanEdit: false,
@@ -68,8 +70,29 @@ module.exports = {
     },
     {
       key: 'password',
-      name: 'Password',
-      description: 'The password to login to ServiceNow with',
+      name: 'Password (Required)',
+      description:
+        'The password for the provided Username used to login to ServiceNow.  If using OAuth (i.e., Client Id and Secret are provided), the Username and Password should be for the OAuth Application User.',
+      default: '',
+      type: 'password',
+      userCanEdit: false,
+      adminOnly: true
+    },
+    {
+      key: 'clientId',
+      name: 'OAuth Client ID (Optional)',
+      description:
+        'Optional Client ID which is required when authenticating to ServiceNow via OAuth.  If provided, a corresponding Client Secret must also be provided. Can be left blank when authenticating via Basic Auth.',
+      default: '',
+      type: 'text',
+      userCanEdit: false,
+      adminOnly: true
+    },
+    {
+      key: 'clientSecret',
+      name: 'OAuth Client Secret (Optional)',
+      description:
+        'Optional Client Secret which is required when authenticating to ServiceNow via OAuth.  If provided, a corresponding Client ID must also be provided. Can be left blank when authenticating via Basic Auth.',
       default: '',
       type: 'password',
       userCanEdit: false,
@@ -107,7 +130,7 @@ module.exports = {
     },
     {
       key: 'incidentDaysAgoToSearch',
-      name: 'Incident Search Window in Days',
+      name: 'Incident Search Window in Days ',
       description:
         'Number of days back to search when searching incidents.  Filters based on the date that the Incident was opened. Defaults to 360.',
       default: 360,
@@ -129,7 +152,7 @@ module.exports = {
       key: 'assetTableFields',
       name: 'Asset Query Fields',
       description:
-        "A comma separated list of fields to search when querying for Assets. Asset searches are done for IPs, domains, CVEs, annotated entities and any added custom types. NOTE: If a field is not in this list, the field will not be searched in ServiceNow's Asset Table.",
+        "A comma separated list of fields to search when querying for Assets. Asset searches are done for IPs, domains, CVEs, annotated entities and any added custom types. NOTE: If a field is not in this list, the field will not be searched in ServiceNow's Asset (alm_asset) Table.",
       default: 'name, display_name, asset_tag, ci.name, ci.asset_tag',
       type: 'text',
       userCanEdit: false,
