@@ -32,10 +32,6 @@ const customFunctionalityWithDefaults = mapObject(
 );
 
 const queryEntityByType = (entity, options, requestWithDefaults, Logger) => {
-  Logger.info(
-    { entity, keys: Object.keys(customFunctionalityWithDefaults) },
-    'queryEntityByType'
-  );
   const queryFunc = _.get(
     customFunctionalityWithDefaults,
     [entity.type, 'queryFunction'],

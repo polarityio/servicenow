@@ -46,7 +46,6 @@ const _getEntitiesResults = async (
               // as an example, if the type is `custom.incident` then the `type` property must be set to `incident`.
               let simplifiedType = type.split('.')[1];
               entity.type = simplifiedType;
-              Logger.info({ entity }, 'Type to lookup');
               const result = await queryEntityByType(
                 entity,
                 options,
@@ -54,7 +53,8 @@ const _getEntitiesResults = async (
                 Logger
               );
 
-              Logger.info({ result, type: entity.type }, 'SINGLE LOOKUP RESULTS');
+              Logger.trace({ result, type: entity.type }, 'queryEntityByType result for custom types');
+              
               if (result) {
                 result._resultType = simplifiedType;
               }
