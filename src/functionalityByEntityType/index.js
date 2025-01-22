@@ -36,12 +36,15 @@ const queryEntityByType = (entity, options, requestWithDefaults, Logger) => {
     { entity, keys: Object.keys(customFunctionalityWithDefaults) },
     'queryEntityByType'
   );
-  return get([entity.type, 'queryFunction'], customFunctionalityWithDefaults)(
-    entity,
-    options,
-    requestWithDefaults,
-    Logger
+  const queryFunc = _.get(
+    customFunctionalityWithDefaults,
+    [entity.type, 'queryFunction'],
+    null
   );
+  if (typeof queryFunc === 'function') {
+    return queryFunc(entity, options, requestWithDefaults, Logger);
+  }
+  return {};
 };
 
 const createSummaryByType = (entity, formattedQueryResult, Logger) =>
@@ -51,19 +54,16 @@ const createSummaryByType = (entity, formattedQueryResult, Logger) =>
     Logger
   );
 
-const createSummaryByTypes = (entity, formattedQueryResult, Logger) => {
+const createSummaryByTypes = (entity, resultTypes, formattedQueryResult, Logger) => {
   let summary = [];
-  entity.types.forEach((type) => {
-    if (type.startsWith('custom.')) {
-      type = type.split('.')[1];
-    }
+  resultTypes.forEach((type) => {
     const createSummaryFunc = get(
       [type, 'createSummaryTags'],
       customFunctionalityWithDefaults,
       null
     );
     if (createSummaryFunc) {
-      summary = summary.concat(createSummaryFunc(formattedQueryResult, entity, Logger));
+      summary = summary.concat(createSummaryFunc(formattedQueryResult, entity, resultTypes, Logger));
     }
   });
   return _.uniq(summary);
@@ -81,8 +81,9 @@ const getTableQueryQueryStringByType = (entity, options) =>
 const getTableQuerySummaryTagPathsType = (type) =>
   get([type, 'tableQuerySummaryTagPaths'], customFunctionalityWithDefaults);
 
-const getDisplayStructureByType = (type) =>
-  get([type, 'displayStructure'], customFunctionalityWithDefaults);
+const getDisplayStructureByType = (type) => {
+  return _.get(customFunctionalityWithDefaults, [type, 'displayStructure'], {});
+};
 
 const getDisplayTabNamesByType = (type) =>
   get([type, 'displayTabNames'], customFunctionalityWithDefaults);
@@ -90,12 +91,9 @@ const getDisplayTabNamesByType = (type) =>
 const getDisplayTabNamesByTypes = (types) => {
   let tabNames = {};
   types.forEach((type) => {
-    if (type.startsWith('custom.')) {
-      type = type.split('.')[1];
-    }
     tabNames = {
       ...tabNames,
-      ..._.get([type, 'displayTabNames'], customFunctionalityWithDefaults, {})
+      ..._.get(customFunctionalityWithDefaults, [type, 'displayTabNames'], {})
     };
   });
   return tabNames;

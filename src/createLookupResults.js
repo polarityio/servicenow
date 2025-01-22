@@ -2,12 +2,12 @@ const { flow, map, size, mapValues, some, identity } = require('lodash/fp');
 
 const createLookupResults = (foundEntities, options, Logger) => {
   const {
-    putResultsInDisplayStructureIgnoringMoreDataLinks
+    putResultsInDisplayStructureIgnoringMoreDataLinksMultiType
   } = require('./displayStructures/index');
-  
+
   const {
-    createSummaryByType,
-    getDisplayTabNamesByType
+    createSummaryByTypes,
+    getDisplayTabNamesByTypes
   } = require('./functionalityByEntityType/index');
 
   return map(({ entity, result }) => {
@@ -17,15 +17,21 @@ const createLookupResults = (foundEntities, options, Logger) => {
       entity,
       data: !!formattedQueryResult
         ? {
-            summary: createSummaryByType(entity, formattedQueryResult, Logger),
+            summary: createSummaryByTypes(
+              entity,
+              result._resultTypes,
+              formattedQueryResult,
+              Logger
+            ),
             details: {
-              ...putResultsInDisplayStructureIgnoringMoreDataLinks(
+              ...putResultsInDisplayStructureIgnoringMoreDataLinksMultiType(
                 entity,
+                result._resultTypes,
                 formattedQueryResult,
                 options,
                 Logger
               ),
-              displayTabNames: getDisplayTabNamesByType(entity.type)
+              displayTabNames: getDisplayTabNamesByTypes(result._resultTypes)
             }
           }
         : null

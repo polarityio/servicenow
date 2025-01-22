@@ -134,7 +134,7 @@ const CUSTOM_FUNCTIONALITY_FOR_CUSTOM_ENTITY_TYPES = {
   },
   sctask: {
     tableQueryTableName: 'sc_task',
-    displayTabNames: { tableQueryData: 'SC Task' }
+    displayTabNames: { tableQueryData: 'Catalog Task' }
   },
   task: {
     tableQueryTableName: 'task',

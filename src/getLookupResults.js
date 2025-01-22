@@ -45,7 +45,8 @@ const _getEntitiesResults = async (
             if (type.startsWith('custom.')) {
               // The way the integration is set up is that the type must be the name of the custom type rather custom
               // as an example, if the type is `custom.incident` then the `type` property must be set to `incident`.
-              entity.type = type.split('.')[1];
+              let simplifiedType = type.split('.')[1];
+              entity.type = simplifiedType;
               Logger.info({ entity }, 'Type to lookup');
               const result = await queryEntityByType(
                 entity,
@@ -54,43 +55,50 @@ const _getEntitiesResults = async (
                 Logger
               );
 
-              Logger.info({ result }, 'SINGLE LOOKUP RESULTS');
+              Logger.info({ result, type: entity.type }, 'SINGLE LOOKUP RESULTS');
+              result._resultType = simplifiedType;
               return result;
             }
             return {};
           })
         );
 
-        Logger.info({ typeResults }, 'Type Results');
+        
 
         let finalResults = {
           tableQueryData: [],
           assetsData: [],
           knowledgeBaseData: []
         };
+        const resultTypes = new Set();
         typeResults.forEach((result) => {
           if (result && result.tableQueryData) {
+            resultTypes.add(result._resultType);
             finalResults.tableQueryData = finalResults.tableQueryData.concat(
               result.tableQueryData
             );
           }
           if (result && result.assetsData) {
+            resultTypes.add(result._resultType);
             finalResults.assetsData = finalResults.assetsData.concat(
               result.assetsData
             );
           }
           if (result && result.knowledgeBaseData) {
+            resultTypes.add(result._resultType);
             finalResults.knowledgeBaseData = finalResults.knowledgeBaseData.concat(
               result.knowledgeBaseData
             );
           }
         });
+        
+        finalResults._resultTypes = [...resultTypes];
 
         finalResults.tableQueryData = _.uniqBy(finalResults.tableQueryData, function (e) {
           return e.number ? e.number : e;
         });
 
-        
+        Logger.info({ finalResults }, 'Final Results');
         return { entity, result: finalResults };
       }
 
