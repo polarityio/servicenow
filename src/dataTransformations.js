@@ -48,8 +48,10 @@ const groupEntities = (entities) =>
 const splitOutIgnoredIps = (_entitiesPartition) => {
   const { ignoredIPs, entitiesPartition } = _.groupBy(
     _entitiesPartition,
-    ({ isIP, value }) =>
-      !isIP || (isIP && !IGNORED_IPS.has(value)) ? 'entitiesPartition' : 'ignoredIPs'
+    ({ isIP, value, type }) =>
+      !isIP || (isIP && !IGNORED_IPS.has(value) && type !== 'custom')
+        ? 'entitiesPartition'
+        : 'ignoredIPs'
   );
 
   return {

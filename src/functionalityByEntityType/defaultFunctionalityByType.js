@@ -2,8 +2,8 @@ const { map, flow, get, reduce } = require('lodash/fp');
 
 const { mergeAndRemoveDuplicates } = require('../dataTransformations');
 const { entityTypes, customTypes: customTypesJs } = require('../../config/config');
-const { customTypes: customTypesJson } = require('../../config/config.json');
-const customTypes = mergeAndRemoveDuplicates(customTypesJs, customTypesJson, 'key');
+const { dataTypes: customTypesJson } = require('../../config/config.json');
+const customTypes = mergeAndRemoveDuplicates(customTypesJs, customTypesJson.filter(value => typeof value === 'object' && value.key), 'key');
 const assetsAndIncidentCustomFunctionality = require('./assetsAndIncidentCustomFunctionality');
 const queryTableData = require('../querying/queryTableData');
 

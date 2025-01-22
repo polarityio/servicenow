@@ -4,6 +4,7 @@ const validateOptions = require('./src/validateOptions');
 const createRequestWithDefaults = require('./src/createRequestWithDefaults');
 const { getDisplayStructureNestedLinkData } = require('./src/displayStructures/index');
 const { parseErrorToReadableJSON } = require('./src/dataTransformations');
+const { setLogger } = require('./src/logger');
 
 const { getLookupResults } = require('./src/getLookupResults');
 
@@ -11,6 +12,7 @@ let Logger;
 let requestWithDefaults;
 const startup = (logger) => {
   Logger = logger;
+  setLogger(Logger);
   requestWithDefaults = createRequestWithDefaults(Logger);
 };
 
