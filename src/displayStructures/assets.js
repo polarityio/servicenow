@@ -2,11 +2,12 @@ const ASSET_DISPLAY_STRUCTURE = [
   {
     isTitle: true,
     label: 'View Asset',
-    icon: 'external-link',
+    icon: 'computer-classic',
     path: 'asset.link',
     isDisplayLink: true
   },
   { label: 'Asset Name', path: 'name' },
+  { label: 'Short Description', path: 'short_description' },
   { label: 'Name', path: 'ci.link', pathIsLinkToMoreData: true,  pathToOnePropertyFromMoreDataToDisplay: 'name'},
   { label: 'Display Name', path: 'display_name' },
   { label: 'Asset Subcategory', path: 'subcategory' },

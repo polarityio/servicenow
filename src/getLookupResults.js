@@ -13,8 +13,8 @@ const getLookupResults = async (entities, options, requestWithDefaults, Logger) 
     requestWithDefaults,
     Logger
   );
-  
-  Logger.info({entitiesResults}, 'Entity results');
+
+  Logger.trace({ entitiesResults }, 'Entity results');
 
   const lookupResults = createLookupResults(entitiesResults, options, Logger);
 
@@ -39,7 +39,6 @@ const _getEntitiesResults = async (
       // for an entity to match two custom types.  As a result, for each unique custom type
       // we need to run a lookup
       if (entity.type === 'custom') {
-        Logger.info({ entity }, 'Handling custom type');
         const typeResults = await Promise.all(
           entity.types.map(async (type) => {
             if (type.startsWith('custom.')) {
@@ -56,14 +55,14 @@ const _getEntitiesResults = async (
               );
 
               Logger.info({ result, type: entity.type }, 'SINGLE LOOKUP RESULTS');
-              result._resultType = simplifiedType;
+              if (result) {
+                result._resultType = simplifiedType;
+              }
               return result;
             }
             return {};
           })
         );
-
-        
 
         let finalResults = {
           tableQueryData: [],
@@ -80,9 +79,7 @@ const _getEntitiesResults = async (
           }
           if (result && result.assetsData) {
             resultTypes.add(result._resultType);
-            finalResults.assetsData = finalResults.assetsData.concat(
-              result.assetsData
-            );
+            finalResults.assetsData = finalResults.assetsData.concat(result.assetsData);
           }
           if (result && result.knowledgeBaseData) {
             resultTypes.add(result._resultType);
@@ -91,14 +88,20 @@ const _getEntitiesResults = async (
             );
           }
         });
-        
+
         finalResults._resultTypes = [...resultTypes];
 
         finalResults.tableQueryData = _.uniqBy(finalResults.tableQueryData, function (e) {
           return e.number ? e.number : e;
         });
 
-        Logger.info({ finalResults }, 'Final Results');
+        finalResults.knowledgeBaseData = _.uniqBy(
+          finalResults.knowledgeBaseData,
+          function (e) {
+            return e.number ? e.number : e;
+          }
+        );
+        
         return { entity, result: finalResults };
       }
 
@@ -109,6 +112,12 @@ const _getEntitiesResults = async (
         requestWithDefaults,
         Logger
       );
+
+      Logger.trace({ result }, 'Base Entity Lookup Result');
+
+      if (result && Object.keys(result).length > 0) {
+        result._resultTypes = [entity.type];
+      }
 
       return { entity, result };
     }, entitiesPartition)
