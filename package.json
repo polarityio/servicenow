@@ -1,6 +1,6 @@
 {
   "name": "service-now",
-  "version": "3.7.0+1",
+  "version": "3.7.0",
   "main": "./integration.js",
   "private": true,
   "license": "MIT",
