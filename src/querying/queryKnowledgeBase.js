@@ -34,7 +34,7 @@ const queryKnowledgeBase = async (entity, options, requestWithDefaults, Logger) 
         detail: 'Failed to Query Knowledge Base',
         formattedError: err
       },
-      'Quering Knowledge Base Failed'
+      'Querying Knowledge Base Failed'
     );
 
     throw error;

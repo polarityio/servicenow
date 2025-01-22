@@ -67,6 +67,7 @@ const createRequestWithDefaults = (Logger) => {
           _requestOptions
         );
       } catch (error) {
+        Logger.error({error}, 'Lookup Error');
         postRequestFunctionResults = await postRequestFailureFunction(
           error,
           _requestOptions

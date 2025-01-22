@@ -5,11 +5,13 @@ const usersDisplayStructure = require('./users');
 
 const {
   putResultsInDisplayStructureIgnoringMoreDataLinks,
+  putResultsInDisplayStructureIgnoringMoreDataLinksMultiType,
   getDisplayStructureNestedLinkData
 } = require('./handleDisplayStructures/index');
 
 module.exports = {
   putResultsInDisplayStructureIgnoringMoreDataLinks,
+  putResultsInDisplayStructureIgnoringMoreDataLinksMultiType,
   getDisplayStructureNestedLinkData,
   assetsDisplayStructure,
   knowledgeBaseDisplayStructure,

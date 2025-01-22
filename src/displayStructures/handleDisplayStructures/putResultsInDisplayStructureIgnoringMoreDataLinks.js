@@ -1,6 +1,5 @@
 const { map, flatMap, get, flow, filter, isEmpty, isPlainObject } = require('lodash/fp');
 
-
 const { mapObject } = require('../../dataTransformations');
 
 const putResultsInDisplayStructureIgnoringMoreDataLinks = (
@@ -24,6 +23,42 @@ const putResultsInDisplayStructureIgnoringMoreDataLinks = (
     ],
     displayStructureForThisEntity
   );
+
+  return displayStructureWithPopulatedResults;
+};
+
+const putResultsInDisplayStructureIgnoringMoreDataLinksMultiType = (
+  entity,
+  resultTypes,
+  queryFunctionResultsForThisEntity,
+  options,
+  Logger
+) => {
+  let displayStructureWithPopulatedResults = {};
+  const { getDisplayStructureByType } = require('../../functionalityByEntityType/index');
+
+  resultTypes.forEach((type) => {
+    const displayStructureForThisEntity = getDisplayStructureByType(type);
+    if (
+      typeof displayStructureForThisEntity === 'object' &&
+      Object.keys(displayStructureForThisEntity).length > 0
+    ) {
+      displayStructureWithPopulatedResults = {
+        ...mapObject(
+          (unpopulatedDisplayStructure, resultReturnKey) => [
+            resultReturnKey,
+            populateDisplayStructureIgnoringLinks(
+              queryFunctionResultsForThisEntity[resultReturnKey],
+              unpopulatedDisplayStructure,
+              options
+            )
+          ],
+          displayStructureForThisEntity
+        ),
+        ...displayStructureWithPopulatedResults
+      };
+    }
+  });
 
   return displayStructureWithPopulatedResults;
 };
@@ -89,7 +124,7 @@ const processField = (field, pathResult) => {
         ...processedResult
       })
     : processedResult;
-}
+};
 
 const hasRequiredValueOrIsTitle = (displayStructureField) => {
   const hasResultValue = !isEmpty(
@@ -105,6 +140,7 @@ const hasRequiredValueOrIsTitle = (displayStructureField) => {
 
 module.exports = {
   putResultsInDisplayStructureIgnoringMoreDataLinks,
+  putResultsInDisplayStructureIgnoringMoreDataLinksMultiType,
   populateDisplayStructureIgnoringLinks,
   getDisplayLink
 };

@@ -139,8 +139,27 @@ If you see the following error message:
 Required to provide Auth information
 ```
 
-This typically means the authentication credntials you have provided are incorrect.
+This typically means the authentication credentials you have provided are incorrect.
 
+
+## Adding custom table lookups
+
+To add a new custom table you first need to add your data type to the `config.json` `dataTypes` property.
+
+Next, you will need to modify the `./src/functionalityByEntityType/customFunctionalityByType.js` file and add your new type. 
+
+The new type should be added to the `CUSTOM_FUNCTIONALITY_FOR_CUSTOM_ENTITY_TYPES` array.  The key for new type object should be the same as the `key` value for the data type in the `config.json`.
+
+```
+  sctask: {
+    tableQueryTableName: 'sc_task',
+    displayTabNames: { tableQueryData: 'Catalog Task' }
+  },
+```
+
+The required fields are the `tableQueryTableName` which is the name of the table to search, and the `displayTabNames` property which sets the tab name in the details block.
+
+After adding these two changes, increment the `version` property in the `package.json` and restart the integration.
 ## Polarity
 
 Polarity is a memory-augmentation platform that improves and accelerates analyst decision making.  For more information about the Polarity platform please see:
