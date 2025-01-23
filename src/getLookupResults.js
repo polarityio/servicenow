@@ -33,7 +33,7 @@ const _getEntitiesResults = async (
       // entity type matches (including custom and built in types).  We want to check
       // if string lookups are enabled before continuing.
       if (entity.type === 'string' && !options.shouldSearchString)
-        return { entity, results: {} };
+        return { entity, result: {} };
 
       // Since we allow users to specify a custom hostname regex it is possible
       // for an entity to match two custom types.  As a result, for each unique custom type
