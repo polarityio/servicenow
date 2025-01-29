@@ -12,6 +12,7 @@ const {
   concat,
   slice
 } = require('lodash/fp');
+const { getTableQuerySummaryTagPathsType } = require('./index');
 
 // Custom Summary Creation Functions
 const getTotalAssetSummaryTag = ({ assetsData }) =>
@@ -20,16 +21,20 @@ const getTotalAssetSummaryTag = ({ assetsData }) =>
 const getTotalKbDocsSummaryTag = ({ knowledgeBaseData }) =>
   size(knowledgeBaseData) ? [`Knowledge Base Documents: ${size(knowledgeBaseData)}`] : [];
 
-
 const SUMMARY_TAG_DEFAULT_PATHS = ['category'];
 
-const getTableQueryDataSummaryTags = (result, entity, Logger) => {
+const getTableQueryDataSummaryTags = (result, entity, resultTypes, Logger) => {
   const { getTableQuerySummaryTagPathsType } = require('./index');
 
   return flow(
     getOr([], 'tableQueryData'),
     flatMap((tableQueryDataResult) => {
-      const summaryTagPathsForThisType = getTableQuerySummaryTagPathsType(entity.type);
+      let summaryTagPathsForThisType = [];
+      resultTypes.forEach((type) => {
+        summaryTagPathsForThisType = summaryTagPathsForThisType.concat(
+          getTableQuerySummaryTagPathsType(type)
+        );
+      });
 
       const allTableQueryPathValuesForThisResult = flow(
         concat(summaryTagPathsForThisType),

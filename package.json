@@ -1,12 +1,13 @@
 {
   "name": "service-now",
-  "version": "3.5.0",
+  "version": "3.7.0",
   "main": "./integration.js",
   "private": true,
   "license": "MIT",
   "author": "Polarity",
   "dependencies": {
     "lodash": "^4.17.21",
-    "postman-request": "^2.88.1-postman.38"
+    "postman-request": "^2.88.1-postman.40",
+    "node-cache": "^5.1.2"
   }
 }

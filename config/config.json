@@ -4,6 +4,104 @@
   "acronym": "SN",
   "defaultColor": "light-purple",
   "description": "ServiceNow automates and streamlines work and helps create great employee and customer experiences.",
+  "dataTypes": [
+    "IPv4",
+    "email",
+    "domain",
+    {
+      "type": "string",
+      "enabled": false
+    },
+    "cve",
+    {
+      "type": "custom",
+      "name": "Hostname",
+      "key": "hostname",
+      "regex": "^(?<!\\n|\\r\\n)[ \\t]*[a-zA-Z0-9\\-]{5,25}[ \\t]*(?!\\n|\\r\\n)$",
+      "description": "Matches on possible Hostnames lookups which can be a single search term between 5 and 25 characters using A-Z, 0-9 and dashes.",
+      "enabled": false,
+      "editable": true,
+      "isCaseSensitive": false,
+      "isGlobal": true
+    },
+    {
+      "type": "custom",
+      "name": "Incident ID",
+      "key": "incident",
+      "regex": "INC[0-9]{7,}",
+      "description": "Matches on possible Incident IDs of the format INC0000000 where zeroes can be any integer value from 0 to 9.",
+      "enabled": true,
+      "editable": false,
+      "isCaseSensitive": false,
+      "isGlobal": true
+    },
+    {
+      "type": "custom",
+      "name": "Knowledge Base ID",
+      "key": "knowledgeBase",
+      "regex": "KB[0-9]{7,}",
+      "description": "Matches on possible Knowledge Base IDs of the format KB0000000 where zeroes can be any integer value from 0 to 9.",
+      "enabled": true,
+      "editable": false,
+      "isCaseSensitive": false,
+      "isGlobal": true
+    },
+    {
+      "type": "custom",
+      "name": "Change ID",
+      "key": "change",
+      "regex": "CHG[0-9]{7,}",
+      "description": "Matches on possible Change IDs of the format CHG0000000 where zeroes can be any integer value from 0 to 9.",
+      "enabled": false,
+      "editable": false,
+      "isCaseSensitive": false,
+      "isGlobal": true
+    },
+    {
+      "type": "custom",
+      "name": "Request ID",
+      "key": "request",
+      "regex": "REQ[0-9]{7,}",
+      "description": "Matches on possible Request IDs of the format REQ0000000 where zeroes can be any integer value from 0 to 9.",
+      "enabled": false,
+      "editable": false,
+      "isCaseSensitive": false,
+      "isGlobal": true
+    },
+    {
+      "type": "custom",
+      "name": "Request Item ID",
+      "key": "requestedItem",
+      "regex": "RITM[0-9]{7,}",
+      "description": "Matches on possible Request Item IDs of the format RITM0000000 where zeroes can be any integer value from 0 to 9.",
+      "enabled": false,
+      "editable": false,
+      "isCaseSensitive": false,
+      "isGlobal": true
+    },
+    {
+      "type": "custom",
+      "name": "SC Task ID",
+      "key": "sctask",
+      "regex": "SCTASK[0-9]{7,}",
+      "description": "Matches on possible Catalog Task IDs of the format SCTASK0000000 where zeroes can be any integer value from 0 to 9.",
+      "enabled": false,
+      "editable": false,
+      "isCaseSensitive": false,
+      "isGlobal": true
+    },
+    {
+      "type": "custom",
+      "name": "Task ID",
+      "key": "task",
+      "regex": "TASK[0-9]{7,}",
+      "description": "Matches on possible Task IDs of the format TASK0000000 where zeroes can be any integer value from 0 to 9.",
+      "enabled": false,
+      "editable": false,
+      "isCaseSensitive": false,
+      "isGlobal": true
+    }
+  ],
   "entityTypes": [
     "IPv4",
     "email",
@@ -66,8 +164,8 @@
     },
     {
       "key": "username",
-      "name": "Username",
-      "description": "The username to login to ServiceNow with",
+      "name": "Username (Required)",
+      "description": "The username to login to ServiceNow. If using OAuth (i.e., Client ID and Secret are provided), the Username and Password should be for the OAuth Application User.",
       "default": "",
       "type": "text",
       "userCanEdit": false,
@@ -75,8 +173,26 @@
     },
     {
       "key": "password",
-      "name": "Password",
-      "description": "The password to login to ServiceNow with",
+      "name": "Password (Required)",
+      "description": "The password for the provided Username used to login to ServiceNow.  If using OAuth (i.e., Client Id and Secret are provided), the Username and Password should be for the OAuth Application User.",
+      "default": "",
+      "type": "password",
+      "userCanEdit": false,
+      "adminOnly": true
+    },
+    {
+      "key": "clientId",
+      "name": "OAuth Client ID (Optional)",
+      "description": "Optional Client ID which is required when authenticating to ServiceNow via OAuth.  If provided, a corresponding Client Secret must also be provided. Can be left blank when authenticating via Basic Auth.",
+      "default": "",
+      "type": "text",
+      "userCanEdit": false,
+      "adminOnly": true
+    },
+    {
+      "key": "clientSecret",
+      "name": "OAuth Client Secret (Optional)",
+      "description": "Optional Client Secret which is required when authenticating to ServiceNow via OAuth.  If provided, a corresponding Client ID must also be provided. Can be left blank when authenticating via Basic Auth.",
       "default": "",
       "type": "password",
       "userCanEdit": false,

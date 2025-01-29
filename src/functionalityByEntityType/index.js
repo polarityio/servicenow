@@ -1,9 +1,9 @@
 const { get } = require('lodash/fp');
-
+const _ = require('lodash');
 const customFunctionalityByType = require('./customFunctionalityByType');
 const defaultFunctionalityByType = require('./defaultFunctionalityByType');
 const { mapObject } = require('../dataTransformations');
-
+const { getLogger } = require('../logger');
 /**
  * NOTE: To Add or Modify an Entity Type's functionality go to customFunctionalityByType.js
  */
@@ -31,12 +31,17 @@ const customFunctionalityWithDefaults = mapObject(
   defaultFunctionalityByType
 );
 
-
-const queryEntityByType = (entity, options, requestWithDefaults, Logger) =>
-  get(
+const queryEntityByType = (entity, options, requestWithDefaults, Logger) => {
+  const queryFunc = _.get(
+    customFunctionalityWithDefaults,
     [entity.type, 'queryFunction'],
-    customFunctionalityWithDefaults
-  )(entity, options, requestWithDefaults, Logger);
+    null
+  );
+  if (typeof queryFunc === 'function') {
+    return queryFunc(entity, options, requestWithDefaults, Logger);
+  }
+  return {};
+};
 
 const createSummaryByType = (entity, formattedQueryResult, Logger) =>
   get([entity.type, 'createSummaryTags'], customFunctionalityWithDefaults)(
@@ -44,6 +49,21 @@ const createSummaryByType = (entity, formattedQueryResult, Logger) =>
     entity,
     Logger
   );
+
+const createSummaryByTypes = (entity, resultTypes, formattedQueryResult, Logger) => {
+  let summary = [];
+  resultTypes.forEach((type) => {
+    const createSummaryFunc = get(
+      [type, 'createSummaryTags'],
+      customFunctionalityWithDefaults,
+      null
+    );
+    if (createSummaryFunc) {
+      summary = summary.concat(createSummaryFunc(formattedQueryResult, entity, resultTypes, Logger));
+    }
+  });
+  return _.uniq(summary);
+};
 
 const getTableQueryTableNameByType = (type) =>
   get([type, 'tableQueryTableName'], customFunctionalityWithDefaults);
@@ -57,22 +77,36 @@ const getTableQueryQueryStringByType = (entity, options) =>
 const getTableQuerySummaryTagPathsType = (type) =>
   get([type, 'tableQuerySummaryTagPaths'], customFunctionalityWithDefaults);
 
-const getDisplayStructureByType = (type) =>
-  get([type, 'displayStructure'], customFunctionalityWithDefaults);
+const getDisplayStructureByType = (type) => {
+  return _.get(customFunctionalityWithDefaults, [type, 'displayStructure'], {});
+};
 
 const getDisplayTabNamesByType = (type) =>
   get([type, 'displayTabNames'], customFunctionalityWithDefaults);
 
+const getDisplayTabNamesByTypes = (types) => {
+  let tabNames = {};
+  types.forEach((type) => {
+    tabNames = {
+      ...tabNames,
+      ..._.get(customFunctionalityWithDefaults, [type, 'displayTabNames'], {})
+    };
+  });
+  return tabNames;
+};
+
 module.exports = {
   queryEntityByType,
   createSummaryByType,
+  createSummaryByTypes,
   getTableQueryTableNameByType,
   getTableQueryQueryStringByType,
   getDisplayStructureByType,
   getDisplayTabNamesByType,
+  getDisplayTabNamesByTypes,
   getTableQuerySummaryTagPathsType,
 
-  customFunctionalityWithDefaults,
+  //customFunctionalityWithDefaults,
   customFunctionalityByType,
   defaultFunctionalityByType
 };
