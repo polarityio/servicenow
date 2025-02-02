@@ -11,9 +11,9 @@ To learn more about ServiceNow, visit the [official website](https://servicenow.
 |---|
 |*Service Now Example*|
 
-## Service Now Integration Options
+## ServiceNow Integration Options
 
-### Service Now Server URL
+### ServiceNow Server URL
 The URL for your Service Now server which should include the schema (i.e., http, https) and port if required
 
 ### Username (Required)
@@ -123,13 +123,21 @@ If you leave the Client Secret blank it will be automatically generated after cr
 
 After saving the application make note of the OAuth Application User Username and Password along with the Client ID and Client Secret.  These four values are required for the Polarity ServiceNow integration to authenticate with ServiceNow.
 
-## Known Issues
+## Common Issues
 
-If adding additional custom types to the ServiceNow integration, ensure the added custom types do not also match on the built-in custom types for Incidents, Change Requests, Knowledge Base, Request, and Request Item ids.
+### Overlapping Custom Types
 
-As an example, if you add a new custom type that matches on the string `INC0001234`, this will conflict with the integration's built-in custom type for looking up incidents by ID.
+If you modify the included `hostname` data type with a new regex and that regex overlaps with the built-in ticket types, then those ticket types will also trigger Incident searches against the fields specified in the "Incident Query Fields" option. 
 
-Ensure that newly added custom types (e.g., for hostnames), do not overlap with these custom types.
+As an example, if you modify the `hostname` regex and the new regex matches on the string `INC0001234`, this will conflict with the integration's built-in custom type for looking up incidents by ID.  As a result, the string `INC0001234` will be recognized as both an Incident ID and as a hostname.  This will cause the string `INC0001234` to be looked up against the fields specified in the "Incident Query Fields" option which might not be the behavior you want.  
+
+In general, you will want to ensure that newly added custom types (e.g., for hostnames), do not overlap with the custom ServiceNow ticket types.
+
+### Too many invalid results returned
+
+If you see too many results being returned the most common reason is that an invalid "Incident Query Field" has been added.  The "Incident Query Field" option should only contain fields that are valid for the Incident table in ServiceNow.  Due to a quirk in how the ServiceNow query syntax works, if an invalid field is provided, the query will match on all results.  
+
+If you are unsure of what fields are valid, you can use the ServiceNow REST API Explorer to examine an incident and look for the fields on the response object. The ServiceNow REST API Explorer can be found by searching `REST API Explorer` in your ServiceNow dashboard.
 
 ## Common Errors
 
@@ -142,13 +150,15 @@ Required to provide Auth information
 This typically means the authentication credentials you have provided are incorrect.
 
 
-## Adding custom table lookups
+## Adding Custom Issue Type Lookups
 
-To add a new custom table you first need to add your data type to the `config.json` `dataTypes` property.
+To add a new custom issue type lookup you first need to add your data type to the `config.json` `dataTypes` property.
 
 Next, you will need to modify the `./src/functionalityByEntityType/customFunctionalityByType.js` file and add your new type. 
 
 The new type should be added to the `CUSTOM_FUNCTIONALITY_FOR_CUSTOM_ENTITY_TYPES` array.  The key for new type object should be the same as the `key` value for the data type in the `config.json`.
+
+For example, if your `config.json` adds a new data type with a key of `sctask` then the additional entry added to `CUSTOM_FUNCTIONALITYF_FOR_CUSTOM_ENTITY_TYPES` should look like:
 
 ```
   sctask: {
@@ -157,9 +167,10 @@ The new type should be added to the `CUSTOM_FUNCTIONALITY_FOR_CUSTOM_ENTITY_TYPE
   },
 ```
 
-The required fields are the `tableQueryTableName` which is the name of the table to search, and the `displayTabNames` property which sets the tab name in the details block.
+The required fields are the `tableQueryTableName` which is the name of the table to search in ServiceNow, and the `displayTabNames` property which sets the tab name in the details block.
 
 After adding these two changes, increment the `version` property in the `package.json` and restart the integration.
+
 ## Polarity
 
 Polarity is a memory-augmentation platform that improves and accelerates analyst decision making.  For more information about the Polarity platform please see:
